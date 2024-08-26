@@ -28,7 +28,7 @@ function initializeZeroBounce (config) {
       }
 
       const jsonData = JSON.stringify({ public_key: this.apiKey, email: input.value, widget_type: 'hubspot' });
-      console.log(jsonData);
+      
       try {
         const response = await fetch(uri, {
           method: 'POST',
@@ -37,7 +37,6 @@ function initializeZeroBounce (config) {
           },
           body: jsonData,
         });
-        console.log(response.json());
 
         const result = await response.json();
         container.removeChild(loader);
@@ -68,6 +67,7 @@ function initializeZeroBounce (config) {
         console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
         input.style.borderColor = '#DC143C';
+        container.style.color = '#DC143C';
         container.style.borderColor = '#DC143C';
         container.insertBefore(iconContainer, container.firstChild);
         if (this.disableSubmit && button) {
