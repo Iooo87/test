@@ -4,7 +4,7 @@ function initializeZeroBounce (config) {
       this.apiKey = apiKey;
       this.disableSubmit = disableSubmit;
       this.baseUrl = 'https://test-members-api.zerobounce.net/api';
-      this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~\`&#*-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/;
+      this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
       this.document = iframe;
     }
     
