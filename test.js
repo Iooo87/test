@@ -125,8 +125,10 @@ const initializeZeroBounce = (config) => {
 
     inputs.forEach((input) => {
       input.addEventListener('focus', function () {
-        const parent = input.parentNode;
-        parent.insertBefore(loaderContainer, input.nextSibling);
+        if (input.value.length > 0) {
+          const parent = input.parentNode;
+          parent.insertBefore(loaderContainer, input.nextSibling);
+        }
       });
 
       input.addEventListener('blur', function () {
