@@ -6,11 +6,9 @@ function initializeZeroBounce (config) {
       this.baseUrl = 'https://test-members-api.zerobounce.net/api';
       this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~\`&#*-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/;
       this.document = iframe;
-      console.log('here');
     }
     
     async validate(input, loader, button, initBR) {
-      console.log('start validate');
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
       const iconContainer = this.document.createElement('div');
@@ -25,11 +23,12 @@ function initializeZeroBounce (config) {
         iconContainer.innerHTML = '&#x2718;';
         iconContainer.style.color = '#DC143C';
         container.insertBefore(iconContainer, container.firstChild);
+        console.log('stop here');
         return;
       }
 
       const jsonData = JSON.stringify({ public_key: this.apiKey, email: input.value, widget_type: 'hubspot' });
-
+      console.log(jsonData);
       try {
         const response = await fetch(uri, {
           method: 'POST',
@@ -38,12 +37,11 @@ function initializeZeroBounce (config) {
           },
           body: jsonData,
         });
+        console.log(response.json());
 
         const result = await response.json();
         container.removeChild(loader);
-
-        console.log(result);
-
+        
         if (response.ok) {
           if (result.valid) {
             iconContainer.innerHTML = '&#x2713;';
