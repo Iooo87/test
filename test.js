@@ -18,6 +18,7 @@ function initializeZeroBounce (config) {
       iconContainer.style.marginRight = '8px';
 
       if (!this.emailRegex.test(input.value)) {
+        console.log(container);
         container.removeChild(loader);
         container.style.borderColor = '#DC143C';
         iconContainer.innerHTML = '&#x2718;';
