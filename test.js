@@ -169,7 +169,7 @@ function initializeZeroBounce (config) {
             input.style.cssText = '';
           }
           if (me.value !== '') zb.validate(me, loader, button, initBR);
-        }, 1000);
+        }, 500);
       });
     });
   });
