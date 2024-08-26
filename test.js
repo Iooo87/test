@@ -19,9 +19,9 @@ function initializeZeroBounce (config) {
 
       if (!this.emailRegex.test(input.value)) {
         container.removeChild(loader);
+        container.style.borderColor = '#DC143C';
         iconContainer.innerHTML = '&#x2718;';
         iconContainer.style.color = '#DC143C';
-        iconContainer.style.borderColor = '#DC143C';
         container.insertBefore(iconContainer, container.firstChild);
         return;
       }
