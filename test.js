@@ -21,6 +21,7 @@ function initializeZeroBounce (config) {
         container.removeChild(loader);
         iconContainer.innerHTML = '&#x2718;';
         iconContainer.style.color = '#DC143C';
+        iconContainer.style.borderColor = '#DC143C';
         container.insertBefore(iconContainer, container.firstChild);
         return;
       }
