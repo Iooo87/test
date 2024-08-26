@@ -23,7 +23,6 @@ function initializeZeroBounce (config) {
         iconContainer.innerHTML = '&#x2718;';
         iconContainer.style.color = '#DC143C';
         container.insertBefore(iconContainer, container.firstChild);
-        console.log('stop here');
         return;
       }
 
@@ -50,7 +49,6 @@ function initializeZeroBounce (config) {
               button.disabled = false;
             }
           } else {
-            console.log('error - a');
             iconContainer.innerHTML = '&#x2718;';
             iconContainer.style.color = '#DC143C';
             if (this.disableSubmit) {
@@ -63,7 +61,6 @@ function initializeZeroBounce (config) {
           throw new Error(result.error_message);
         }
       } catch (error) {
-        console.log('some error - b');
         console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
         input.style.borderColor = '#DC143C';
@@ -127,17 +124,17 @@ function initializeZeroBounce (config) {
     loaderContainer.appendChild(logo);
 
     inputs.forEach((input) => {
-      // input.addEventListener('focus', function () {
-      //   const parent = input.parentNode;
-      //   parent.insertBefore(loaderContainer, input.nextSibling);
-      // });
+      input.addEventListener('focus', function () {
+        const parent = input.parentNode;
+        parent.insertBefore(loaderContainer, input.nextSibling);
+      });
 
-      // input.addEventListener('blur', function () {
-      //   const parent = input.parentNode;
-      //   if (parent.querySelector('.loaderContainer')) {
-      //     parent.removeChild(loaderContainer);
-      //   }
-      // });
+      input.addEventListener('blur', function () {
+        const parent = input.parentNode;
+        if (parent.querySelector('.loaderContainer')) {
+          parent.removeChild(loaderContainer);
+        }
+      });
 
       input.addEventListener('input', function () {
         clearTimeout(delayTimer);
