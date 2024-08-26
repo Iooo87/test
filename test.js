@@ -40,6 +40,8 @@ function initializeZeroBounce (config) {
         const result = await response.json();
         container.removeChild(loader);
 
+        console.log(result);
+
         if (response.ok) {
           if (result.valid) {
             iconContainer.innerHTML = '&#x2713;';
