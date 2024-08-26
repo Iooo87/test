@@ -49,6 +49,7 @@ function initializeZeroBounce (config) {
               button.disabled = false;
             }
           } else {
+            console.log('error - a');
             iconContainer.innerHTML = '&#x2718;';
             iconContainer.style.color = '#DC143C';
             if (this.disableSubmit) {
@@ -61,6 +62,7 @@ function initializeZeroBounce (config) {
           throw new Error(result.error_message);
         }
       } catch (error) {
+        console.log('some error - b');
         console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
         input.style.borderColor = '#DC143C';
