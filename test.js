@@ -129,12 +129,12 @@ function initializeZeroBounce (config) {
       //   parent.insertBefore(loaderContainer, input.nextSibling);
       // });
 
-      input.addEventListener('blur', function () {
-        const parent = input.parentNode;
-        if (parent.querySelector('.loaderContainer')) {
-          parent.removeChild(loaderContainer);
-        }
-      });
+      // input.addEventListener('blur', function () {
+      //   const parent = input.parentNode;
+      //   if (parent.querySelector('.loaderContainer')) {
+      //     parent.removeChild(loaderContainer);
+      //   }
+      // });
 
       input.addEventListener('input', function () {
         clearTimeout(delayTimer);
