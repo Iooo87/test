@@ -64,7 +64,6 @@ function initializeZeroBounce (config) {
       } catch (error) {
         console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
-        iconContainer.style.color = '#DC143C';
         input.style.borderColor = '#DC143C';
         container.style.borderColor = '#DC143C';
         container.insertBefore(iconContainer, container.firstChild);
