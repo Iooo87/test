@@ -6,8 +6,9 @@ function initializeZeroBounce (config) {
       this.baseUrl = 'https://test-members-api.zerobounce.net/api';
       this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~\`&#*-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/;
       this.document = iframe;
+      console.log('here');
     }
-    console.log('here');
+    
     async validate(input, loader, button, initBR) {
       console.log('start validate');
       const uri = this.baseUrl + '/integration/widgets/validate/';
