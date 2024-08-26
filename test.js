@@ -1,4 +1,4 @@
-function initializeZeroBounce (config) {
+const initializeZeroBounce = (config) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, iframe) {
       this.apiKey = apiKey;
@@ -7,7 +7,7 @@ function initializeZeroBounce (config) {
       this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
       this.document = iframe;
     }
-    
+
     async validate(input, loader, button, initBR) {
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
@@ -27,7 +27,7 @@ function initializeZeroBounce (config) {
       }
 
       const jsonData = JSON.stringify({ public_key: this.apiKey, email: input.value, widget_type: 'hubspot' });
-      
+
       try {
         const response = await fetch(uri, {
           method: 'POST',
@@ -39,7 +39,7 @@ function initializeZeroBounce (config) {
 
         const result = await response.json();
         container.removeChild(loader);
-        
+
         if (response.ok) {
           if (result.valid) {
             iconContainer.innerHTML = '&#x2713;';
@@ -84,7 +84,7 @@ function initializeZeroBounce (config) {
   if (selector.length === 0 || iframes.length === 0) return null;
 
   iframes.forEach((iframe) => {
-  const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
     const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
     const inputs = iframeDocument.querySelectorAll(selector);
     const loaderContainer = iframeDocument.createElement('div');
