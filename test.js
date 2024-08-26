@@ -7,7 +7,7 @@ function initializeZeroBounce (config) {
       this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~\`&#*-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$/;
       this.document = iframe;
     }
-
+    console.log('here');
     async validate(input, loader, button, initBR) {
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
