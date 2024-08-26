@@ -124,10 +124,10 @@ function initializeZeroBounce (config) {
     loaderContainer.appendChild(logo);
 
     inputs.forEach((input) => {
-      input.addEventListener('focus', function () {
-        const parent = input.parentNode;
-        parent.insertBefore(loaderContainer, input.nextSibling);
-      });
+      // input.addEventListener('focus', function () {
+      //   const parent = input.parentNode;
+      //   parent.insertBefore(loaderContainer, input.nextSibling);
+      // });
 
       input.addEventListener('blur', function () {
         const parent = input.parentNode;
