@@ -9,6 +9,7 @@ function initializeZeroBounce (config) {
     }
     console.log('here');
     async validate(input, loader, button, initBR) {
+      console.log('start validate');
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
       const iconContainer = this.document.createElement('div');
