@@ -1,114 +1,178 @@
-const apiBaseUrl = 'https://test-members-api.zerobounce.net/api';
-
 const initializeZeroBounce = (config) => {
-  const _0x1f0077 = _0x1fe4;
-
-  function _0x2cf7() {
-    const _0x314b2b = ['remove', '#DC143C', '50%', 'insertBefore', '#3cb043', '3px\x205px\x205px', '260780Rgqmxz', 'hubspotFormIds', 'stringify', '.zb-icon', 'addEventListener', '\x200\x20', 'baseline', 'disabled', '93912QATfLF', '/integration/widgets/validate/', 'right', 'flex', 'input', '&#x2713;', '412020ZZdEaW', 'removeChild', 'join', 'firstChild', 'forEach', 'blur', 'padding', 'isArray', 'classList', 'closest', '322856fkUZhX', '2NLWPex', 'json', 'loader', '37826IgujmD', 'zb-icon', 'position', 'transform', '#fff', 'borderRadius', 'rotate(360deg)', 'document', '\x27][type=\x27email\x27]', '2212260tPZxRd', 'alignItems', 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png', '3px\x20solid', '[id^=\x27hs-form-iframe\x27]', '&#x2718;', '#888\x20#fbdd46\x20#888\x20#fbdd46', 'borderColor', 'length', 'color', 'innerHTML', '54kcKzOB', 'marginRight', 'appendChild', 'emailRegex', '15px', 'valid', 'border', 'disableSubmit', 'value', 'parentNode', 'form', 'POST', 'cssText', '0\x202px\x202px\x20rgba(0,0,0,.2)', 'querySelectorAll', 'contains', '[id$=\x27', 'createElement', 'hubspot', 'add', 'getComputedStyle', 'src', 'borderTop', 'style', 'validate', 'zIndex', 'zb-custom-error', 'none', 'map', '20MCVdfl', 'test', 'display', 'animate', 'baseUrl', '1000', 'div', 'disableSubmitOnError', 'application/json', '102363ohRxMc', 'backgroundColor', '8px', 'height', 'error', 'apiKey', 'nextSibling'];
-    _0x2cf7 = function() {
-      return _0x314b2b;
-    };
-    return _0x2cf7();
-  }
-
-  (function(_0x5f48dd, _0x449366) {
-    const _0xa694f8 = _0x1fe4, _0x537d1e = _0x5f48dd();
-    while (!![]) {
-      try {
-        const _0x2dfd05 = -parseInt(_0xa694f8(0xcb)) / 0x1 * (parseInt(_0xa694f8(0xc8)) / 0x2) + parseInt(_0xa694f8(0x105)) / 0x3 * (parseInt(_0xa694f8(0xfc)) / 0x4) + parseInt(_0xa694f8(0x112)) / 0x5 + -parseInt(_0xa694f8(0xbd)) / 0x6 + -parseInt(_0xa694f8(0x11a)) / 0x7 + parseInt(_0xa694f8(0xc7)) / 0x8 * (parseInt(_0xa694f8(0xdf)) / 0x9) + -parseInt(_0xa694f8(0xd4)) / 0xa;
-        if (_0x2dfd05 === _0x449366) break; else _0x537d1e['push'](_0x537d1e['shift']());
-      } catch (_0x1b6abb) {
-        _0x537d1e['push'](_0x537d1e['shift']());
-      }
-    }
-  }(_0x2cf7, 0x1e375));
-
   class ZeroBounceApi {
-    constructor(_0x5b72f9, _0x2ba371, _0x1f04e3) {
-      const _0x3b6980 = _0x1fe4;
-      this[_0x3b6980(0x10a)] = _0x5b72f9, this['disableSubmit'] = _0x2ba371, this['baseUrl'] = apiBaseUrl, this[_0x3b6980(0xe2)] = /^[a-zA-Z0-9._%+=!?/|{}$^~`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, this['document'] = _0x1f04e3;
+    constructor(apiKey, disableSubmit, iframe) {
+      this.apiKey = apiKey;
+      this.disableSubmit = disableSubmit;
+      this.baseUrl = config.stagingAPI ? config.stagingAPI : config.testAPI ? config.testAPI : 'https://extension-api.zerobounce.net/api';
+      this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+      this.document = iframe;
     }
 
-    async [_0x1f0077(0xf7)](_0x2f0fff, _0x533fb6, _0x1a1aec, _0xcb588a) {
-      const _0x97767a = _0x1f0077, _0x324236 = this[_0x97767a(0x100)] + _0x97767a(0x11b),
-        _0x87187f = _0x533fb6[_0x97767a(0xe8)], _0x269bfd = this[_0x97767a(0xd2)][_0x97767a(0xf0)](_0x97767a(0x102));
-      _0x269bfd[_0x97767a(0xc5)][_0x97767a(0xf2)](_0x97767a(0xcc)), _0x269bfd[_0x97767a(0xf6)]['fontSize'] = '16px', _0x269bfd['style'][_0x97767a(0xe0)] = '8px';
-      if (!this[_0x97767a(0xe2)][_0x97767a(0xfd)](_0x2f0fff[_0x97767a(0xe7)])) {
-        _0x87187f[_0x97767a(0xbe)](_0x533fb6), _0x87187f[_0x97767a(0xf6)][_0x97767a(0xdb)] = _0x97767a(0x10d), _0x269bfd[_0x97767a(0xde)] = _0x97767a(0xd9), _0x269bfd['style'][_0x97767a(0xdd)] = '#DC143C', _0x87187f[_0x97767a(0x10f)](_0x269bfd, _0x87187f[_0x97767a(0xc0)]);
+    async validate(input, loader, button, initBR) {
+      const uri = this.baseUrl + '/integration/widgets/validate/';
+      const container = loader.parentNode;
+      const iconContainer = this.document.createElement('div');
+
+      iconContainer.classList.add('zb-icon');
+      iconContainer.style.fontSize = '16px';
+      iconContainer.style.marginRight = '8px';
+
+      if (!this.emailRegex.test(input.value)) {
+        container.removeChild(loader);
+        container.style.borderColor = '#DC143C';
+        iconContainer.innerHTML = '&#x2718;';
+        iconContainer.style.color = '#DC143C';
+        container.insertBefore(iconContainer, container.firstChild);
         return;
       }
-      const _0x3e9c69 = JSON[_0x97767a(0x114)]({
-        'public_key': this['apiKey'],
-        'email': _0x2f0fff['value'],
-        'widget_type': _0x97767a(0xf1),
-      });
+
+      const jsonData = JSON.stringify({ public_key: this.apiKey, email: input.value, widget_type: 'hubspot' });
+
       try {
-        const _0x569652 = await fetch(_0x324236, {
-          'method': _0x97767a(0xea),
-          'headers': { 'Content-Type': _0x97767a(0x104) },
-          'body': _0x3e9c69,
-        }), _0x3e03ea = await _0x569652[_0x97767a(0xc9)]();
-        _0x87187f[_0x97767a(0xbe)](_0x533fb6);
-        if (_0x569652['ok']) _0x3e03ea[_0x97767a(0xe4)] ? (_0x269bfd[_0x97767a(0xde)] = _0x97767a(0xbc), _0x269bfd[_0x97767a(0xf6)][_0x97767a(0xdd)] = _0x97767a(0x110), _0x269bfd[_0x97767a(0xf6)][_0x97767a(0xce)] = 'scale(1.5,\x201)', this[_0x97767a(0xe6)] && _0x1a1aec && (_0x1a1aec[_0x97767a(0x119)] = ![])) : (_0x269bfd[_0x97767a(0xde)] = _0x97767a(0xd9), _0x269bfd[_0x97767a(0xf6)]['color'] = _0x97767a(0x10d), this[_0x97767a(0xe6)] && (_0x2f0fff[_0x97767a(0xf6)][_0x97767a(0xdb)] = _0x97767a(0x10d), _0x87187f[_0x97767a(0xf6)]['borderColor'] = _0x97767a(0x10d))), _0x87187f[_0x97767a(0x10f)](_0x269bfd, _0x87187f['firstChild']); else throw new Error(_0x3e03ea['error_message']);
-      } catch (_0x4e96ee) {
-        console[_0x97767a(0x109)]('Validation\x20error:', _0x4e96ee), _0x269bfd[_0x97767a(0xde)] = _0x97767a(0xd9), _0x2f0fff[_0x97767a(0xf6)][_0x97767a(0xdb)] = _0x97767a(0x10d), _0x87187f['style'][_0x97767a(0xdd)] = '#DC143C', _0x87187f[_0x97767a(0xf6)][_0x97767a(0xdb)] = _0x97767a(0x10d), _0x87187f[_0x97767a(0x10f)](_0x269bfd, _0x87187f[_0x97767a(0xc0)]), this[_0x97767a(0xe6)] && _0x1a1aec && (_0x1a1aec[_0x97767a(0x119)] = ![]);
+        const response = await fetch(uri, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonData,
+        });
+
+        const result = await response.json();
+        container.removeChild(loader);
+
+        if (response.ok) {
+          if (result.valid) {
+            container.style.borderColor = undefined;
+            iconContainer.innerHTML = '&#x2713;';
+            iconContainer.style.color = '#3cb043';
+            iconContainer.style.transform = 'scale(1.5, 1)';
+            if (this.disableSubmit && button) {
+              button.disabled = false;
+            }
+          } else {
+            iconContainer.innerHTML = '&#x2718;';
+            iconContainer.style.color = '#DC143C';
+            if (this.disableSubmit) {
+              input.style.borderColor = '#DC143C';
+              container.style.borderColor = '#DC143C';
+            }
+          }
+          container.insertBefore(iconContainer, container.firstChild);
+        } else {
+          throw new Error(result.error_message);
+        }
+      } catch (error) {
+        console.error('Validation error:', error);
+        iconContainer.innerHTML = '&#x2718;';
+        input.style.borderColor = '#DC143C';
+        container.style.color = '#DC143C';
+        container.style.borderColor = '#DC143C';
+        container.insertBefore(iconContainer, container.firstChild);
+        if (this.disableSubmit && button) {
+          button.disabled = false;
+        }
       }
     }
   }
 
-  const disableSubmit = typeof config['disableSubmitOnError'] !== 'undefined' ? config[_0x1f0077(0x103)] : !![],
-    iframes = document[_0x1f0077(0xed)](_0x1f0077(0xd8)),
-    selector = Array[_0x1f0077(0xc4)](config[_0x1f0077(0x113)]) && config[_0x1f0077(0x113)][_0x1f0077(0xdc)] > 0x0 ? config[_0x1f0077(0x113)][_0x1f0077(0xfb)](_0x364b23 => _0x1f0077(0xef) + _0x364b23 + _0x1f0077(0xd3))[_0x1f0077(0xbf)](',\x20') : [];
-  if (selector[_0x1f0077(0xdc)] === 0x0 || iframes[_0x1f0077(0xdc)] === 0x0) return null;
+  const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
+  const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
+  const selector =
+    Array.isArray(config.hubspotFormIds) && config.hubspotFormIds.length > 0
+      ? config.hubspotFormIds.map((id) => "[id$='" + id + "'][type='email']").join(', ')
+      : [];
 
-  function _0x1fe4(_0x5a70f4, _0x37b06a) {
-    const _0x2cf7a5 = _0x2cf7();
-    return _0x1fe4 = function(_0x1fe410, _0x40aa38) {
-      _0x1fe410 = _0x1fe410 - 0xb9;
-      let _0x211db8 = _0x2cf7a5[_0x1fe410];
-      return _0x211db8;
-    }, _0x1fe4(_0x5a70f4, _0x37b06a);
-  }
+  if (selector.length === 0 || iframes.length === 0) return null;
 
-  iframes[_0x1f0077(0xc1)](_0xb02a02 => {
-    const _0x1ec1b9 = _0x1f0077,
-      _0x1c0da9 = _0xb02a02['contentDocument'] || _0xb02a02['contentWindow'][_0x1ec1b9(0xd2)],
-      _0x28fddf = new ZeroBounceApi(config['apiKey'], disableSubmit, _0x1c0da9),
-      _0x219116 = _0x1c0da9[_0x1ec1b9(0xed)](selector), _0x29610c = _0x1c0da9['createElement'](_0x1ec1b9(0x102)),
-      _0x31fdd5 = _0x1c0da9[_0x1ec1b9(0xf0)](_0x1ec1b9(0x102)), _0x40d7c5 = _0x1c0da9[_0x1ec1b9(0xf0)]('img');
-    let _0x4cedc6;
-    _0x40d7c5[_0x1ec1b9(0xf4)] = _0x1ec1b9(0xd6), _0x29610c[_0x1ec1b9(0xc5)][_0x1ec1b9(0xf2)]('loaderContainer'), _0x29610c[_0x1ec1b9(0xf6)][_0x1ec1b9(0xcd)] = 'absolute', _0x29610c['style'][_0x1ec1b9(0xb9)] = 0x0, _0x29610c['style'][_0x1ec1b9(0xd0)] = '0\x200\x204px\x204px', _0x29610c[_0x1ec1b9(0xf6)][_0x1ec1b9(0x106)] = _0x1ec1b9(0xcf), _0x29610c[_0x1ec1b9(0xf6)]['boxShadow'] = _0x1ec1b9(0xec), _0x29610c['style'][_0x1ec1b9(0xfe)] = _0x1ec1b9(0xba), _0x29610c['style'][_0x1ec1b9(0xd5)] = _0x1ec1b9(0x118), _0x29610c[_0x1ec1b9(0xf6)][_0x1ec1b9(0xc3)] = _0x1ec1b9(0x111), _0x29610c[_0x1ec1b9(0xf6)][_0x1ec1b9(0x108)] = '32px', _0x29610c[_0x1ec1b9(0xf6)][_0x1ec1b9(0xe5)] = '1px\x20solid\x20#bbbbbb', _0x29610c[_0x1ec1b9(0xf6)][_0x1ec1b9(0xf5)] = _0x1ec1b9(0xfa), _0x29610c[_0x1ec1b9(0xf6)][_0x1ec1b9(0xf8)] = _0x1ec1b9(0x101), _0x31fdd5[_0x1ec1b9(0xc5)][_0x1ec1b9(0xf2)](_0x1ec1b9(0xca)), _0x31fdd5[_0x1ec1b9(0xf6)][_0x1ec1b9(0xe5)] = _0x1ec1b9(0xd7), _0x31fdd5[_0x1ec1b9(0xf6)][_0x1ec1b9(0xdb)] = _0x1ec1b9(0xda), _0x31fdd5[_0x1ec1b9(0xf6)][_0x1ec1b9(0xd0)] = _0x1ec1b9(0x10e), _0x31fdd5['style']['width'] = _0x1ec1b9(0xe3), _0x31fdd5['style'][_0x1ec1b9(0x108)] = _0x1ec1b9(0xe3), _0x31fdd5['style'][_0x1ec1b9(0xe0)] = _0x1ec1b9(0x107), _0x31fdd5[_0x1ec1b9(0xff)]([{ 'transform': 'rotate(0deg)' }, { 'transform': _0x1ec1b9(0xd1) }], {
-      'duration': 0x7d0,
-      'iterations': Infinity,
-    }), _0x29610c[_0x1ec1b9(0xe1)](_0x40d7c5), _0x219116[_0x1ec1b9(0xc1)](_0x5311c5 => {
-      const _0x578ea5 = _0x1ec1b9;
-      _0x5311c5['addEventListener']('focus', function() {
-        const _0x15d976 = _0x1fe4, _0x312e74 = _0x5311c5[_0x15d976(0xe8)];
-        _0x312e74[_0x15d976(0x10f)](_0x29610c, _0x5311c5[_0x15d976(0x10b)]);
-      }), _0x5311c5['addEventListener'](_0x578ea5(0xc2), function() {
-        const _0x5b76d6 = _0x578ea5, _0x521942 = _0x5311c5[_0x5b76d6(0xe8)];
-        _0x521942['querySelector']('.loaderContainer') && _0x521942[_0x5b76d6(0xbe)](_0x29610c);
-      }), _0x5311c5[_0x578ea5(0x116)](_0x578ea5(0xbb), function() {
-        const _0x492292 = _0x578ea5;
-        clearTimeout(_0x4cedc6);
-        const _0xf2e1f = this, _0x350efe = _0x5311c5[_0x492292(0xe8)],
-          _0x1b8d19 = _0x5311c5[_0x492292(0xc6)](_0x492292(0xe9)),
-          _0x14a5e5 = _0x1b8d19['querySelector']('[type=\x27submit\x27]');
-        _0x5311c5['style'][_0x492292(0xeb)] = '';
-        const _0x3a0db2 = window[_0x492292(0xf3)](_0x5311c5), _0x2fc3e1 = _0x3a0db2[_0x492292(0xd0)];
-        _0x29610c[_0x492292(0xf6)][_0x492292(0xdb)] = _0x3a0db2['borderColor'];
-        if (_0x5311c5[_0x492292(0xc5)][_0x492292(0xee)](_0x492292(0xf9))) _0x5311c5[_0x492292(0xc5)][_0x492292(0x10c)](_0x492292(0xf9));
-        if (_0x29610c[_0x492292(0xc5)][_0x492292(0xee)](_0x492292(0xf9))) _0x5311c5[_0x492292(0xc5)][_0x492292(0x10c)](_0x492292(0xf9));
-        disableSubmit && _0x14a5e5 && (_0x14a5e5['disabled'] = !![]);
-        if (_0x29610c[_0x492292(0xed)]('.zb-icon')[_0x492292(0xdc)] > 0x0) {
-          const _0x31c342 = _0x350efe['querySelector'](_0x492292(0x115));
-          _0x29610c['removeChild'](_0x31c342);
+  iframes.forEach((iframe) => {
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+    const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
+    const inputs = iframeDocument.querySelectorAll(selector);
+    const loaderContainer = iframeDocument.createElement('div');
+    const loader = iframeDocument.createElement('div');
+    const logo = iframeDocument.createElement('img');
+    let delayTimer;
+
+    logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
+
+    loaderContainer.classList.add('loaderContainer');
+    loaderContainer.style.position = 'absolute';
+    loaderContainer.style.right = 0;
+    loaderContainer.style.borderRadius = '0 0 4px 4px';
+    loaderContainer.style.backgroundColor = '#fff';
+    loaderContainer.style.boxShadow = '0 2px 2px rgba(0,0,0,.2)';
+    loaderContainer.style.display = 'flex';
+    loaderContainer.style.alignItems = 'baseline';
+    loaderContainer.style.padding = '3px 5px 5px';
+    loaderContainer.style.height = '32px';
+    loaderContainer.style.border = '1px solid #bbbbbb';
+    loaderContainer.style.borderTop = 'none';
+    loaderContainer.style.zIndex = '1000';
+
+    loader.classList.add('loader');
+    loader.style.border = '3px solid';
+    loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
+    loader.style.borderRadius = '50%';
+    loader.style.width = '15px';
+    loader.style.height = '15px';
+    loader.style.marginRight = '8px';
+
+    loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
+      duration: 2000,
+      iterations: Infinity,
+    });
+
+    loaderContainer.appendChild(logo);
+
+    inputs.forEach((input) => {
+      input.addEventListener('focus', function () {
+        if (input.value.length > 0) {
+          const parent = input.parentNode;
+          parent.insertBefore(loaderContainer, input.nextSibling);
         }
-        _0xf2e1f['value'][_0x492292(0xdc)] > 0x0 && (_0x350efe[_0x492292(0x10f)](_0x29610c, _0x5311c5[_0x492292(0x10b)]), _0x5311c5[_0x492292(0xf6)][_0x492292(0xd0)] = _0x2fc3e1 + '\x20' + _0x2fc3e1 + _0x492292(0x117) + _0x2fc3e1), _0x29610c[_0x492292(0x10f)](_0x31fdd5, _0x29610c[_0x492292(0xc0)]), _0x4cedc6 = setTimeout(function() {
-          const _0x16840e = _0x492292;
-          _0xf2e1f[_0x16840e(0xe7)] === '' && _0x350efe[_0x16840e(0xed)]('.loaderContainer')[_0x16840e(0xdc)] > 0x0 && (_0x350efe[_0x16840e(0xbe)](_0x29610c), _0x5311c5[_0x16840e(0xf6)][_0x16840e(0xeb)] = '');
-          if (_0xf2e1f[_0x16840e(0xe7)] !== '') _0x28fddf[_0x16840e(0xf7)](_0xf2e1f, _0x31fdd5, _0x14a5e5, _0x2fc3e1);
-        }, 0x1f4);
+      });
+
+      input.addEventListener('blur', function () {
+        const parent = input.parentNode;
+        if (parent.querySelector('.loaderContainer')) {
+          parent.removeChild(loaderContainer);
+        }
+      });
+
+      input.addEventListener('input', function () {
+        clearTimeout(delayTimer);
+        const me = this;
+        const parent = input.parentNode;
+        const form = input.closest('form');
+        const button = form.querySelector("[type='submit']");
+        input.style.cssText = '';
+        const inputStyles = window.getComputedStyle(input);
+        const initBR = inputStyles.borderRadius;
+        loaderContainer.style.borderColor = inputStyles.borderColor;
+
+        if (input.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
+        if (loaderContainer.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
+
+        if (disableSubmit && button) {
+          button.disabled = true;
+        }
+        if (loaderContainer.querySelectorAll('.zb-icon').length > 0) {
+          const icon = parent.querySelector('.zb-icon');
+          loaderContainer.removeChild(icon);
+        }
+        if (me.value.length > 0) {
+          parent.insertBefore(loaderContainer, input.nextSibling);
+          input.style.borderRadius = initBR + ' ' + initBR + ' 0 ' + initBR;
+        }
+
+        loaderContainer.insertBefore(loader, loaderContainer.firstChild);
+        delayTimer = setTimeout(function () {
+          if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
+            parent.removeChild(loaderContainer);
+            input.style.cssText = '';
+          }
+          if (me.value !== '') zb.validate(me, loader, button, initBR);
+        }, 500);
       });
     });
   });
