@@ -43,7 +43,7 @@ const initializeZeroBounce = (config) => {
         if (response.ok) {
           if (result.valid) {
             console.log(container);
-            container.style.borderColor = 0;
+            container.style.border = 0;
             iconContainer.innerHTML = '&#x2713;';
             iconContainer.style.color = '#3cb043';
             iconContainer.style.transform = 'scale(1.5, 1)';
@@ -63,6 +63,7 @@ const initializeZeroBounce = (config) => {
           throw new Error(result.error_message);
         }
       } catch (error) {
+        container.removeChild(loader);
         console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
         input.style.borderColor = '#DC143C';
