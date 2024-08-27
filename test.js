@@ -42,7 +42,6 @@ const initializeZeroBounce = (config) => {
 
         if (response.ok) {
           if (result.valid) {
-            console.log(container);
             container.style.borderColor = 'rgba(82,168,236,.8)';
             iconContainer.innerHTML = '&#x2713;';
             iconContainer.style.color = '#3cb043';
