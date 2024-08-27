@@ -125,19 +125,19 @@ const initializeZeroBounce = (config) => {
     loaderContainer.appendChild(logo);
 
     inputs.forEach((input) => {
-      input.addEventListener('focus', function () {
-        if (input.value.length > 0) {
-          const parent = input.parentNode;
-          parent.insertBefore(loaderContainer, input.nextSibling);
-        }
-      });
+      // input.addEventListener('focus', function () {
+      //   if (input.value.length > 0) {
+      //     const parent = input.parentNode;
+      //     parent.insertBefore(loaderContainer, input.nextSibling);
+      //   }
+      // });
 
-      input.addEventListener('blur', function () {
-        const parent = input.parentNode;
-        if (parent.querySelector('.loaderContainer')) {
-          parent.removeChild(loaderContainer);
-        }
-      });
+      // input.addEventListener('blur', function () {
+      //   const parent = input.parentNode;
+      //   if (parent.querySelector('.loaderContainer')) {
+      //     parent.removeChild(loaderContainer);
+      //   }
+      // });
 
       input.addEventListener('input', function () {
         clearTimeout(delayTimer);
