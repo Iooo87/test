@@ -79,21 +79,17 @@ const initializeZeroBounce = (config, form) => {
     }
   }
  
-  console.log(form);
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
 
   if (form.length === 0) return null;
 
   const iframeDocument = form[0].ownerDocument;
-  console.log(iframeDocument);
   const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
   const inputs = form[0].querySelectorAll('input[type="email"]');
   const loaderContainer = iframeDocument.createElement('div');
   const loader = iframeDocument.createElement('div');
   const logo = iframeDocument.createElement('img');
   let delayTimer;
-
-  console.log(inputs);
 
   logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
 
