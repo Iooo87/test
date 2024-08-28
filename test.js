@@ -126,6 +126,7 @@ const initializeZeroBounce = (config, form) => {
     input.addEventListener('focus', function () {
       if (input.value.length > 0) {
         const parent = input.parentNode;
+        loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
         parent.insertBefore(loaderContainer, input.nextSibling);
       }
     });
