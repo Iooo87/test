@@ -81,22 +81,18 @@ const initializeZeroBounce = (config, form) => {
  
   console.log(form);
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
-  const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
-  const selector =
-    Array.isArray(config.hubspotFormIds) && config.hubspotFormIds.length > 0
-      ? config.hubspotFormIds.map((id) => "[id$='" + id + "'][type='email']").join(', ')
-      : [];
 
-  if (selector.length === 0 || iframes.length === 0) return null;
+  if (form.length === 0) return null;
 
-  iframes.forEach((iframe) => {
     const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
     const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
-    const inputs = iframeDocument.querySelectorAll(selector);
+    const inputs = form[0].querySelectorAll('input[type="email"]');
     const loaderContainer = iframeDocument.createElement('div');
     const loader = iframeDocument.createElement('div');
     const logo = iframeDocument.createElement('img');
     let delayTimer;
+
+  console.log(inputs);
 
     logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
 
@@ -180,5 +176,4 @@ const initializeZeroBounce = (config, form) => {
         }, 500);
       });
     });
-  });
 };
