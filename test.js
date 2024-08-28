@@ -59,7 +59,6 @@ const initializeZeroBounce = (config) => {
           }
           container.insertBefore(iconContainer, container.firstChild);
         } else {
-          container.removeChild(loader);
           container.style.borderColor = '#DC143C';
           iconContainer.innerHTML = '&#x2718;';
           iconContainer.style.color = '#DC143C';
@@ -67,7 +66,6 @@ const initializeZeroBounce = (config) => {
           throw new Error(result.error_message);
         }
       } catch (error) {
-        container.removeChild(loader);
         console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
         input.style.borderColor = '#DC143C';
