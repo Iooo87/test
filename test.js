@@ -126,7 +126,6 @@ const initializeZeroBounce = (config, form) => {
     input.addEventListener('focus', function () {
       if (input.value.length > 0) {
         const parent = input.parentNode;
-        loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
         parent.insertBefore(loaderContainer, input.nextSibling);
       }
     });
@@ -147,7 +146,7 @@ const initializeZeroBounce = (config, form) => {
       input.style.cssText = '';
       const inputStyles = window.getComputedStyle(input);
       const initBR = inputStyles.borderRadius;
-      loaderContainer.style.borderColor = inputStyles.borderColor;
+      loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';;
 
       if (input.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
       if (loaderContainer.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
