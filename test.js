@@ -1,4 +1,4 @@
-const initializeZeroBounce = (config) => {
+const initializeZeroBounce = (config, form) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, iframe) {
       this.apiKey = apiKey;
@@ -78,7 +78,8 @@ const initializeZeroBounce = (config) => {
       }
     }
   }
-
+ 
+  console.log(form);
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
   const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
   const selector =
