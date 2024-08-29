@@ -86,8 +86,9 @@ const initializeZeroBounce = (config, form) => {
   const iframeDocument = form[0].ownerDocument;
   const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
   const uniqueId = form[0].id.split('hsForm_')[1];
-  const input = iframeDocument.getElementById('email_' + uniqueId);
-  console.log(input);
+  console.log(uniqueId);
+  const inputs = iframeDocument.queryElement('[id="email_' + uniqueId + '"');
+  console.log(inputs);
   const loaderContainer = iframeDocument.createElement('div');
   const loader = iframeDocument.createElement('div');
   const logo = iframeDocument.createElement('img');
@@ -124,7 +125,7 @@ const initializeZeroBounce = (config, form) => {
 
   loaderContainer.appendChild(logo);
 
-
+  input.addEventListener('input', function () {
     input.addEventListener('focus', function () {
       if (input.value.length > 0) {
         const parent = input.parentNode;
@@ -174,4 +175,5 @@ const initializeZeroBounce = (config, form) => {
         if (me.value !== '') zb.validate(me, loader, button, initBR);
       }, 500);
     });
+  });
 };
