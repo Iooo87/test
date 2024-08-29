@@ -80,13 +80,14 @@ const initializeZeroBounce = (config, form) => {
   }
  
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
-console.log(form);
+
   if (form.length === 0) return null;
 
   const iframeDocument = form[0].ownerDocument;
   const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
-  const inputs = form[0].querySelectorAll('input[type="email"]');
-  console.log(form[0].querySelectorAll('input[type="email"]'));
+  const uniqueId = form[0].id.split('hsForm_')[1];
+  const input = iframeDocument.getElementById('email_' + uniqueId);
+  console.log(finput);
   const loaderContainer = iframeDocument.createElement('div');
   const loader = iframeDocument.createElement('div');
   const logo = iframeDocument.createElement('img');
@@ -123,7 +124,7 @@ console.log(form);
 
   loaderContainer.appendChild(logo);
 
-  inputs.forEach((input) => {
+
     input.addEventListener('focus', function () {
       if (input.value.length > 0) {
         const parent = input.parentNode;
@@ -173,5 +174,4 @@ console.log(form);
         if (me.value !== '') zb.validate(me, loader, button, initBR);
       }, 500);
     });
-  });
 };
