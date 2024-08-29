@@ -121,7 +121,7 @@ console.log(form);
   });
 
   loaderContainer.appendChild(logo);
-cosnole.log(inputs);
+console.log(inputs);
   inputs.forEach((input) => {
     input.addEventListener('focus', function () {
       if (input.value.length > 0) {
