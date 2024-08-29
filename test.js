@@ -87,7 +87,7 @@ const initializeZeroBounce = (config, form) => {
   const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
   const uniqueId = form[0].id.split('hsForm_')[1];
   const input = iframeDocument.getElementById('email_' + uniqueId);
-  console.log(finput);
+  console.log(input);
   const loaderContainer = iframeDocument.createElement('div');
   const loader = iframeDocument.createElement('div');
   const logo = iframeDocument.createElement('img');
