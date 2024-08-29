@@ -125,7 +125,7 @@ const initializeZeroBounce = (config, form) => {
 
   loaderContainer.appendChild(logo);
 
-  inputs.addEventListener('input', function () {
+  inputs.forEach((input) => {
     input.addEventListener('focus', function () {
       if (input.value.length > 0) {
         const parent = input.parentNode;
