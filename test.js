@@ -80,7 +80,7 @@ const initializeZeroBounce = (config, form) => {
   }
  
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
-
+console.log(form);
   if (form.length === 0) return null;
 
   const iframeDocument = form[0].ownerDocument;
