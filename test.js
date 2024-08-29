@@ -149,7 +149,7 @@ const initializeZeroBounce = (config) => {
         input.style.cssText = '';
         const inputStyles = window.getComputedStyle(input);
         const initBR = inputStyles.borderRadius;
-        loaderContainer.style.borderColor = inputStyles.borderColor;
+        loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
 
         if (input.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
         if (loaderContainer.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
