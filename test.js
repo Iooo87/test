@@ -86,6 +86,7 @@ console.log(form);
   const iframeDocument = form[0].ownerDocument;
   const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
   const inputs = form[0].querySelectorAll('input[type="email"]');
+  console.log(form[0].querySelectorAll('input[type="email"]'));
   const loaderContainer = iframeDocument.createElement('div');
   const loader = iframeDocument.createElement('div');
   const logo = iframeDocument.createElement('img');
@@ -121,7 +122,7 @@ console.log(form);
   });
 
   loaderContainer.appendChild(logo);
-console.log(inputs);
+
   inputs.forEach((input) => {
     input.addEventListener('focus', function () {
       if (input.value.length > 0) {
