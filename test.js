@@ -82,7 +82,7 @@ const initializeZeroBounce = (config, form) => {
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
 
   if (form.length === 0) return null;
-  console.log(form);
+  console.log(typeof form);
   console.log(Object.keys(form).lengt > 0);
   const formEl = typeof form === 'object' && Object.keys(form).lengt > 0 ? form[0] : form;
 console.log(formEl);
