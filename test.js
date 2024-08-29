@@ -1,4 +1,10 @@
-const initializeZeroBounce = (config, form) => {
+const config = {
+  apiKey: '',
+  disableSubmitOnError: true,
+  hubspotFormIds: [''],
+};
+
+const initializeZeroBounce = (config) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, iframe) {
       this.apiKey = apiKey;
@@ -78,16 +84,14 @@ const initializeZeroBounce = (config, form) => {
       }
     }
   }
- 
+
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
 
   if (form.length === 0) return null;
 
   const iframeDocument = form[0].ownerDocument;
-  console.log(iframeDocument);
   const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
-  const uniqueId = form[0].id.split('hsForm_')[1];
-  const input = iframeDocument.getElementById('email-' + uniqueId);
+  const inputs = form[0].querySelectorAll('input[type="email"]');
   const loaderContainer = iframeDocument.createElement('div');
   const loader = iframeDocument.createElement('div');
   const logo = iframeDocument.createElement('img');
@@ -124,6 +128,7 @@ const initializeZeroBounce = (config, form) => {
 
   loaderContainer.appendChild(logo);
 
+  inputs.forEach((input) => {
     input.addEventListener('focus', function () {
       if (input.value.length > 0) {
         const parent = input.parentNode;
@@ -147,7 +152,7 @@ const initializeZeroBounce = (config, form) => {
       input.style.cssText = '';
       const inputStyles = window.getComputedStyle(input);
       const initBR = inputStyles.borderRadius;
-      loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';;
+      loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
 
       if (input.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
       if (loaderContainer.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
@@ -173,4 +178,5 @@ const initializeZeroBounce = (config, form) => {
         if (me.value !== '') zb.validate(me, loader, button, initBR);
       }, 500);
     });
+  });
 };
