@@ -1,4 +1,4 @@
-const initializeZeroBounce = (config, form) => {
+const initializeZeroBounce = (config) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, iframe) {
       this.apiKey = apiKey;
@@ -80,100 +80,101 @@ const initializeZeroBounce = (config, form) => {
   }
 
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
+  const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
+  const selector =  config.hubspotFormId.length > 0 ? "[id$='" + config.hubspotFormId + "'][type='email']" : '';
 
-  if (form.length === 0) return null;
-  console.log(typeof form);
-  console.log(Object.keys(form).lengt > 0);
-  const formEl = form[0];
-console.log(formEl);
-  const iframeDocument = formEl.ownerDocument;
-  const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
-  const inputs = formEl.querySelectorAll('input[type="email"]');
-  const loaderContainer = iframeDocument.createElement('div');
-  const loader = iframeDocument.createElement('div');
-  const logo = iframeDocument.createElement('img');
-  let delayTimer;
+  if (selector.length === 0 || iframes.length === 0) return null;
 
-  logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
+  iframes.forEach((iframe) => {
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+    const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
+    const inputs = iframeDocument.querySelectorAll(selector);
+    const loaderContainer = iframeDocument.createElement('div');
+    const loader = iframeDocument.createElement('div');
+    const logo = iframeDocument.createElement('img');
+    let delayTimer;
 
-  loaderContainer.classList.add('loaderContainer');
-  loaderContainer.style.position = 'absolute';
-  loaderContainer.style.right = 0;
-  loaderContainer.style.borderRadius = '0 0 4px 4px';
-  loaderContainer.style.backgroundColor = '#fff';
-  loaderContainer.style.boxShadow = '0 2px 2px rgba(0,0,0,.2)';
-  loaderContainer.style.display = 'flex';
-  loaderContainer.style.alignItems = 'baseline';
-  loaderContainer.style.padding = '3px 5px 5px';
-  loaderContainer.style.height = '32px';
-  loaderContainer.style.border = '1px solid #bbbbbb';
-  loaderContainer.style.borderTop = 'none';
-  loaderContainer.style.zIndex = '1000';
+    logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
 
-  loader.classList.add('loader');
-  loader.style.border = '3px solid';
-  loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
-  loader.style.borderRadius = '50%';
-  loader.style.width = '15px';
-  loader.style.height = '15px';
-  loader.style.marginRight = '8px';
+    loaderContainer.classList.add('loaderContainer');
+    loaderContainer.style.position = 'absolute';
+    loaderContainer.style.right = 0;
+    loaderContainer.style.borderRadius = '0 0 4px 4px';
+    loaderContainer.style.backgroundColor = '#fff';
+    loaderContainer.style.boxShadow = '0 2px 2px rgba(0,0,0,.2)';
+    loaderContainer.style.display = 'flex';
+    loaderContainer.style.alignItems = 'baseline';
+    loaderContainer.style.padding = '3px 5px 5px';
+    loaderContainer.style.height = '32px';
+    loaderContainer.style.border = '1px solid #bbbbbb';
+    loaderContainer.style.borderTop = 'none';
+    loaderContainer.style.zIndex = '1000';
 
-  loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
-    duration: 2000,
-    iterations: Infinity,
-  });
+    loader.classList.add('loader');
+    loader.style.border = '3px solid';
+    loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
+    loader.style.borderRadius = '50%';
+    loader.style.width = '15px';
+    loader.style.height = '15px';
+    loader.style.marginRight = '8px';
 
-  loaderContainer.appendChild(logo);
-
-  inputs.forEach((input) => {
-    input.addEventListener('focus', function () {
-      if (input.value.length > 0) {
-        const parent = input.parentNode;
-        parent.insertBefore(loaderContainer, input.nextSibling);
-      }
+    loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
+      duration: 2000,
+      iterations: Infinity,
     });
 
-    input.addEventListener('blur', function () {
-      const parent = input.parentNode;
-      if (parent.querySelector('.loaderContainer')) {
-        parent.removeChild(loaderContainer);
-      }
-    });
+    loaderContainer.appendChild(logo);
 
-    input.addEventListener('input', function () {
-      clearTimeout(delayTimer);
-      const me = this;
-      const parent = input.parentNode;
-      const form = input.closest('form');
-      const button = form.querySelector("[type='submit']");
-      input.style.cssText = '';
-      const inputStyles = window.getComputedStyle(input);
-      const initBR = inputStyles.borderRadius;
-      loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
-
-      if (input.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
-      if (loaderContainer.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
-
-      if (disableSubmit && button) {
-        button.disabled = true;
-      }
-      if (loaderContainer.querySelectorAll('.zb-icon').length > 0) {
-        const icon = parent.querySelector('.zb-icon');
-        loaderContainer.removeChild(icon);
-      }
-      if (me.value.length > 0) {
-        parent.insertBefore(loaderContainer, input.nextSibling);
-        input.style.borderRadius = initBR + ' ' + initBR + ' 0 ' + initBR;
-      }
-
-      loaderContainer.insertBefore(loader, loaderContainer.firstChild);
-      delayTimer = setTimeout(function () {
-        if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
-          parent.removeChild(loaderContainer);
-          input.style.cssText = '';
+    inputs.forEach((input) => {
+      input.addEventListener('focus', function () {
+        if (input.value.length > 0) {
+          const parent = input.parentNode;
+          parent.insertBefore(loaderContainer, input.nextSibling);
         }
-        if (me.value !== '') zb.validate(me, loader, button, initBR);
-      }, 500);
+      });
+
+      input.addEventListener('blur', function () {
+        const parent = input.parentNode;
+        if (parent.querySelector('.loaderContainer')) {
+          parent.removeChild(loaderContainer);
+        }
+      });
+
+      input.addEventListener('input', function () {
+        clearTimeout(delayTimer);
+        const me = this;
+        const parent = input.parentNode;
+        const form = input.closest('form');
+        const button = form.querySelector("[type='submit']");
+        input.style.cssText = '';
+        const inputStyles = window.getComputedStyle(input);
+        const initBR = inputStyles.borderRadius;
+        loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
+
+        if (input.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
+        if (loaderContainer.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
+
+        if (disableSubmit && button) {
+          button.disabled = true;
+        }
+        if (loaderContainer.querySelectorAll('.zb-icon').length > 0) {
+          const icon = parent.querySelector('.zb-icon');
+          loaderContainer.removeChild(icon);
+        }
+        if (me.value.length > 0) {
+          parent.insertBefore(loaderContainer, input.nextSibling);
+          input.style.borderRadius = initBR + ' ' + initBR + ' 0 ' + initBR;
+        }
+
+        loaderContainer.insertBefore(loader, loaderContainer.firstChild);
+        delayTimer = setTimeout(function () {
+          if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
+            parent.removeChild(loaderContainer);
+            input.style.cssText = '';
+          }
+          if (me.value !== '') zb.validate(me, loader, button, initBR);
+        }, 500);
+      });
     });
   });
 };
