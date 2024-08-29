@@ -83,10 +83,10 @@ const initializeZeroBounce = (config, form) => {
 
   if (form.length === 0) return null;
   const formEl = Array.isArray(form) ? form[0] : form;
-
+console.log(formEl);
   const iframeDocument = form[0].ownerDocument;
   const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
-  const inputs = form[0].querySelectorAll('input[type="email"]');
+  const inputs = formEl.querySelectorAll('input[type="email"]');
   const loaderContainer = iframeDocument.createElement('div');
   const loader = iframeDocument.createElement('div');
   const logo = iframeDocument.createElement('img');
