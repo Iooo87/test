@@ -87,7 +87,7 @@ const initializeZeroBounce = (config, form) => {
   const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
   const uniqueId = form[0].id.split('hsForm_')[1];
   console.log(uniqueId);
-  const inputs = iframeDocument.querySelectorAll('[id="email_' + uniqueId + '"');
+  const inputs = iframeDocument.querySelectorAll('[id="email-' + uniqueId + '"');
   console.log(inputs);
   const loaderContainer = iframeDocument.createElement('div');
   const loader = iframeDocument.createElement('div');
@@ -125,7 +125,7 @@ const initializeZeroBounce = (config, form) => {
 
   loaderContainer.appendChild(logo);
 
-  input.addEventListener('input', function () {
+  inputse.addEventListener('input', function () {
     input.addEventListener('focus', function () {
       if (input.value.length > 0) {
         const parent = input.parentNode;
