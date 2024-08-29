@@ -82,6 +82,8 @@ const initializeZeroBounce = (config, form) => {
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
 
   if (form.length === 0) return null;
+  console.log(form);
+  console.log(from[0]);
   const formEl = Array.isArray(form) ? form[0] : form;
 console.log(formEl);
   const iframeDocument = formEl.ownerDocument;
