@@ -1,4 +1,4 @@
-const initializeZeroBounce = (config, formId) => {
+const initializeZeroBounce = (config, form) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, iframe) {
       this.apiKey = apiKey;
@@ -80,101 +80,98 @@ const initializeZeroBounce = (config, formId) => {
   }
 
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
-  const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
-  const selector = formId.length > 0 ? "[id$='" + formId + "'][type='email']" : '';
 
-  if (selector.length === 0 || iframes.length === 0) return null;
+  if (form.length === 0) return null;
+  const formEl = Array.isArray(form) ? form[0] : form;
 
-  iframes.forEach((iframe) => {
-    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-    const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
-    const inputs = iframeDocument.querySelectorAll(selector);
-    const loaderContainer = iframeDocument.createElement('div');
-    const loader = iframeDocument.createElement('div');
-    const logo = iframeDocument.createElement('img');
-    let delayTimer;
+  const iframeDocument = form[0].ownerDocument;
+  const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
+  const inputs = form[0].querySelectorAll('input[type="email"]');
+  const loaderContainer = iframeDocument.createElement('div');
+  const loader = iframeDocument.createElement('div');
+  const logo = iframeDocument.createElement('img');
+  let delayTimer;
 
-    logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
+  logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
 
-    loaderContainer.classList.add('loaderContainer');
-    loaderContainer.style.position = 'absolute';
-    loaderContainer.style.right = 0;
-    loaderContainer.style.borderRadius = '0 0 4px 4px';
-    loaderContainer.style.backgroundColor = '#fff';
-    loaderContainer.style.boxShadow = '0 2px 2px rgba(0,0,0,.2)';
-    loaderContainer.style.display = 'flex';
-    loaderContainer.style.alignItems = 'baseline';
-    loaderContainer.style.padding = '3px 5px 5px';
-    loaderContainer.style.height = '32px';
-    loaderContainer.style.border = '1px solid #bbbbbb';
-    loaderContainer.style.borderTop = 'none';
-    loaderContainer.style.zIndex = '1000';
+  loaderContainer.classList.add('loaderContainer');
+  loaderContainer.style.position = 'absolute';
+  loaderContainer.style.right = 0;
+  loaderContainer.style.borderRadius = '0 0 4px 4px';
+  loaderContainer.style.backgroundColor = '#fff';
+  loaderContainer.style.boxShadow = '0 2px 2px rgba(0,0,0,.2)';
+  loaderContainer.style.display = 'flex';
+  loaderContainer.style.alignItems = 'baseline';
+  loaderContainer.style.padding = '3px 5px 5px';
+  loaderContainer.style.height = '32px';
+  loaderContainer.style.border = '1px solid #bbbbbb';
+  loaderContainer.style.borderTop = 'none';
+  loaderContainer.style.zIndex = '1000';
 
-    loader.classList.add('loader');
-    loader.style.border = '3px solid';
-    loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
-    loader.style.borderRadius = '50%';
-    loader.style.width = '15px';
-    loader.style.height = '15px';
-    loader.style.marginRight = '8px';
+  loader.classList.add('loader');
+  loader.style.border = '3px solid';
+  loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
+  loader.style.borderRadius = '50%';
+  loader.style.width = '15px';
+  loader.style.height = '15px';
+  loader.style.marginRight = '8px';
 
-    loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
-      duration: 2000,
-      iterations: Infinity,
+  loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
+    duration: 2000,
+    iterations: Infinity,
+  });
+
+  loaderContainer.appendChild(logo);
+
+  inputs.forEach((input) => {
+    input.addEventListener('focus', function () {
+      if (input.value.length > 0) {
+        const parent = input.parentNode;
+        parent.insertBefore(loaderContainer, input.nextSibling);
+      }
     });
 
-    loaderContainer.appendChild(logo);
+    input.addEventListener('blur', function () {
+      const parent = input.parentNode;
+      if (parent.querySelector('.loaderContainer')) {
+        parent.removeChild(loaderContainer);
+      }
+    });
 
-    inputs.forEach((input) => {
-      input.addEventListener('focus', function () {
-        if (input.value.length > 0) {
-          const parent = input.parentNode;
-          parent.insertBefore(loaderContainer, input.nextSibling);
-        }
-      });
+    input.addEventListener('input', function () {
+      clearTimeout(delayTimer);
+      const me = this;
+      const parent = input.parentNode;
+      const form = input.closest('form');
+      const button = form.querySelector("[type='submit']");
+      input.style.cssText = '';
+      const inputStyles = window.getComputedStyle(input);
+      const initBR = inputStyles.borderRadius;
+      loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
 
-      input.addEventListener('blur', function () {
-        const parent = input.parentNode;
-        if (parent.querySelector('.loaderContainer')) {
+      if (input.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
+      if (loaderContainer.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
+
+      if (disableSubmit && button) {
+        button.disabled = true;
+      }
+      if (loaderContainer.querySelectorAll('.zb-icon').length > 0) {
+        const icon = parent.querySelector('.zb-icon');
+        loaderContainer.removeChild(icon);
+      }
+      if (me.value.length > 0) {
+        parent.insertBefore(loaderContainer, input.nextSibling);
+        input.style.borderRadius = initBR + ' ' + initBR + ' 0 ' + initBR;
+      }
+
+      loaderContainer.insertBefore(loader, loaderContainer.firstChild);
+      delayTimer = setTimeout(function () {
+        if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
           parent.removeChild(loaderContainer);
+          input.style.cssText = '';
         }
-      });
-
-      input.addEventListener('input', function () {
-        clearTimeout(delayTimer);
-        const me = this;
-        const parent = input.parentNode;
-        const form = input.closest('form');
-        const button = form.querySelector("[type='submit']");
-        input.style.cssText = '';
-        const inputStyles = window.getComputedStyle(input);
-        const initBR = inputStyles.borderRadius;
-        loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
-
-        if (input.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
-        if (loaderContainer.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
-
-        if (disableSubmit && button) {
-          button.disabled = true;
-        }
-        if (loaderContainer.querySelectorAll('.zb-icon').length > 0) {
-          const icon = parent.querySelector('.zb-icon');
-          loaderContainer.removeChild(icon);
-        }
-        if (me.value.length > 0) {
-          parent.insertBefore(loaderContainer, input.nextSibling);
-          input.style.borderRadius = initBR + ' ' + initBR + ' 0 ' + initBR;
-        }
-
-        loaderContainer.insertBefore(loader, loaderContainer.firstChild);
-        delayTimer = setTimeout(function () {
-          if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
-            parent.removeChild(loaderContainer);
-            input.style.cssText = '';
-          }
-          if (me.value !== '') zb.validate(me, loader, button, initBR);
-        }, 500);
-      });
+        if (me.value !== '') zb.validate(me, loader, button, initBR);
+      }, 500);
     });
   });
 };
