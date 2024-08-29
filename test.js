@@ -84,7 +84,7 @@ const initializeZeroBounce = (config, form) => {
   if (form.length === 0) return null;
   console.log(form);
   console.log(form[0]);
-  const formEl = Array.isArray(form) ? form[0] : form;
+  const formEl = typeof form === 'object' ? form[0] : form;
 console.log(formEl);
   const iframeDocument = formEl.ownerDocument;
   const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
