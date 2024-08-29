@@ -83,7 +83,7 @@ const initializeZeroBounce = (config, form) => {
 
   if (form.length === 0) return null;
   console.log(form);
-  console.log(from[0]);
+  console.log(form[0]);
   const formEl = Array.isArray(form) ? form[0] : form;
 console.log(formEl);
   const iframeDocument = formEl.ownerDocument;
