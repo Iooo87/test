@@ -1,3 +1,9 @@
+const config = {
+  apiKey: '',
+  disableSubmitOnError: true,
+  hubspotFormId: '',
+};
+
 const initializeZeroBounce = (config) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, iframe) {
@@ -81,7 +87,7 @@ const initializeZeroBounce = (config) => {
 
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
   const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
-  const selector =  config.hubspotFormId.length > 0 ? "[id$='" + config.hubspotFormId + "'][type='email']" : '';
+  const selector = config.hubspotFormId.length > 0 ? "[id*='" + config.hubspotFormId + "'][type='email']" : '';
 
   if (selector.length === 0 || iframes.length === 0) return null;
 
