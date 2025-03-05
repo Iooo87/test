@@ -1,11 +1,11 @@
 const initializeZeroBounce = (config) => {
   class ZeroBounceApi {
-    constructor(apiKey, disableSubmit, iframe) {
+    constructor(apiKey, disableSubmit, documentContext) {
       this.apiKey = apiKey;
       this.disableSubmit = disableSubmit;
       this.baseUrl = config.stagingAPI ? config.stagingAPI : config.testAPI ? config.testAPI : 'https://extension-api.zerobounce.net/api';
       this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-      this.document = iframe;
+      this.document = documentContext;
     }
 
     async validate(input, loader, button, initBR) {
@@ -80,20 +80,29 @@ const initializeZeroBounce = (config) => {
   }
 
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
-  const iframes = document.querySelectorAll("[id^='hs-form-iframe']") || document.getElementById("[id^='hsForm_" + config.hubspotFormId + "']");
-  const selector = config.hubspotFormId.length > 0 ? "[id$='" + config.hubspotFormId + "'][type='email']" : '';
+  const selector = config.hubspotFormId.length > 0 ? `[id$='${config.hubspotFormId}'][type='email']` : '';
 
-  console.log(iframes);
+  const iframes = document.querySelectorAll("[id^='hs-form-iframe']") || document.getElementById(`[id^='hsForm_${config.hubspotFormId}']`);
+  
+  if (iframes.length > 0) {
 
-  if (selector.length === 0 || iframes.length === 0) return null;
+    iframes.forEach((iframe) => {
+      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+      processValidation(iframeDocument, selector, disableSubmit, config.apiKey);
+    });
+  } else {
+    const form = document.getElementById(config.hubspotFormId);
+    if (form) {
+      processValidation(document, selector, disableSubmit, config.apiKey);
+    }
+  }
 
-  iframes.forEach((iframe) => {
-    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-    const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
-    const inputs = iframeDocument.querySelectorAll(selector);
-    const loaderContainer = iframeDocument.createElement('div');
-    const loader = iframeDocument.createElement('div');
-    const logo = iframeDocument.createElement('img');
+  function processValidation(documentContext, selector, disableSubmit, apiKey) {
+    const zb = new ZeroBounceApi(apiKey, disableSubmit, documentContext);
+    const inputs = documentContext.querySelectorAll(selector);
+    const loaderContainer = documentContext.createElement('div');
+    const loader = documentContext.createElement('div');
+    const logo = documentContext.createElement('img');
     let delayTimer;
 
     logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
@@ -126,8 +135,6 @@ const initializeZeroBounce = (config) => {
     });
 
     loaderContainer.appendChild(logo);
-
-    console.log(inputs);
 
     inputs.forEach((input) => {
       input.addEventListener('focus', function () {
@@ -170,8 +177,6 @@ const initializeZeroBounce = (config) => {
           input.style.borderRadius = initBR + ' ' + initBR + ' 0 ' + initBR;
         }
 
-        console.log(input);
-
         loaderContainer.insertBefore(loader, loaderContainer.firstChild);
         delayTimer = setTimeout(function () {
           if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
@@ -182,5 +187,5 @@ const initializeZeroBounce = (config) => {
         }, 500);
       });
     });
-  });
+  }
 };
