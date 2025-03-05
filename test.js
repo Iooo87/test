@@ -80,7 +80,7 @@ const initializeZeroBounce = (config) => {
   }
 
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
-  const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
+  const iframes = document.querySelectorAll("[id^='hs-form-iframe']") || document.getElementById("[id^='hsForm_" + config.hubspotFormId + "']");
   const selector = config.hubspotFormId.length > 0 ? "[id$='" + config.hubspotFormId + "'][type='email']" : '';
 
   if (selector.length === 0 || iframes.length === 0) return null;
