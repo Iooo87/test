@@ -1,9 +1,3 @@
-const config = {
-  apiKey: '',
-  disableSubmitOnError: true,
-  hubspotFormId: '',
-};
-
 const initializeZeroBounce = (config) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, iframe) {
