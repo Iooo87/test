@@ -144,7 +144,8 @@ const initializeZeroBounce = (config) => {
       input.addEventListener('focus', function () {
         if (input.value.length > 0) {
           const parent = input.parentNode;
-          loaderContainer.style.transform = 'translateX(calc(-100% - 5px))';
+          console.log(getComputedStyle(parent).width);
+          parent.style.position = 'relative';
           parent.insertBefore(loaderContainer, input.nextSibling);
         }
       });
