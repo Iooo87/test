@@ -8,10 +8,6 @@ const initializeZeroBounce = (config) => {
       this.document = iframe;
     }
 
-    console.log(this.apiKey);
-    console.log(this.document);
-    console.log(this.baseUrl);
-
     async validate(input, loader, button, initBR) {
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
@@ -129,6 +125,8 @@ const initializeZeroBounce = (config) => {
 
     loaderContainer.appendChild(logo);
 
+    console.log(inputs);
+
     inputs.forEach((input) => {
       input.addEventListener('focus', function () {
         if (input.value.length > 0) {
@@ -169,6 +167,8 @@ const initializeZeroBounce = (config) => {
           parent.insertBefore(loaderContainer, input.nextSibling);
           input.style.borderRadius = initBR + ' ' + initBR + ' 0 ' + initBR;
         }
+
+        console.log(input);
 
         loaderContainer.insertBefore(loader, loaderContainer.firstChild);
         delayTimer = setTimeout(function () {
