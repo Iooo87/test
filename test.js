@@ -86,21 +86,12 @@ const initializeZeroBounce = (config) => {
   }
 
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
-  if (config.isNewFormBuilder) {
-    const iframes = document.querySelectorAll("[id='embedded-form-" + config.hubspotFormId + "']");
-  } else {
-    const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
-    const selector = config.hubspotFormId.length > 0 ? "[id^='" + config.hubspotFormId + "'][type='email']" : '';
-  }
+  const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
+  const selector = config.hubspotFormId.length > 0 ? "[id$='" + config.hubspotFormId + "'][type='email']" : '';
 
   if (selector.length === 0 || iframes.length === 0) return null;
 
   iframes.forEach((iframe) => {
-    if (config.isNewFormBuilder) {
-      const form = document.querySelectorAll("[id^='" + config.hubspotFormId + "']");
-      const selector = "[id^='" + form.id + "']";
-      console.log(selector);
-    }
     const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
     const zb = new ZeroBounceApi(config.apiKey, disableSubmit, iframeDocument);
     const inputs = iframeDocument.querySelectorAll(selector);
