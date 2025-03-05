@@ -145,6 +145,7 @@ const initializeZeroBounce = (config) => {
         if (input.value.length > 0) {
           const parent = input.parentNode;
           console.log(getComputedStyle(parent).width - getComputedStyle(loaderContainer).width);
+          loaderContainer.style.left = 'calc(100% - ' + getComputedStyle(parent).width + ')';
           parent.style.position = 'relative';
           parent.insertBefore(loaderContainer, input.nextSibling);
         }
