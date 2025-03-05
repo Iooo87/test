@@ -8,6 +8,10 @@ const initializeZeroBounce = (config) => {
       this.document = iframe;
     }
 
+    console.log(this.apiKey);
+    console.log(this.document);
+    console.log(this.baseUrl);
+
     async validate(input, loader, button, initBR) {
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
