@@ -82,7 +82,7 @@ const initializeZeroBounce = (config) => {
   const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
   const selector = config.hubspotFormId.length > 0 ? `[id$='${config.hubspotFormId}'][type='email']` : '';
 
-  const iframes = document.querySelectorAll("[id^='hs-form-iframe']") || document.getElementById(`[id^='hsForm_${config.hubspotFormId}']`);
+  const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
   
   if (iframes.length > 0) {
 
@@ -91,7 +91,7 @@ const initializeZeroBounce = (config) => {
       processValidation(iframeDocument, selector, disableSubmit, config.apiKey);
     });
   } else {
-    const form = document.getElementById(config.hubspotFormId);
+    const form = document.getElementById(`[id^='hsForm_${config.hubspotFormId}']`);
     if (form) {
       processValidation(document, selector, disableSubmit, config.apiKey);
     }
