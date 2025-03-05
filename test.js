@@ -83,6 +83,8 @@ const initializeZeroBounce = (config) => {
   const iframes = document.querySelectorAll("[id^='hs-form-iframe']") || document.getElementById("[id^='hsForm_" + config.hubspotFormId + "']");
   const selector = config.hubspotFormId.length > 0 ? "[id$='" + config.hubspotFormId + "'][type='email']" : '';
 
+  console.log(iframes);
+
   if (selector.length === 0 || iframes.length === 0) return null;
 
   iframes.forEach((iframe) => {
