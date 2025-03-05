@@ -141,11 +141,11 @@ const initializeZeroBounce = (config) => {
     loaderContainer.appendChild(logo);
 
     inputs.forEach((input) => {
+      loaderContainer.style.right = 'calc(100% - ' + getComputedStyle(parent).width + ')';
+      
       input.addEventListener('focus', function () {
         if (input.value.length > 0) {
           const parent = input.parentNode;
-          console.log(getComputedStyle(parent).width - getComputedStyle(loaderContainer).width);
-          loaderContainer.style.left = 'calc(100% - ' + getComputedStyle(parent).width + ')';
           parent.style.position = 'relative';
           parent.insertBefore(loaderContainer, input.nextSibling);
         }
