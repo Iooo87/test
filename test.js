@@ -83,8 +83,6 @@ const initializeZeroBounce = (config) => {
   const selector = config.hubspotFormId.length > 0 ? `[id$='${config.hubspotFormId}'][type='email']` : '';
 
   const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
-
-  console.log(iframes);
   
   if (iframes.length > 0) {
 
@@ -94,8 +92,6 @@ const initializeZeroBounce = (config) => {
     });
   } else {
     const form = document.getElementById(`hsForm_${config.hubspotFormId}`);
-    console.log(form);
-    
     if (form) {
       processValidation(document, selector, disableSubmit, config.apiKey);
     }
