@@ -85,7 +85,6 @@ const initializeZeroBounce = (config) => {
   const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
   
   if (iframes.length > 0) {
-
     iframes.forEach((iframe) => {
       const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
       processValidation(iframeDocument, selector, disableSubmit, config.apiKey);
@@ -137,7 +136,7 @@ const initializeZeroBounce = (config) => {
     loaderContainer.appendChild(logo);
 
     inputs.forEach((input) => {
-      loaderContainer.style.right = 'calc(100% - ' + getComputedStyle(input).width + ')';
+      loaderContainer.style.right = 'calc(100% - ' + input.offsetWidth + 'px)';
       
       input.addEventListener('focus', function () {
         if (input.value.length > 0) {
