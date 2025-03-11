@@ -4,7 +4,7 @@
 
         init: function (config) {
             this.config = atob(config);
-            console.log("Initializing ZBWidget with config:", this.config);
+            // console.log("Initializing ZBWidget with config:", this.config);
             this.setupValidation();
         },
 
