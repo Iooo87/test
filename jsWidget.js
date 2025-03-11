@@ -3,8 +3,8 @@
         config: null, // Store config
 
         init: function (config) {
-            console.log("Initializing ZBWidget with config:", config);
-            this.config = config;
+            this.config = atob(config);
+            console.log("Initializing ZBWidget with config:", this.config);
             this.setupValidation();
         },
 
