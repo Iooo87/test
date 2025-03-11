@@ -1,11 +1,8 @@
-const ZeroBounce_JsWidget_APIKEY = '';
-const disableSubmitOnError = true;
-
 class ZeroBounceApi {
   constructor(apiKey, disableSubmit) {
     this.apiKey = apiKey;
     this.disableSubmit = disableSubmit;
-    this.baseUrl = 'https://extension-api.zerobounce.net';
+    this.baseUrl = 'https://test-members-api.zerobounce.net';
     this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   }
 
