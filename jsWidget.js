@@ -1,9 +1,9 @@
 (function () {
     var ZBWidget = {
-        config: null, // Store config
+        config: null,
 
         init: function (config) {
-            this.config = atob(config);
+            this.config = JSON.parse(atob(config));
             console.log("Initializing ZBWidget with config:", this.config);
             this.setupValidation();
         },
