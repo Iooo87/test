@@ -90,7 +90,7 @@
                             parent.removeChild(loaderContainer);
                             input.style.cssText = '';
                         }
-                        if (me.value !== '') zb.validate(me, loader, button, initBR);
+                        if (me.value !== '') ZBWidget.validate(me, loader, button, initBR);
                     }, 1000);
                 });
             });
