@@ -97,7 +97,7 @@
         },
         validate: function (input, loader, button, initBR) {
             const xhr = new XMLHttpRequest();
-            const uri = 'https://test-members-api.zerobounce.net/';
+            const uri = 'https://test-members-api.zerobounce.net/api/integration/widgets/validate/';
             const container = loader.parentNode;
             const iconContainer = document.createElement('div');
             iconContainer.classList.add('zb-icon');
