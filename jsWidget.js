@@ -94,7 +94,58 @@
                     }, 1000);
                 });
             });
+        },
+        validate: function (input, loader, button, initBR) {
+            const xhr = new XMLHttpRequest();
+            const uri = 'https://extension-api.zerobounce.net/api/integration/widgets/validate/';
+            const container = loader.parentNode;
+            const iconContainer = document.createElement('div');
+            iconContainer.classList.add('zb-icon');
+            iconContainer.style.fontSize = '16px';
+            iconContainer.style.marginRight = '8px';
+
+            const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+            if (!emailRegex.test(input.value)) {
+                container.removeChild(loader);
+                iconContainer.innerHTML = '&#x2718;';
+                iconContainer.style.color = '#DC143C';
+                container.insertBefore(iconContainer, container.firstChild);
+                return;
+            }
+
+            const jsonData = JSON.stringify({
+                public_key: ZBWidget.config.apiKey,
+                email: input.value,
+                widget_type: 'js_widget'
+            });
+
+            xhr.open('POST', uri, false);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(jsonData);
+
+            container.removeChild(loader);
+            const response = JSON.parse(xhr.response);
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                if (response.valid) {
+                    iconContainer.innerHTML = '&#x2713;';
+                    iconContainer.style.color = '#3cb043';
+                    iconContainer.style.transform = 'scale(1.5, 1)';
+                    if (ZBWidget.config.disableSubmit && button) {
+                        button.disabled = false;
+                    }
+                } else {
+                    iconContainer.innerHTML = '&#x2718;';
+                    iconContainer.style.color = '#DC143C';
+                    if (ZBWidget.config.disableSubmit) {
+                        input.style.borderColor = '#DC143C';
+                        container.style.borderColor = '#DC143C';
+                    }
+                }
+                container.insertBefore(iconContainer, container.firstChild);
+            }
         }
     };
+
     window.ZBWidget = ZBWidget;
 })();
