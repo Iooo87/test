@@ -51,8 +51,10 @@
                     });
 
                     input.addEventListener('input', function () {
+                        clearTimeout(input.validationTimer);
+                        input.validationTimer = 
                         const container = input.parentNode;
-                        let messageContainer = container.querySelector('.zb-message')
+                        const messageContainer = container.querySelector('.zb-message');
                         if (messageContainer) {
                             messageContainer.style.display = 'none';
                             container.style.paddingBottom = '0px';
@@ -63,8 +65,9 @@
                         
                         if (ZBWidget.config.disableSubmit && button) button.disabled = true;
 
-                        if (input.value !== '') {
+                        if (emailRegex.test(input.value)) {
                             ZBWidget.validate(input, loader, button);
+                        }
                         }
                     });
                 }
@@ -125,7 +128,7 @@
                         button.disabled = !response.valid;
                     }
                 }
-            }, 500);
+            
         }
     };
 
