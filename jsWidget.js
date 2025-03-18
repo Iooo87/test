@@ -46,15 +46,18 @@
                         loader.style.right = `${inputHeight / 2 - 10}px`;
                     }
 
-                    input.addEventListener('focus', function () {
-                        loader.style.display = 'block';
-                    });
-
                     input.addEventListener('blur', function () {
                         loader.style.display = 'none';
                     });
 
                     input.addEventListener('input', function () {
+                        // Remove error message when user starts typing
+                        if (messageContainer) {
+                            messageContainer.style.display = 'none';
+                            container.style.paddingBottom = '0px';
+                        }
+                        // Show loader
+                        loader.style.display = 'block';
                         const form = input.closest('form');
                         const button = form.querySelector("[type='submit']");
                         
@@ -97,7 +100,7 @@
                     messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
                     messageContainer.style.color = '#DC143C';
                     messageContainer.style.display = 'block';
-                    parent.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
+                    container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
                     return;
                 }
 
@@ -118,7 +121,7 @@
                         : (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email');
                     messageContainer.style.color = response.valid ? '#3cb043' : '#DC143C';
                     messageContainer.style.display = 'block';
-                    parent.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
+                    container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
                     if (ZBWidget.config.disableSubmit && button) {
                         button.disabled = !response.valid;
                     }
