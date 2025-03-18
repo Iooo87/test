@@ -51,12 +51,10 @@
                     });
 
                     input.addEventListener('input', function () {
-                        // Remove error message when user starts typing
-                        if (messageContainer) {
+                        if (container.querySelector('.zb-message')[0]) {
                             messageContainer.style.display = 'none';
                             container.style.paddingBottom = '0px';
                         }
-                        // Show loader
                         loader.style.display = 'block';
                         const form = input.closest('form');
                         const button = form.querySelector("[type='submit']");
