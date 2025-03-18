@@ -51,7 +51,8 @@
                     });
 
                     input.addEventListener('input', function () {
-                        if (container.querySelector('.zb-message')[0]) {
+                        let messageContainer = container.querySelector('.zb-message')
+                        if (messageContainer) {
                             messageContainer.style.display = 'none';
                             container.style.paddingBottom = '0px';
                         }
