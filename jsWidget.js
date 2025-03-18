@@ -11,11 +11,11 @@
         setupValidation: function () {
             console.log("Setting up email validation...");
             const inputs = document.querySelectorAll('.zb-email[type="email"]');
-            
+
             inputs.forEach((input) => {
                 const parent = input.parentNode;
                 parent.style.position = 'relative';
-                
+
                 if (ZBWidget.config.nonAcceptedStatusBehavior === "allow") {
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
@@ -36,11 +36,11 @@
                         duration: 2000,
                         iterations: Infinity,
                     });
-                    
+
                     if (ZBWidget.config.styling === "custom") {
                         input.style.paddingRight = '25px';
                         parent.appendChild(loader);
-                        
+
                         const inputHeight = input.offsetHeight;
                         loader.style.top = `${inputHeight / 2 - 10}px`;
                         loader.style.right = `${inputHeight / 2 - 10}px`;
@@ -53,21 +53,44 @@
                     input.addEventListener('input', function () {
                         clearTimeout(input.validationTimer);
                         input.validationTimer = setTimeout(() => {
-                          const container = input.parentNode;
-                          const messageContainer = container.querySelector('.zb-message');
-                          if (messageContainer) {
-                              messageContainer.style.display = 'none';
-                              container.style.paddingBottom = '0px';
-                          }
-                          loader.style.display = 'block';
-                          const form = input.closest('form');
-                          const button = form.querySelector("[type='submit']");
-                          
-                          if (ZBWidget.config.disableSubmit && button) button.disabled = true;
-  
-                          if (emailRegex.test(input.value)) {
-                              ZBWidget.validate(input, loader, button);
-                          }
+                            const container = input.parentNode;
+                            const messageContainer = container.querySelector('.zb-message');
+
+                            if (!messageContainer) {
+                                messageContainer = document.createElement('div');
+                                messageContainer.classList.add('zb-message');
+                                messageContainer.style.position = 'absolute';
+                                messageContainer.style.left = '0';
+                                messageContainer.style.background = '#fff';
+                                messageContainer.style.padding = '5px';
+                                messageContainer.style.borderRadius = '4px';
+                                messageContainer.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
+                                messageContainer.style.fontSize = '12px';
+                                messageContainer.style.display = 'none';
+                                container.appendChild(messageContainer);
+                            }
+
+                            if (messageContainer) {
+                                messageContainer.style.display = 'none';
+                                container.style.paddingBottom = '0px';
+                            }
+
+                            loader.style.display = 'block';
+                            const form = input.closest('form');
+                            const button = form.querySelector("[type='submit']");
+
+                            if (ZBWidget.config.disableSubmit && button) button.disabled = true;
+
+                            const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+                            if (emailRegex.test(input.value)) {
+                                ZBWidget.validate(input, loader, button);
+                            } else {
+                                messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
+                                messageContainer.style.color = '#DC143C';
+                                messageContainer.style.display = 'block';
+                                container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
+                                return;
+                            }
                         }, 500);
                     });
                 }
@@ -80,54 +103,29 @@
             const container = input.parentNode;
             let messageContainer = container.querySelector('.zb-message');
 
-            if (!messageContainer) {
-                messageContainer = document.createElement('div');
-                messageContainer.classList.add('zb-message');
-                messageContainer.style.position = 'absolute';
-                messageContainer.style.left = '0';
-                messageContainer.style.background = '#fff';
-                messageContainer.style.padding = '5px';
-                messageContainer.style.borderRadius = '4px';
-                messageContainer.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
-                messageContainer.style.fontSize = '12px';
-                messageContainer.style.display = 'none';
-                container.appendChild(messageContainer);
+            const jsonData = JSON.stringify({
+                public_key: ZBWidget.config.apiKey,
+                email: input.value,
+                widget_type: 'js_widget'
+            });
+
+            xhr.open('POST', uri, false);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(jsonData);
+
+            const response = JSON.parse(xhr.response);
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                loader.style.display = 'none';
+                messageContainer.innerHTML = response.valid
+                    ? (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.validMessage : 'Valid email')
+                    : (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email');
+                messageContainer.style.color = response.valid ? '#3cb043' : '#DC143C';
+                messageContainer.style.display = 'block';
+                container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
+                if (ZBWidget.config.disableSubmit && button) {
+                    button.disabled = !response.valid;
+                }
             }
-
-            const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-
-              if (!emailRegex.test(input.value)) {
-                    messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
-                    messageContainer.style.color = '#DC143C';
-                    messageContainer.style.display = 'block';
-                    container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
-                    return;
-                }
-
-                const jsonData = JSON.stringify({
-                    public_key: ZBWidget.config.apiKey,
-                    email: input.value,
-                    widget_type: 'js_widget'
-                });
-
-                xhr.open('POST', uri, false);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.send(jsonData);
-
-                const response = JSON.parse(xhr.response);
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    loader.style.display = 'none';
-                    messageContainer.innerHTML = response.valid
-                        ? (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.validMessage : 'Valid email')
-                        : (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email');
-                    messageContainer.style.color = response.valid ? '#3cb043' : '#DC143C';
-                    messageContainer.style.display = 'block';
-                    container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
-                    if (ZBWidget.config.disableSubmit && button) {
-                        button.disabled = !response.valid;
-                    }
-                }
-            
         }
     };
 
