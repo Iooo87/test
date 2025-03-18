@@ -29,7 +29,6 @@
                     loader.style.width = '14px';
                     loader.style.height = '14px';
                     loader.style.position = 'absolute';
-                    loader.style.right = '10px';
                     loader.style.pointerEvents = 'none';
                     loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
                         duration: 2000,
@@ -44,6 +43,7 @@
                         
                         const inputHeight = input.offsetHeight;
                         loader.style.top = `${inputHeight / 2 - 10}px`;
+                        loacer.style.right = `${inputHeight / 2 - 10}px`
                     }
 
                     input.addEventListener('input', function () {
