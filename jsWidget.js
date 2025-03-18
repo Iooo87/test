@@ -30,7 +30,7 @@
                     loader.style.height = '14px';
                     loader.style.position = 'absolute';
                     loader.style.pointerEvents = 'none';
-                    loader.style.display = 'none'; // Hide loader initially
+                    loader.style.display = 'none';
                     loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
                         duration: 2000,
                         iterations: Infinity,
@@ -48,11 +48,11 @@
                     }
 
                     input.addEventListener('focus', function () {
-                        loader.style.display = 'block'; // Show loader on focus
+                        loader.style.display = 'block';
                     });
 
                     input.addEventListener('blur', function () {
-                        loader.style.display = 'none'; // Hide loader on focus out
+                        loader.style.display = 'none';
                     });
 
                     input.addEventListener('input', function () {
