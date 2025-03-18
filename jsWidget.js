@@ -6,8 +6,7 @@
             this.config = JSON.parse(atob(config));
             console.log("Initializing ZBWidget with config:", this.config);
             this.setupValidation();
-        }
-                        }, 500);,
+        },
 
         setupValidation: function () {
             console.log("Setting up email validation...");
@@ -54,7 +53,6 @@
                     input.addEventListener('input', function () {
                         clearTimeout(input.validationTimer);
                         input.validationTimer = setTimeout(() => {
-                          clearTimeout(input.validationTimer);
                           const container = input.parentNode;
                           const messageContainer = container.querySelector('.zb-message');
                           if (messageContainer) {
@@ -68,10 +66,9 @@
                           if (ZBWidget.config.disableSubmit && button) button.disabled = true;
   
                           if (emailRegex.test(input.value)) {
-                              loader.style.display = 'block';
                               ZBWidget.validate(input, loader, button);
                           }
-                        }
+                        }, 500);
                     });
                 }
             });
@@ -98,9 +95,8 @@
             }
 
             const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-            
-            setTimeout(() => {
-                if (!emailRegex.test(input.value)) {
+
+              if (!emailRegex.test(input.value)) {
                     messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
                     messageContainer.style.color = '#DC143C';
                     messageContainer.style.display = 'block';
