@@ -14,7 +14,6 @@
             
             inputs.forEach((input) => {
                 const parent = input.parentNode;
-                input.style.boxSizing = "border-box";
                 
                 if (ZBWidget.config.nonAcceptedStatusBehavior === "allow") {
                     const hiddenInput = document.createElement('input');
@@ -31,6 +30,7 @@
                     loader.style.height = '14px';
                     loader.style.position = 'absolute';
                     loader.style.pointerEvents = 'none';
+                    loader.style.display = 'none'; // Hide loader initially
                     loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
                         duration: 2000,
                         iterations: Infinity,
@@ -46,6 +46,14 @@
                         loader.style.top = `${inputHeight / 2 - 7}px`;
                         loader.style.right = `10px`;
                     }
+
+                    input.addEventListener('focus', function () {
+                        loader.style.display = 'block'; // Show loader on focus
+                    });
+
+                    input.addEventListener('blur', function () {
+                        loader.style.display = 'none'; // Hide loader on focus out
+                    });
 
                     input.addEventListener('input', function () {
                         const form = input.closest('form');
