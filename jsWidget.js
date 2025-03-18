@@ -22,43 +22,41 @@
                     hiddenInput.id = 'zbone_valid';
                     parent.insertBefore(hiddenInput, input.nextSibling);
                 } else {
-                    if (ZBWidget.config.styling === "default") {
-                        const loader = document.createElement('div');
-                        loader.classList.add('loader');
-                        loader.style.border = '3px solid';
-                        loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
-                        loader.style.borderRadius = '50%';
-                        loader.style.width = '10px';
-                        loader.style.height = '10px';
-                        loader.style.marginLeft = '5px';
-                        loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
-                            duration: 2000,
-                            iterations: Infinity,
-                        });
+                    const loader = document.createElement('div');
+                    loader.classList.add('loader');
+                    loader.style.border = '3px solid';
+                    loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
+                    loader.style.borderRadius = '50%';
+                    loader.style.width = '10px';
+                    loader.style.height = '10px';
+                    loader.style.marginLeft = '5px';
+                    loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
+                        duration: 2000,
+                        iterations: Infinity,
+                    });
 
-                        input.addEventListener('focus', function () {
-                            parent.appendChild(loader);
-                        });
+                    input.addEventListener('focus', function () {
+                        parent.appendChild(loader);
+                    });
 
-                        input.addEventListener('blur', function () {
-                            if (parent.contains(loader)) {
-                                parent.removeChild(loader);
-                            }
-                        });
+                    input.addEventListener('blur', function () {
+                        if (parent.contains(loader)) {
+                            parent.removeChild(loader);
+                        }
+                    });
 
-                        input.addEventListener('input', function () {
-                            clearTimeout(delayTimer);
-                            const form = input.closest('form');
-                            const button = form.querySelector("[type='submit']");
-                            input.style.cssText = '';
+                    input.addEventListener('input', function () {
+                        clearTimeout(delayTimer);
+                        const form = input.closest('form');
+                        const button = form.querySelector("[type='submit']");
+                        input.style.cssText = '';
 
-                            if (ZBWidget.config.disableSubmit && button) button.disabled = true;
+                        if (ZBWidget.config.disableSubmit && button) button.disabled = true;
 
-                            delayTimer = setTimeout(function () {
-                                if (input.value !== '') ZBWidget.validate(input, loader, button);
-                            }, 1000);
-                        });
-                    }
+                        if (input.value !== '') {
+                            ZBWidget.validate(input, loader, button);
+                        }
+                    });
                 }
             });
         },
