@@ -30,8 +30,6 @@
                     loader.style.height = '14px';
                     loader.style.position = 'absolute';
                     loader.style.right = '10px';
-                    loader.style.top = '50%';
-                    loader.style.transform = 'translateY(-50%)';
                     loader.style.pointerEvents = 'none';
                     loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
                         duration: 2000,
@@ -40,9 +38,12 @@
                     
                     if (ZBWidget.config.styling === "custom") {
                         input.style.position = 'relative';
-                        input.style.paddingRight = '30px';
+                        input.style.paddingRight = '35px';
                         parent.style.position = 'relative';
                         parent.appendChild(loader);
+                        
+                        const inputHeight = input.offsetHeight;
+                        loader.style.top = `${inputHeight / 2 - 7}px`;
                     }
 
                     input.addEventListener('input', function () {
