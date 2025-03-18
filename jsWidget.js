@@ -128,6 +128,10 @@
             } else {
               loader.style.display = 'none';
               messageContainer.style.display = 'none';
+
+              if (ZBWidget.config.disableSubmit && button) {
+                button.disabled = false;
+              }
             }
         }
     };
