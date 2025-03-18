@@ -50,8 +50,7 @@
                     input.addEventListener('input', function () {
                         const form = input.closest('form');
                         const button = form.querySelector("[type='submit']");
-                        input.style.cssText += "box-sizing: border-box;";
-
+                        
                         if (ZBWidget.config.disableSubmit && button) button.disabled = true;
 
                         if (input.value !== '') {
