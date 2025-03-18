@@ -106,7 +106,10 @@
             const uri = 'https://test-members-api.zerobounce.net/api/integration/widgets/validate/';
             const container = input.parentNode;
             let messageContainer = container.querySelector('.zb-message');
-            if (ZBWidget.config.styling !== 'custom') return;
+            if (ZBWidget.config.styling !== 'custom') {
+                loader.style.display = 'none';
+                return;
+            }
 
             const jsonData = JSON.stringify({
                 public_key: ZBWidget.config.apiKey,
