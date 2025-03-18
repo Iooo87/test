@@ -94,8 +94,6 @@
             const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
             
             setTimeout(() => {
-                loader.style.display = 'none';
-                
                 if (!emailRegex.test(input.value)) {
                     messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
                     messageContainer.style.color = '#DC143C';
@@ -116,6 +114,7 @@
 
                 const response = JSON.parse(xhr.response);
                 if (xhr.readyState === 4 && xhr.status === 200) {
+                    loader.style.display = 'none';
                     messageContainer.innerHTML = response.valid
                         ? (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.validMessage : 'Valid email')
                         : (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email');
