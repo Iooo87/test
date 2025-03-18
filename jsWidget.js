@@ -43,7 +43,7 @@
                         
                         const inputHeight = input.offsetHeight;
                         loader.style.top = `${inputHeight / 2 - 10}px`;
-                        loacer.style.right = `${inputHeight / 2 - 10}px`;
+                        loader.style.right = `${inputHeight / 2 - 10}px`;
                     }
 
                     input.addEventListener('input', function () {
