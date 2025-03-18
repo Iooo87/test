@@ -81,17 +81,18 @@
                         if (ZBWidget.config.disableSubmit && button) button.disabled = true;
 
                         const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-                        if (emailRegex.test(input.value)) {
-                            input.validationTimer = setTimeout(() => {
-                                ZBWidget.validate(input, loader, button);
-                            }, 500);
-                        } else {
-                            messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
-                            messageContainer.style.color = '#DC143C';
-                            messageContainer.style.display = 'block';
-                            container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
-                            return;
-                        }
+                        input.validationTimer = setTimeout(() => {
+                          if (emailRegex.test(input.value)) {
+                              ZBWidget.validate(input, loader, button);
+                          } else {
+                              loader.style.display = 'none';
+                              messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
+                              messageContainer.style.color = '#DC143C';
+                              messageContainer.style.display = 'block';
+                              container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
+                              return;
+                          }
+                        }, 500);
                     });
                 }
             });
