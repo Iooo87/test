@@ -38,7 +38,7 @@
                     
                     if (ZBWidget.config.styling === "custom") {
                         input.style.position = 'relative';
-                        input.style.paddingRight = '35px';
+                        input.style.paddingRight = '25px';
                         parent.style.position = 'relative';
                         parent.appendChild(loader);
                         
