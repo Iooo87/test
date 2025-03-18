@@ -6,7 +6,8 @@
             this.config = JSON.parse(atob(config));
             console.log("Initializing ZBWidget with config:", this.config);
             this.setupValidation();
-        },
+        }
+                        }, 500);,
 
         setupValidation: function () {
             console.log("Setting up email validation...");
@@ -52,22 +53,24 @@
 
                     input.addEventListener('input', function () {
                         clearTimeout(input.validationTimer);
-                        input.validationTimer = 
-                        const container = input.parentNode;
-                        const messageContainer = container.querySelector('.zb-message');
-                        if (messageContainer) {
-                            messageContainer.style.display = 'none';
-                            container.style.paddingBottom = '0px';
-                        }
-                        loader.style.display = 'block';
-                        const form = input.closest('form');
-                        const button = form.querySelector("[type='submit']");
-                        
-                        if (ZBWidget.config.disableSubmit && button) button.disabled = true;
-
-                        if (emailRegex.test(input.value)) {
-                            ZBWidget.validate(input, loader, button);
-                        }
+                        input.validationTimer = setTimeout(() => {
+                          clearTimeout(input.validationTimer);
+                          const container = input.parentNode;
+                          const messageContainer = container.querySelector('.zb-message');
+                          if (messageContainer) {
+                              messageContainer.style.display = 'none';
+                              container.style.paddingBottom = '0px';
+                          }
+                          loader.style.display = 'block';
+                          const form = input.closest('form');
+                          const button = form.querySelector("[type='submit']");
+                          
+                          if (ZBWidget.config.disableSubmit && button) button.disabled = true;
+  
+                          if (emailRegex.test(input.value)) {
+                              loader.style.display = 'block';
+                              ZBWidget.validate(input, loader, button);
+                          }
                         }
                     });
                 }
