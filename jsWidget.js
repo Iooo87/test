@@ -9,7 +9,7 @@
         },
 
         setupValidation: function () {
-            console.log("Setting up email validation...");
+            console.info("Setting up email validation...");
             const inputs = document.querySelectorAll('.zb-email[type="email"]');
 
             inputs.forEach((input) => {
@@ -51,6 +51,7 @@
                     });
 
                     input.addEventListener('input', function () {
+                        loader.style.display = 'block';
                         clearTimeout(input.validationTimer);
                         const container = input.parentNode;
                         let messageContainer = container.querySelector('.zb-message');
@@ -74,7 +75,6 @@
                             container.style.paddingBottom = '0px';
                         }
 
-                        loader.style.display = 'block';
                         const form = input.closest('form');
                         const button = form.querySelector("[type='submit']");
 
@@ -100,7 +100,7 @@
 
         validate: function (input, loader, button) {
             const xhr = new XMLHttpRequest();
-            const uri = 'https://test-members-api.zerobounce.net/api/integration/widgets/validate/';
+            const uri = 'https://extension-api.zerobounce.net/api/integration/widgets/validate/';
             const container = input.parentNode;
             const messageContainer = container.querySelector('.zb-message');
 
