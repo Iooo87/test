@@ -52,46 +52,46 @@
 
                     input.addEventListener('input', function () {
                         clearTimeout(input.validationTimer);
-                        input.validationTimer = setTimeout(() => {
-                            const container = input.parentNode;
-                            let messageContainer = container.querySelector('.zb-message');
+                        const container = input.parentNode;
+                        let messageContainer = container.querySelector('.zb-message');
 
-                            if (!messageContainer) {
-                                messageContainer = document.createElement('div');
-                                messageContainer.classList.add('zb-message');
-                                messageContainer.style.position = 'absolute';
-                                messageContainer.style.left = '0';
-                                messageContainer.style.background = '#fff';
-                                messageContainer.style.padding = '5px';
-                                messageContainer.style.borderRadius = '4px';
-                                messageContainer.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
-                                messageContainer.style.fontSize = '12px';
-                                messageContainer.style.display = 'none';
-                                container.appendChild(messageContainer);
-                            }
+                        if (!messageContainer) {
+                            messageContainer = document.createElement('div');
+                            messageContainer.classList.add('zb-message');
+                            messageContainer.style.position = 'absolute';
+                            messageContainer.style.left = '0';
+                            messageContainer.style.background = '#fff';
+                            messageContainer.style.padding = '5px';
+                            messageContainer.style.borderRadius = '4px';
+                            messageContainer.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
+                            messageContainer.style.fontSize = '12px';
+                            messageContainer.style.display = 'none';
+                            container.appendChild(messageContainer);
+                        }
 
-                            if (messageContainer) {
-                                messageContainer.style.display = 'none';
-                                container.style.paddingBottom = '0px';
-                            }
+                        if (messageContainer) {
+                            messageContainer.style.display = 'none';
+                            container.style.paddingBottom = '0px';
+                        }
 
-                            loader.style.display = 'block';
-                            const form = input.closest('form');
-                            const button = form.querySelector("[type='submit']");
+                        loader.style.display = 'block';
+                        const form = input.closest('form');
+                        const button = form.querySelector("[type='submit']");
 
-                            if (ZBWidget.config.disableSubmit && button) button.disabled = true;
+                        if (ZBWidget.config.disableSubmit && button) button.disabled = true;
 
-                            const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-                            if (emailRegex.test(input.value)) {
+                        const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+                        if (emailRegex.test(input.value)) {
+                            input.validationTimer = setTimeout(() => {
                                 ZBWidget.validate(input, loader, button);
-                            } else {
-                                messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
-                                messageContainer.style.color = '#DC143C';
-                                messageContainer.style.display = 'block';
-                                container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
-                                return;
-                            }
-                        }, 500);
+                            }, 500);
+                        } else {
+                            messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
+                            messageContainer.style.color = '#DC143C';
+                            messageContainer.style.display = 'block';
+                            container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
+                            return;
+                        }
                     });
                 }
             });
