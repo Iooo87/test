@@ -43,7 +43,7 @@
                         parent.appendChild(loader);
                         
                         const inputHeight = input.offsetHeight;
-                        loader.style.top = `${inputHeight / 2 - 7}px`;
+                        loader.style.top = `${inputHeight / 2 - 10}px`;
                     }
 
                     input.addEventListener('input', function () {
