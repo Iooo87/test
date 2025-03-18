@@ -100,7 +100,7 @@
 
         validate: function (input, loader, button) {
             const xhr = new XMLHttpRequest();
-            const uri = 'https://extension-api.zerobounce.net/api/integration/widgets/validate/';
+            const uri = 'https://test-members-api.zerobounce.net/api/integration/widgets/validate/';
             const container = input.parentNode;
             const messageContainer = container.querySelector('.zb-message');
 
