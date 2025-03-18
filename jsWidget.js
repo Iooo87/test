@@ -14,6 +14,7 @@
             
             inputs.forEach((input) => {
                 const parent = input.parentNode;
+                parent.style.position = 'relative';
                 
                 if (ZBWidget.config.nonAcceptedStatusBehavior === "allow") {
                     const hiddenInput = document.createElement('input');
@@ -37,14 +38,12 @@
                     });
                     
                     if (ZBWidget.config.styling === "custom") {
-                        input.style.position = 'relative';
                         input.style.paddingRight = '25px';
-                        parent.style.position = 'relative';
                         parent.appendChild(loader);
                         
                         const inputHeight = input.offsetHeight;
-                        loader.style.top = `${inputHeight / 2 - 10}px`;
-                        loader.style.right = `${inputHeight / 2 - 10}px`;
+                        loader.style.top = `${inputHeight / 2 - 7}px`;
+                        loader.style.right = `10px`;
                     }
 
                     input.addEventListener('focus', function () {
@@ -78,39 +77,53 @@
             if (!messageContainer) {
                 messageContainer = document.createElement('div');
                 messageContainer.classList.add('zb-message');
-                messageContainer.style.marginTop = '5px';
+                messageContainer.style.position = 'absolute';
+                messageContainer.style.left = '0';
+                messageContainer.style.background = '#fff';
+                messageContainer.style.padding = '5px';
+                messageContainer.style.borderRadius = '4px';
+                messageContainer.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
                 messageContainer.style.fontSize = '12px';
+                messageContainer.style.display = 'none';
                 container.appendChild(messageContainer);
             }
 
             const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-
-            if (!emailRegex.test(input.value)) {
-                messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
-                messageContainer.style.color = '#DC143C';
-                return;
-            }
-
-            const jsonData = JSON.stringify({
-                public_key: ZBWidget.config.apiKey,
-                email: input.value,
-                widget_type: 'js_widget'
-            });
-
-            xhr.open('POST', uri, false);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(jsonData);
-
-            const response = JSON.parse(xhr.response);
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                messageContainer.innerHTML = response.valid
-                    ? (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.validMessage : 'Valid email')
-                    : (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email');
-                messageContainer.style.color = response.valid ? '#3cb043' : '#DC143C';
-                if (ZBWidget.config.disableSubmit && button) {
-                    button.disabled = !response.valid;
+            
+            setTimeout(() => {
+                loader.style.display = 'none';
+                
+                if (!emailRegex.test(input.value)) {
+                    messageContainer.innerHTML = ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email format';
+                    messageContainer.style.color = '#DC143C';
+                    messageContainer.style.display = 'block';
+                    parent.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
+                    return;
                 }
-            }
+
+                const jsonData = JSON.stringify({
+                    public_key: ZBWidget.config.apiKey,
+                    email: input.value,
+                    widget_type: 'js_widget'
+                });
+
+                xhr.open('POST', uri, false);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(jsonData);
+
+                const response = JSON.parse(xhr.response);
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    messageContainer.innerHTML = response.valid
+                        ? (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.validMessage : 'Valid email')
+                        : (ZBWidget.config.styling === "custom" ? ZBWidget.config.customStyling.invalidMessage : 'Invalid email');
+                    messageContainer.style.color = response.valid ? '#3cb043' : '#DC143C';
+                    messageContainer.style.display = 'block';
+                    parent.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
+                    if (ZBWidget.config.disableSubmit && button) {
+                        button.disabled = !response.valid;
+                    }
+                }
+            }, 500);
         }
     };
 
