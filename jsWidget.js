@@ -51,6 +51,7 @@
                     });
 
                     input.addEventListener('input', function () {
+                        const container = input.parentNode;
                         let messageContainer = container.querySelector('.zb-message')
                         if (messageContainer) {
                             messageContainer.style.display = 'none';
