@@ -54,7 +54,7 @@
                         clearTimeout(input.validationTimer);
                         input.validationTimer = setTimeout(() => {
                             const container = input.parentNode;
-                            const messageContainer = container.querySelector('.zb-message');
+                            let messageContainer = container.querySelector('.zb-message');
 
                             if (!messageContainer) {
                                 messageContainer = document.createElement('div');
@@ -101,7 +101,7 @@
             const xhr = new XMLHttpRequest();
             const uri = 'https://extension-api.zerobounce.net/api/integration/widgets/validate/';
             const container = input.parentNode;
-            let messageContainer = container.querySelector('.zb-message');
+            const messageContainer = container.querySelector('.zb-message');
 
             const jsonData = JSON.stringify({
                 public_key: ZBWidget.config.apiKey,
