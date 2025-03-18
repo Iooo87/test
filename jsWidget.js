@@ -11,8 +11,7 @@
         setupValidation: function () {
             console.log("Setting up email validation...");
             const inputs = document.querySelectorAll('.zb-email[type="email"]');
-            let delayTimer;
-
+            
             inputs.forEach((input) => {
                 const parent = input.parentNode;
 
@@ -27,26 +26,26 @@
                     loader.style.border = '3px solid';
                     loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
                     loader.style.borderRadius = '50%';
-                    loader.style.width = '10px';
-                    loader.style.height = '10px';
-                    loader.style.marginLeft = '5px';
+                    loader.style.width = '14px';
+                    loader.style.height = '14px';
+                    loader.style.position = 'absolute';
+                    loader.style.right = '10px';
+                    loader.style.top = '50%';
+                    loader.style.transform = 'translateY(-50%)';
+                    loader.style.pointerEvents = 'none';
                     loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
                         duration: 2000,
                         iterations: Infinity,
                     });
-
-                    input.addEventListener('focus', function () {
+                    
+                    if (ZBWidget.config.styling === "custom") {
+                        input.style.position = 'relative';
+                        input.style.paddingRight = '30px';
+                        parent.style.position = 'relative';
                         parent.appendChild(loader);
-                    });
-
-                    input.addEventListener('blur', function () {
-                        if (parent.contains(loader)) {
-                            parent.removeChild(loader);
-                        }
-                    });
+                    }
 
                     input.addEventListener('input', function () {
-                        clearTimeout(delayTimer);
                         const form = input.closest('form');
                         const button = form.querySelector("[type='submit']");
                         input.style.cssText = '';
