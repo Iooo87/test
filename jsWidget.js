@@ -125,6 +125,9 @@
                 if (ZBWidget.config.disableSubmit && button) {
                     button.disabled = !response.valid;
                 }
+            } else {
+              loader.style.display = 'none';
+              messageContainer.style.display = 'none';
             }
         }
     };
