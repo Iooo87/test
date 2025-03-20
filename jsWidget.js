@@ -4,8 +4,6 @@
 
       init: function (config) {
         this.config = JSON.parse(atob(config));
-        this.config.apiKey = 'qq';
-        console.log("Initializing ZBWidget with config:", this.config);
         this.setupValidation();
       },
       
