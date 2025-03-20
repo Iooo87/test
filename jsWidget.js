@@ -199,4 +199,6 @@
         loaderContainer.insertBefore(icon, loaderContainer.firstChild);
       }
     };
+
+    window.ZBWidget = ZBWidget;
 })();
