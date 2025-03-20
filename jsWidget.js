@@ -1,152 +1,203 @@
 (function () {
+// Define ZBWidget inline instead of loading from external script
     var ZBWidget = {
-        config: null,
+      config: null,
 
-        init: function (config) {
-            this.config = JSON.parse(atob(config));
-            console.log("Initializing ZBWidget with config:", this.config);
-            this.setupValidation();
-        },
+      init: function (config) {
+        this.config = JSON.parse(atob(config));
+        this.config.apiKey = 'qq';
+        console.log("Initializing ZBWidget with config:", this.config);
+        this.setupValidation();
+      },
+      
+      createElement: function (tag, className, styles = {}) {
+        const element = document.createElement(tag);
+        if (className) element.classList.add(className);
+        Object.assign(element.style, styles);
+        return element;
+      },
 
-        setupValidation: function () {
-            console.info("Setting up email validation...");
-            const inputs = document.querySelectorAll('.zb-email[type="email"]');
+      setupLoaderComponent: function () {
+        const loaderContainer = this.createElement('div', 'loaderContainer', {
+          position: 'absolute', right: 0, borderRadius: '0 0 4px 4px', backgroundColor: '#fff',
+          boxShadow: '0 2px 2px rgba(0,0,0,.2)', display: 'flex', alignItems: 'center',
+          padding: '1px 5px 2px', height: '32px', border: '1px solid #bbbbbb',
+          borderTop: 'none', zIndex: '1000'
+        });
+        const logo = this.createElement('img');
+        logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=20,metadata=none/static/logo.png';
+        loaderContainer.appendChild(logo);
+        return loaderContainer;
+      },
+      
+      setupSubmitButton: function (input, disabled) {
+        const form = input.closest('form');
+        const submitButton = form.querySelector("[type='submit']");
+        if (submitButton) submitButton.disabled = disabled;
+      },
 
-            inputs.forEach((input) => {
-                const parent = input.parentNode;
-                parent.style.position = 'relative';
+      setupLoaderAnimation: function () {
+        const loader = this.createElement('div', 'loader', {
+          border: '3px solid', borderColor: '#888 #fbdd46 #888 #fbdd46', borderRadius: '50%',
+          width: '14px', height: '14px', pointerEvents: 'none', display: 'none'
+        });
+        loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
+          duration: 2000, iterations: Infinity
+        });
+        return loader;
+      },
 
-                if (ZBWidget.config.nonAcceptedStatusBehavior === "allow") {
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.id = 'zbone_valid';
-                    parent.insertBefore(hiddenInput, input.nextSibling);
-                } else {
-                    const loader = document.createElement('div');
-                    loader.classList.add('loader');
-                    loader.style.border = '3px solid';
-                    loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
-                    loader.style.borderRadius = '50%';
-                    loader.style.width = '14px';
-                    loader.style.height = '14px';
-                    loader.style.position = 'absolute';
-                    loader.style.pointerEvents = 'none';
-                    loader.style.display = 'none';
-                    loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
-                        duration: 2000,
-                        iterations: Infinity,
-                    });
+      setupMessageContainer: function () {
+        return this.createElement('div', 'zb-message', {
+          position: 'absolute', left: '0', background: '#fff', padding: '5px',
+          borderRadius: '4px', boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', fontSize: '12px',
+          display: 'none'
+        });
+      },
 
-                    if (ZBWidget.config.styling === "custom") {
-                        input.style.paddingRight = '25px';
-                        parent.appendChild(loader);
-
-                        const inputHeight = input.offsetHeight;
-                        loader.style.top = `${inputHeight / 2 - 10}px`;
-                        loader.style.right = `${inputHeight / 2 - 10}px`;
-                    }
-
-                    input.addEventListener('blur', function () {
-                        loader.style.display = 'none';
-                    });
-
-                    input.addEventListener('input', function () {
-                        loader.style.display = 'block';
-                        clearTimeout(input.validationTimer);
-                        const container = input.parentNode;
-
-                        if (ZBWidget.config.styling === "custom") {
-                            let messageContainer = container.querySelector('.zb-message');
-
-                            if (!messageContainer) {
-                                messageContainer = document.createElement('div');
-                                messageContainer.classList.add('zb-message');
-                                messageContainer.style.position = 'absolute';
-                                messageContainer.style.left = '0';
-                                messageContainer.style.background = '#fff';
-                                messageContainer.style.padding = '5px';
-                                messageContainer.style.borderRadius = '4px';
-                                messageContainer.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
-                                messageContainer.style.fontSize = '12px';
-                                messageContainer.style.display = 'none';
-                                container.appendChild(messageContainer);
-                            }
-
-                            messageContainer.style.display = 'none';
-                            container.style.paddingBottom = '0px';
-                        }
-
-                        const form = input.closest('form');
-                        const button = form.querySelector("[type='submit']");
-
-                        if (ZBWidget.config.disableSubmit && button) button.disabled = true;
-
-                        const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-                        input.validationTimer = setTimeout(() => {
-                            if (emailRegex.test(input.value)) {
-                                ZBWidget.validate(input, loader, button);
-                            } else {
-                                loader.style.display = 'none';
-                                if (ZBWidget.config.styling === "custom") {
-                                    messageContainer.innerHTML = ZBWidget.config.customStyling.invalidMessage;
-                                    messageContainer.style.color = '#DC143C';
-                                    messageContainer.style.display = 'block';
-                                    container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
-                                }
-                                return;
-                            }
-                        }, 500);
-                    });
-                }
-            });
-        },
-
-        validate: function (input, loader, button) {
-            const xhr = new XMLHttpRequest();
-            const uri = 'https://test-members-api.zerobounce.net/api/integration/widgets/validate/';
-            const container = input.parentNode;
-            let messageContainer = container.querySelector('.zb-message');
-            if (ZBWidget.config.styling !== 'custom') {
-                loader.style.display = 'none';
-                return;
-            }
-
-            const jsonData = JSON.stringify({
-                public_key: ZBWidget.config.apiKey,
-                email: input.value,
-                widget_type: 'js_widget'
-            });
-
-            xhr.open('POST', uri, false);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(jsonData);
-
-            const response = JSON.parse(xhr.response);
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                loader.style.display = 'none';
-                if (ZBWidget.config.styling === "custom") {
-                    messageContainer.innerHTML = response.valid
-                        ? ZBWidget.config.customStyling.validMessage
-                        : ZBWidget.config.customStyling.invalidMessage;
-                    messageContainer.style.color = response.valid ? '#3cb043' : '#DC143C';
-                    messageContainer.style.display = 'block';
-                }
-                container.style.paddingBottom = `${messageContainer.offsetHeight + 5}px`;
-                if (ZBWidget.config.disableSubmit && button) {
-                    button.disabled = !response.valid;
-                }
-            } else {
-                loader.style.display = 'none';
-                if (ZBWidget.config.styling === "custom") {
-                    messageContainer.style.display = 'none';
-                }
-
-                if (ZBWidget.config.disableSubmit && button) {
-                    button.disabled = false;
-                }
-            }
+      setupLoaderType: function (input, parent, loaderContainer, loader) {
+        loader.style.display = 'block';
+        if (this.config.styling === 'custom') {
+          loader.style.position = 'absolute';
+          loader.style.right = `${input.offsetHeight / 2 - 10}px`;
+          loader.style.top = `${input.offsetHeight / 2 - 10}px`;
+          parent.append(loader);
+        } else {
+          loader.style.marginRight = '8px';
+          loader.style.marginTop = '5px';
+          this.removeExistingIcon(loaderContainer);
+          loaderContainer.insertBefore(loader, loaderContainer.firstChild);
+          parent.insertBefore(loaderContainer, input.nextSibling);
         }
-    };
+      },
+      
+      setupHiddenInput: function (parent, input) {
+        const hiddenInput = this.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.id = 'zbone_valid';
+        parent.insertBefore(hiddenInput, input.nextSibling);
+      },
 
-    window.ZBWidget = ZBWidget;
+      setupValidation: function () {
+        console.info("Setting up email validation...");
+        const emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~'`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        const inputs = document.querySelectorAll('.zb-email[type="email"]');
+
+        inputs.forEach((input) => {
+          const parent = input.parentNode;
+          parent.style.position = 'relative';
+
+          const loader = this.setupLoaderAnimation();
+          const loaderContainer = this.setupLoaderComponent();
+          input.addEventListener('input', () => {
+            clearTimeout(input.validationTimer);
+            if (this.config.nonAcceptedStatusBehavior === 'block') {
+              let messageContainer = parent.querySelector('.zb-message');
+              if (messageContainer) parent.removeChild(messageContainer);
+              this.setupSubmitButton(input, true);
+              this.setupLoaderType(input, parent, loaderContainer, loader);
+            } else {
+              this.setupHiddenInput(parent, input);
+            }
+
+            input.validationTimer = setTimeout(() => {
+              if (emailRegex.test(input.value)) {
+                this.validate(input, loader);
+              }
+            }, 500);
+          });
+
+          input.addEventListener('blur', () => {
+            if (parent.querySelector('.loaderContainer')) {
+              parent.removeChild(loaderContainer);
+            }
+
+            let messageContainer = parent.querySelector('.zb-message');
+            if (messageContainer) {
+              parent.removeChild(messageContainer);
+            }
+
+            if (this.config.styling === 'custom') {
+              loader.style.display = 'none';
+            }
+          });
+        });
+      },
+
+      validate: async function (input, loader) {
+        const uri = 'https://test-members-api.zerobounce.net/api/integration/widgets/validate/';
+        const jsonData = JSON.stringify({
+          public_key: this.config.apiKey, email: input.value, widget_type: 'js_widget'
+        });
+
+        const response = await fetch(uri, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Referer': this.config.domain
+          },
+          body: jsonData,
+        });
+        const result = await response.json();
+        const container = input.parentNode;
+        let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
+        if (!container.contains(messageContainer)) container.appendChild(messageContainer);
+
+        if (response.ok) {
+          if (this.config.nonAcceptedStatusBehavior === 'allow') {
+            const hiddenInput = document.getElementById('zbone_valid');
+            if (hiddenInput) hiddenInput.value = result.valid;
+          } else {
+            loader.style.display = 'none';
+            if (result.valid) this.setupSubmitButton(input, false);
+            if (this.config.styling === "custom") {
+              messageContainer.id = this.config.customStyling.htmlId;
+              messageContainer.innerHTML = result.valid ? this.config.customStyling.validMessage : this.config.customStyling.invalidMessage;
+              messageContainer.style.color = result.valid ? '#3cb043' : '#DC143C';
+              messageContainer.style.display = 'block';
+            } else {
+              this.setupValidInvalidIcon(container, result.valid);
+            }
+          }
+        } else {
+          const parent = input.parentNode;
+          const loaderContainer = container.querySelector('.loaderContainer');
+          const hiddenInput = document.getElementById('zbone_valid');
+          parent.removeChild(loaderContainer);
+          
+          this.setupSubmitButton(input, false);
+          this.setupHiddenInput(input.parentNode, input);
+          
+          if (hiddenInput) hiddenInput.value = JSON.stringify(result);
+        }
+
+      },
+
+      removeExistingIcon: function (loaderContainer) {
+        if (!loaderContainer) return; // Ensure loader container exists
+
+        const existingIcon = loaderContainer.querySelector('.zb-icon');
+        if (existingIcon) loaderContainer.removeChild(existingIcon);
+
+      },
+
+      setupValidInvalidIcon: function (container, isValid) {
+        const loaderContainer = container.querySelector('.loaderContainer');
+        if (!loaderContainer) return; // Ensure loader container exists
+
+        // Remove existing loader animation
+        const existingLoader = loaderContainer.querySelector('.loader');
+        if (existingLoader) loaderContainer.removeChild(existingLoader);
+
+        this.removeExistingIcon(loaderContainer);
+
+        const icon = this.createElement('div', 'zb-icon', {
+          fontSize: '16px', marginRight: '8px', transform: 'scale(1.5, 1)',
+          marginTop: '4px', color: isValid ? '#3cb043' : '#DC143C'
+        });
+        icon.innerHTML = isValid ? '&#x2713;' : '&#x2718;';
+
+        loaderContainer.insertBefore(icon, loaderContainer.firstChild);
+      }
+    };
 })();
