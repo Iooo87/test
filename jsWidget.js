@@ -1,6 +1,5 @@
 (function () {
-// Define ZBWidget inline instead of loading from external script
-    var ZBWidget = {
+    const ZBWidget = {
       config: null,
 
       init: function (config) {
