@@ -90,7 +90,7 @@
           const loaderContainer = this.setupLoaderComponent();
           input.addEventListener('input', () => {
             clearTimeout(input.validationTimer);
-            if (this.config.nonAcceptedStatusBehavior === 'block' && this.config.timeoutLimitBehavior === 'block') {
+            if (this.config.nonAcceptedStatusBehavior === 'block' || this.config.timeoutLimitBehavior === 'block') {
               let messageContainer = parent.querySelector('.zb-message');
               if (messageContainer) parent.removeChild(messageContainer);
               this.setupSubmitButton(input, true);
