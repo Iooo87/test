@@ -192,7 +192,7 @@
           }
         } catch (error) {
           clearTimeout(timeoutId);
-
+          loader.style.display = 'none';
           const errorMessage = error.name === 'AbortError'
             ? 'Request timed out!'
             : 'Fetch failed: ' + error.message;
@@ -203,6 +203,7 @@
 
           const loaderContainer = container.querySelector('.loaderContainer');
           if (loaderContainer) container.removeChild(loaderContainer);
+            
 
           if (shouldAllow) {
             this.setupHiddenInput(container, input);
@@ -216,8 +217,6 @@
             if (!container.contains(messageContainer)) {
               container.appendChild(messageContainer);
             }
-
-            loader.style.display = 'none';
 
             if (this.config.styling === 'custom') {
               const {htmlId, invalidMessage} = this.config.customStyling;
