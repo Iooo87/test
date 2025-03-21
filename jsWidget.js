@@ -114,7 +114,7 @@
                     messageContainer.innerHTML = this.config.customStyling.invalidMessage;
                     messageContainer.style.color = '#DC143C';
                     messageContainer.style.display = 'block';
-                    if (!container.contains(messageContainer)) container.appendChild(messageContainer);
+                    if (!parent.contains(messageContainer)) parent.appendChild(messageContainer);
                   }
                 }
               }
