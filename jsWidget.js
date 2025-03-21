@@ -130,7 +130,7 @@
         });
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3);//this.config.timeoutLimit * 1000);
+        const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutLimit * 1000);
         try {
           const response = await fetch(uri, {
             method: 'POST',
