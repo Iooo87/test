@@ -69,6 +69,7 @@
       },
       
       setupHiddenInput: function (parent, input) {
+        if (parent.querySelector("#zbone_valid") return;
         const hiddenInput = this.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.id = 'zbone_valid';
@@ -171,7 +172,7 @@
       },
 
       removeExistingIcon: function (loaderContainer) {
-        if (!loaderContainer) return; // Ensure loader container exists
+        if (!loaderContainer) return;
 
         const existingIcon = loaderContainer.querySelector('.zb-icon');
         if (existingIcon) loaderContainer.removeChild(existingIcon);
@@ -180,9 +181,8 @@
 
       setupValidInvalidIcon: function (container, isValid) {
         const loaderContainer = container.querySelector('.loaderContainer');
-        if (!loaderContainer) return; // Ensure loader container exists
+        if (!loaderContainer) return;
 
-        // Remove existing loader animation
         const existingLoader = loaderContainer.querySelector('.loader');
         if (existingLoader) loaderContainer.removeChild(existingLoader);
 
