@@ -91,8 +91,8 @@
           input.addEventListener('input', () => {
             clearTimeout(input.validationTimer);
             if (this.config.nonAcceptedStatusBehavior === 'block') {
-              //let messageContainer = parent.querySelector('.zb-message');
-              //if (messageContainer) parent.removeChild(messageContainer);
+              let messageContainer = parent.querySelector('.zb-message');
+              if (messageContainer) parent.removeChild(messageContainer);
               this.setupSubmitButton(input, true);
               this.setupLoaderType(input, parent, loaderContainer, loader);
             } else {
@@ -114,6 +114,7 @@
                     messageContainer.innerHTML = this.config.customStyling.invalidMessage;
                     messageContainer.style.color = '#DC143C';
                     messageContainer.style.display = 'block';
+                    if (!container.contains(messageContainer)) container.appendChild(messageContainer);
                   }
                 }
               }
