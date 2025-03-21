@@ -215,7 +215,7 @@
               container.appendChild(messageContainer);
             }
 
-            if (typeof loader !== 'undefined') loader.style.display = 'none';
+            loader.style.display = 'none';
 
             if (this.config.styling === 'custom') {
               const {htmlId, invalidMessage} = this.config.customStyling;
