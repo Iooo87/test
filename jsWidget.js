@@ -4,10 +4,10 @@
 
       init: function (config) {
         this.config = JSON.parse(atob(config));
-          console.log(this.config);
+        console.log(this.config);
         this.setupValidation();
       },
-      
+
       createElement: function (tag, className, styles = {}) {
         const element = document.createElement(tag);
         if (className) element.classList.add(className);
@@ -27,7 +27,7 @@
         loaderContainer.appendChild(logo);
         return loaderContainer;
       },
-      
+
       setupSubmitButton: function (input, disabled) {
         const form = input.closest('form');
         const submitButton = form.querySelector("[type='submit']");
@@ -68,7 +68,7 @@
           parent.insertBefore(loaderContainer, input.nextSibling);
         }
       },
-      
+
       setupHiddenInput: function (parent, input) {
         if (parent.querySelector("#zbone_valid")) return;
         const hiddenInput = this.createElement('input');
@@ -131,47 +131,75 @@
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3);//this.config.timeoutLimit * 1000);
-
-        const response = await fetch(uri, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Referer': this.config.domain
-          },
-          body: jsonData,
-          signal: controller.signal
-        });
-        const result = await response.json();
-        const container = input.parentNode;
-        let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
-        if (!container.contains(messageContainer)) container.appendChild(messageContainer);
-
-        if (response.ok) {
-          if (this.config.nonAcceptedStatusBehavior === 'allow') {
-            const hiddenInput = document.getElementById('zbone_valid');
-            if (hiddenInput) hiddenInput.value = result.valid;
-          } else {
-            loader.style.display = 'none';
-            if (result.valid) this.setupSubmitButton(input, false);
-            if (this.config.styling === "custom") {
-              messageContainer.id = this.config.customStyling.htmlId;
-              messageContainer.innerHTML = result.valid ? this.config.customStyling.validMessage : this.config.customStyling.invalidMessage;
-              messageContainer.style.color = result.valid ? '#3cb043' : '#DC143C';
-              messageContainer.style.display = 'block';
+        try {
+          const response = await fetch(uri, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Referer': this.config.domain
+            },
+            body: jsonData,
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+          
+          const result = await response.json();
+          const container = input.parentNode;
+          let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
+          if (!container.contains(messageContainer)) container.appendChild(messageContainer);
+          
+          if (response.ok) {
+            if (this.config.nonAcceptedStatusBehavior === 'allow') {
+              const hiddenInput = document.getElementById('zbone_valid');
+              if (hiddenInput) hiddenInput.value = result.valid;
             } else {
-              this.setupValidInvalidIcon(container, result.valid);
+              loader.style.display = 'none';
+              
+              if (this.config.styling === "custom") {
+                messageContainer.id = this.config.customStyling.htmlId;
+                messageContainer.innerHTML = result.valid ? this.config.customStyling.validMessage : this.config.customStyling.invalidMessage;
+                messageContainer.style.color = result.valid ? '#3cb043' : '#DC143C';
+                messageContainer.style.display = 'block';
+              } else {
+                this.setupValidInvalidIcon(container, result.valid);
+              }
+              this.setupSubmitButton(input, !this.valid);
             }
+          } else {
+            const loaderContainer = container.querySelector('.loaderContainer');
+            container.removeChild(loaderContainer);
+
+            this.setupSubmitButton(input, false);
+            this.setupHiddenInput(container, input);
+              
+            const hiddenInput = document.getElementById('zbone_valid');
+            if (hiddenInput) hiddenInput.value = JSON.stringify(result);
           }
-        } else {
-          const parent = input.parentNode;
-          const loaderContainer = container.querySelector('.loaderContainer');
-          const hiddenInput = document.getElementById('zbone_valid');
-          parent.removeChild(loaderContainer);
-          
-          this.setupSubmitButton(input, false);
-          this.setupHiddenInput(input.parentNode, input);
-          
-          if (hiddenInput) hiddenInput.value = JSON.stringify(result);
+        } catch(e) {
+            clearTimeout(timeoutId);
+            const errorMessage = error.name === 'AbortError' ? 'Request timed out!' : 'Fetch failed: ' + error.message;
+            const container = input.parentNode;
+
+            if (this.config.nonAcceptedStatusBehavior === 'allow' || this.config.timeoutLimitBehavior === 'allow') {
+                this.setupHiddenInput(container, input);
+                const hiddenInput = document.getElementById('zbone_valid');
+                if (hiddenInput) hiddenInput.value = errorMessage;
+                this.setupSubmitButton(input, false);
+            } else {
+                this.setupSubmitButton(input, true);
+                const container = input.parentNode;
+                let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
+                if (!container.contains(messageContainer)) container.appendChild(messageContainer);
+                loader.style.display = 'none';
+                if (this.config.styling === "custom") {
+                    messageContainer.id = this.config.customStyling.htmlId;
+                    messageContainer.innerHTML = this.config.customStyling.invalidMessage;
+                    messageContainer.style.color = '#DC143C';
+                    messageContainer.style.display = 'block';
+                } else {
+                    this.setupValidInvalidIcon(container, false);
+                }
+            }
         }
 
       },
@@ -204,4 +232,4 @@
     };
 
     window.ZBWidget = ZBWidget;
-})();
+  })();
