@@ -4,6 +4,7 @@
 
       init: function (config) {
         this.config = JSON.parse(atob(config));
+          console.log(this.config);
         this.setupValidation();
       },
       
@@ -128,6 +129,9 @@
           public_key: this.config.apiKey, email: input.value, widget_type: 'js_widget'
         });
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutLimit);
+
         const response = await fetch(uri, {
           method: 'POST',
           headers: {
@@ -135,6 +139,7 @@
             'Referer': this.config.domain
           },
           body: jsonData,
+          signal: controller.signal
         });
         const result = await response.json();
         const container = input.parentNode;
