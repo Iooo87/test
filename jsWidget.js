@@ -175,7 +175,7 @@
             const hiddenInput = document.getElementById('zbone_valid');
             if (hiddenInput) hiddenInput.value = JSON.stringify(result);
           }
-        } catch (e) {
+        } catch (error) {
           clearTimeout(timeoutId);
           const errorMessage = error.name === 'AbortError' ? 'Request timed out!' : 'Fetch failed: ' + error.message;
           const container = input.parentNode;
@@ -201,7 +201,6 @@
             }
           }
         }
-
       },
 
       removeExistingIcon: function (loaderContainer) {
@@ -209,7 +208,6 @@
 
         const existingIcon = loaderContainer.querySelector('.zb-icon');
         if (existingIcon) loaderContainer.removeChild(existingIcon);
-
       },
 
       setupValidInvalidIcon: function (container, isValid) {
