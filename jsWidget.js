@@ -214,7 +214,7 @@
             if (!container.contains(messageContainer)) {
               container.appendChild(messageContainer);
             }
-
+console.log(loder);
             loader.style.display = 'none';
 
             if (this.config.styling === 'custom') {
