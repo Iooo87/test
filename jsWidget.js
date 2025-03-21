@@ -177,30 +177,49 @@
           }
         } catch (error) {
           clearTimeout(timeoutId);
-          const errorMessage = error.name === 'AbortError' ? 'Request timed out!' : 'Fetch failed: ' + error.message;
-          const container = input.parentNode;
 
-          if (this.config.nonAcceptedStatusBehavior === 'allow' || this.config.timeoutLimitBehavior === 'allow') {
+          const errorMessage = error.name === 'AbortError'
+            ? 'Request timed out!'
+            : 'Fetch failed: ' + error.message;
+
+          const container = input.parentNode;
+          const shouldAllow = this.config.nonAcceptedStatusBehavior === 'allow' ||
+            this.config.timeoutLimitBehavior === 'allow';
+
+          const loaderContainer = container.querySelector('.loaderContainer');
+          if (loaderContainer) container.removeChild(loaderContainer);
+
+          if (shouldAllow) {
             this.setupHiddenInput(container, input);
             const hiddenInput = document.getElementById('zbone_valid');
             if (hiddenInput) hiddenInput.value = errorMessage;
             this.setupSubmitButton(input, false);
           } else {
             this.setupSubmitButton(input, true);
-            const container = input.parentNode;
+
             let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
-            if (!container.contains(messageContainer)) container.appendChild(messageContainer);
-            loader.style.display = 'none';
-            if (this.config.styling === "custom") {
-              messageContainer.id = this.config.customStyling.htmlId;
-              messageContainer.innerHTML = this.config.customStyling.invalidMessage;
-              messageContainer.style.color = '#DC143C';
-              messageContainer.style.display = 'block';
+            if (!container.contains(messageContainer)) {
+              container.appendChild(messageContainer);
+            }
+
+            if (typeof loader !== 'undefined') loader.style.display = 'none';
+
+            if (this.config.styling === 'custom') {
+              const {htmlId, invalidMessage} = this.config.customStyling;
+              Object.assign(messageContainer, {
+                id: htmlId,
+                innerHTML: invalidMessage,
+                style: {
+                  color: '#DC143C',
+                  display: 'block'
+                }
+              });
             } else {
               this.setupValidInvalidIcon(container, false);
             }
           }
         }
+
       },
 
       removeExistingIcon: function (loaderContainer) {
