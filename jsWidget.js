@@ -219,14 +219,10 @@
 
             if (this.config.styling === 'custom') {
               const {htmlId, invalidMessage} = this.config.customStyling;
-              Object.assign(messageContainer, {
-                id: htmlId,
-                innerHTML: invalidMessage,
-                style: {
-                  color: '#DC143C',
-                  display: 'block'
-                }
-              });
+              messageContainer.id = htmlId;
+              messageContainer.innerHTML = invalidMessage;
+              messageContainer.style.color = '#DC143C';
+              messageContainer.style.display = 'block';
             } else {
               this.setupValidInvalidIcon(container, false);
             }
