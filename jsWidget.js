@@ -109,6 +109,7 @@
                   } else {
                     loader.style.display = 'none';
                     let messageContainer = parent.querySelector('.zb-message') || this.setupMessageContainer();
+                      console.log(messageContainer);
                     messageContainer.id = this.config.customStyling.htmlId;
                     messageContainer.innerHTML = this.config.customStyling.invalidMessage;
                     messageContainer.style.color = '#DC143C';
@@ -214,7 +215,7 @@
             if (!container.contains(messageContainer)) {
               container.appendChild(messageContainer);
             }
-console.log(loder);
+
             loader.style.display = 'none';
 
             if (this.config.styling === 'custom') {
