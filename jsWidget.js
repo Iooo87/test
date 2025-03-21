@@ -102,6 +102,19 @@
             input.validationTimer = setTimeout(() => {
               if (emailRegex.test(input.value)) {
                 this.validate(input, loader);
+              } else {
+                if (this.config.nonAcceptedStatusBehavior === 'block') {
+                  if (this.config.styling === 'default') {
+                    this.setupValidInvalidIcon(parent, false);
+                  } else {
+                    loader.style.display = 'none';
+                    let messageContainer = parent.querySelector('.zb-message') || this.setupMessageContainer();
+                    messageContainer.id = this.config.customStyling.htmlId;
+                    messageContainer.innerHTML = this.config.customStyling.invalidMessage;
+                    messageContainer.style.color = '#DC143C';
+                    messageContainer.style.display = 'block';
+                  }
+                }
               }
             }, 500);
           });
@@ -219,7 +232,6 @@
             }
           }
         }
-
       },
 
       removeExistingIcon: function (loaderContainer) {
