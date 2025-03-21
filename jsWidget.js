@@ -109,7 +109,6 @@
                   } else {
                     loader.style.display = 'none';
                     let messageContainer = parent.querySelector('.zb-message') || this.setupMessageContainer();
-                      console.log(messageContainer);
                     messageContainer.id = this.config.customStyling.htmlId;
                     messageContainer.innerHTML = this.config.customStyling.invalidMessage;
                     messageContainer.style.color = '#DC143C';
