@@ -39,7 +39,7 @@
           border: '3px solid', borderColor: '#888 #fbdd46 #888 #fbdd46', borderRadius: '50%',
           width: '14px', height: '14px', pointerEvents: 'none', display: 'none'
         });
-        loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
+        loader.animate([{transform: 'rotate(0deg)'}, {transform: 'rotate(360deg)'}], {
           duration: 2000, iterations: Infinity
         });
         return loader;
@@ -90,7 +90,7 @@
           const loaderContainer = this.setupLoaderComponent();
           input.addEventListener('input', () => {
             clearTimeout(input.validationTimer);
-            if (this.config.nonAcceptedStatusBehavior === 'block') {
+            if (this.config.nonAcceptedStatusBehavior === 'block' && this.config.timeoutLimitBehavior === 'block') {
               let messageContainer = parent.querySelector('.zb-message');
               if (messageContainer) parent.removeChild(messageContainer);
               this.setupSubmitButton(input, true);
@@ -142,19 +142,19 @@
             signal: controller.signal
           });
           clearTimeout(timeoutId);
-          
+
           const result = await response.json();
           const container = input.parentNode;
           let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
           if (!container.contains(messageContainer)) container.appendChild(messageContainer);
-          
+
           if (response.ok) {
             if (this.config.nonAcceptedStatusBehavior === 'allow') {
               const hiddenInput = document.getElementById('zbone_valid');
               if (hiddenInput) hiddenInput.value = result.valid;
             } else {
               loader.style.display = 'none';
-              
+
               if (this.config.styling === "custom") {
                 messageContainer.id = this.config.customStyling.htmlId;
                 messageContainer.innerHTML = result.valid ? this.config.customStyling.validMessage : this.config.customStyling.invalidMessage;
@@ -171,35 +171,35 @@
 
             this.setupSubmitButton(input, false);
             this.setupHiddenInput(container, input);
-              
+
             const hiddenInput = document.getElementById('zbone_valid');
             if (hiddenInput) hiddenInput.value = JSON.stringify(result);
           }
-        } catch(error) {
-            clearTimeout(timeoutId);
-            const errorMessage = error.name === 'AbortError' ? 'Request timed out!' : 'Fetch failed: ' + error.message;
-            const container = input.parentNode;
+        } catch (e) {
+          clearTimeout(timeoutId);
+          const errorMessage = error.name === 'AbortError' ? 'Request timed out!' : 'Fetch failed: ' + error.message;
+          const container = input.parentNode;
 
-            if (this.config.nonAcceptedStatusBehavior === 'allow' || this.config.timeoutLimitBehavior === 'allow') {
-                this.setupHiddenInput(container, input);
-                const hiddenInput = document.getElementById('zbone_valid');
-                if (hiddenInput) hiddenInput.value = errorMessage;
-                this.setupSubmitButton(input, false);
+          if (this.config.nonAcceptedStatusBehavior === 'allow' || this.config.timeoutLimitBehavior === 'allow') {
+            this.setupHiddenInput(container, input);
+            const hiddenInput = document.getElementById('zbone_valid');
+            if (hiddenInput) hiddenInput.value = errorMessage;
+            this.setupSubmitButton(input, false);
+          } else {
+            this.setupSubmitButton(input, true);
+            const container = input.parentNode;
+            let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
+            if (!container.contains(messageContainer)) container.appendChild(messageContainer);
+            loader.style.display = 'none';
+            if (this.config.styling === "custom") {
+              messageContainer.id = this.config.customStyling.htmlId;
+              messageContainer.innerHTML = this.config.customStyling.invalidMessage;
+              messageContainer.style.color = '#DC143C';
+              messageContainer.style.display = 'block';
             } else {
-                this.setupSubmitButton(input, true);
-                const container = input.parentNode;
-                let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
-                if (!container.contains(messageContainer)) container.appendChild(messageContainer);
-                loader.style.display = 'none';
-                if (this.config.styling === "custom") {
-                    messageContainer.id = this.config.customStyling.htmlId;
-                    messageContainer.innerHTML = this.config.customStyling.invalidMessage;
-                    messageContainer.style.color = '#DC143C';
-                    messageContainer.style.display = 'block';
-                } else {
-                    this.setupValidInvalidIcon(container, false);
-                }
+              this.setupValidInvalidIcon(container, false);
             }
+          }
         }
 
       },
