@@ -1,4 +1,3 @@
-<script>
   (function () {
     const ZBWidget = {
       config: null,
@@ -247,5 +246,3 @@
 
     window.ZBWidget = ZBWidget;
   })();
-
-</script>
