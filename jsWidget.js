@@ -191,42 +191,31 @@
           }
         } catch (error) {
           clearTimeout(timeoutId);
+
           loader.style.display = 'none';
-          const errorMessage = error.name === 'AbortError'
-            ? 'Request timed out!'
-            : 'Fetch failed: ' + error.message;
-
           const container = input.parentNode;
-          const shouldAllow = this.config.nonAcceptedStatusBehavior === 'allow' ||
-            this.config.timeoutLimitBehavior === 'allow';
-
           const loaderContainer = container.querySelector('.loaderContainer');
+          const errorMessage = this.config.timeoutLimitBehavior === 'block' && error.name === 'AbortError' ? 'Request timed out' : undefined;
           if (loaderContainer) container.removeChild(loaderContainer);
-            
+          this.throwError(container, errorMessage);
+        }
+      },
 
-          if (shouldAllow) {
-            this.setupHiddenInput(container, input);
-            const hiddenInput = document.getElementById('zbone_valid');
-            if (hiddenInput) hiddenInput.value = errorMessage;
-            this.setupSubmitButton(input, false);
-          } else {
-            this.setupSubmitButton(input, true);
+      throwError: function (container, errorMessage) {
+        this.setupSubmitButton(input, true);
 
-            let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
-            if (!container.contains(messageContainer)) {
-              container.appendChild(messageContainer);
-            }
-
-            if (this.config.styling === 'custom') {
-              const {htmlId, invalidMessage} = this.config.customStyling;
-              messageContainer.id = htmlId;
-              messageContainer.innerHTML = invalidMessage;
-              messageContainer.style.color = '#DC143C';
-              messageContainer.style.display = 'block';
-            } else {
-              this.setupValidInvalidIcon(container, false);
-            }
+        if (this.config.styling === 'custom') {
+          const {htmlId, invalidMessage} = this.config.customStyling;
+          let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
+          if (!container.contains(messageContainer)) {
+            container.appendChild(messageContainer);
           }
+          messageContainer.id = htmlId;
+          messageContainer.innerHTML = errorMessage || invalidMessage;
+          messageContainer.style.color = '#DC143C';
+          messageContainer.style.display = 'block';
+        } else {
+          this.setupValidInvalidIcon(container, false);
         }
       },
 
