@@ -193,9 +193,10 @@
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
+        const shouldBlock = this.config.timeoutLimitBehavior === 'block' || this.config.nonAcceptedStatusBehavior === 'block';
         const errorMessage = (this.config.timeoutLimitBehavior === 'block' && error.name === 'AbortError') ? 'Request timed out' : undefined;
-        this.setupSubmitButton(input, this.config.timeoutLimitBehavior === 'block' || this.config.nonAcceptedStatusBehavior === 'block');
-        this.throwError(container, errorMessage);
+        this.setupSubmitButton(input, shouldBlock);
+        if (shouldBlock) this.throwError(container, errorMessage);
       }
     },
 
@@ -204,7 +205,7 @@
         const {htmlId, invalidMessage} = this.config.customStyling;
         const loaderContainer = container.querySelector('.loaderContainer');
         let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
-        
+
         if (loaderContainer) container.removeChild(loaderContainer);
         if (!container.contains(messageContainer)) {
           container.appendChild(messageContainer);
