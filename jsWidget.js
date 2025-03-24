@@ -1,4 +1,5 @@
-(function () {
+<script>
+  (function () {
     const ZBWidget = {
       config: null,
 
@@ -197,13 +198,12 @@
           const loaderContainer = container.querySelector('.loaderContainer');
           const errorMessage = this.config.timeoutLimitBehavior === 'block' && error.name === 'AbortError' ? 'Request timed out' : undefined;
           if (loaderContainer) container.removeChild(loaderContainer);
+          this.setupSubmitButton(input, this.config.timeoutLimitBehavior === 'block' || this.config.nonAcceptedStatusBehavior === 'block');
           this.throwError(container, errorMessage);
         }
       },
 
       throwError: function (container, errorMessage) {
-        this.setupSubmitButton(input, true);
-
         if (this.config.styling === 'custom') {
           const {htmlId, invalidMessage} = this.config.customStyling;
           let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
@@ -247,3 +247,5 @@
 
     window.ZBWidget = ZBWidget;
   })();
+
+</script>
