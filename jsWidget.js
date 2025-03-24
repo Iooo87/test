@@ -201,6 +201,7 @@
           this.setupSubmitButton(input, true);
           this.throwError(container, loaderContainer, undefined);
         } else {
+          this.setupSubmitButton(input, false);
           if (loaderContainer) container.removeChild(loaderContainer);
         }
       }
