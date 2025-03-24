@@ -202,6 +202,7 @@
           this.throwError(container, loaderContainer, undefined);
         } else {
           if (loaderContainer) container.removeChild(loaderContainer);
+        }
       }
     },
 
