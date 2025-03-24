@@ -227,6 +227,8 @@
 
     setupValidInvalidIcon: function (container, isValid) {
       const loaderContainer = container.querySelector('.loaderContainer');
+
+      console.log(loaderContainer);
       if (!loaderContainer) return;
 
       const existingLoader = loaderContainer.querySelector('.loader');
