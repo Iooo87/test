@@ -193,20 +193,21 @@
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
+        const loaderContainer = container.querySelector('.loaderContainer');
         if (this.config.timeoutLimitBehavior === 'block') {
           this.setupSubmitButton(input, true);
-          this.throwError(container, error.name === 'AbortError' ? 'Request timed out' : undefined);
+          this.throwError(container, loaderContainer, error.name === 'AbortError' ? 'Request timed out' : undefined);
         } else if (error.name !== 'AbortError' && this.config.nonAcceptedStatusBehavior === 'block') {
           this.setupSubmitButton(input, true);
-          this.throwError(container, undefined);
-        }
+          this.throwError(container, loaderContainer, undefined);
+        } else {
+          if (loaderContainer) container.removeChild(loaderContainer);
       }
     },
 
-    throwError: function (container, errorMessage) {
+    throwError: function (container, loaderContainer, errorMessage) {
       if (this.config.styling === 'custom') {
         const {htmlId, invalidMessage} = this.config.customStyling;
-        const loaderContainer = container.querySelector('.loaderContainer');
         let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
 
         if (loaderContainer) container.removeChild(loaderContainer);
