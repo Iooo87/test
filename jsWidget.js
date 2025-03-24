@@ -193,10 +193,13 @@
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
-        const shouldBlock = (this.config.timeoutLimitBehavior === 'block' || this.config.timeoutLimitBehavior) && this.config.nonAcceptedStatusBehavior === 'block';
-        const errorMessage = (this.config.timeoutLimitBehavior === 'block' && error.name === 'AbortError') ? 'Request timed out' : undefined;
         this.setupSubmitButton(input, shouldBlock);
-        if (shouldBlock) this.throwError(container, errorMessage);
+        if (this.config.timeoutLimitBehavior === 'block') {
+          this.setupSubmitButton(input, true);
+          this.throwError(container, error.name === 'AbortError' : 'Request timed out': undefined);
+        } else if (this.config.nonAcceptedStatusBehavior === 'block') {
+          this.setupSubmitButton(input, true);
+          this.throwError(container, undefined);
       }
     },
 
