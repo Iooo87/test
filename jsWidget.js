@@ -193,10 +193,8 @@
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
-        const loaderContainer = container.querySelector('.loaderContainer');
         const errorMessage = (this.config.timeoutLimitBehavior === 'block' && error.name === 'AbortError') ? 'Request timed out' : undefined;
         console.log(errorMessage);
-        if (loaderContainer) container.removeChild(loaderContainer);
         this.setupSubmitButton(input, this.config.timeoutLimitBehavior === 'block' || this.config.nonAcceptedStatusBehavior === 'block');
         this.throwError(container, errorMessage);
       }
@@ -204,6 +202,8 @@
 
     throwError: function (container, errorMessage) {
       if (this.config.styling === 'custom') {
+        const loaderContainer = container.querySelector('.loaderContainer');
+        if (loaderContainer) container.removeChild(loaderContainer);
         const {htmlId, invalidMessage} = this.config.customStyling;
         let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
         if (!container.contains(messageContainer)) {
@@ -227,8 +227,6 @@
 
     setupValidInvalidIcon: function (container, isValid) {
       const loaderContainer = container.querySelector('.loaderContainer');
-
-      console.log(loaderContainer);
       if (!loaderContainer) return;
 
       const existingLoader = loaderContainer.querySelector('.loader');
