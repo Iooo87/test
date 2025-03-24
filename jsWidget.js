@@ -196,7 +196,7 @@
         if (this.config.timeoutLimitBehavior === 'block') {
           this.setupSubmitButton(input, true);
           this.throwError(container, error.name === 'AbortError' ? 'Request timed out' : undefined);
-        } else if (this.config.nonAcceptedStatusBehavior === 'block') {
+        } else if (error.name !== 'AbortError' && this.config.nonAcceptedStatusBehavior === 'block') {
           this.setupSubmitButton(input, true);
           this.throwError(container, undefined);
         }
