@@ -193,13 +193,13 @@
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
-        this.setupSubmitButton(input, shouldBlock);
         if (this.config.timeoutLimitBehavior === 'block') {
           this.setupSubmitButton(input, true);
-          this.throwError(container, error.name === 'AbortError' ? 'Request timed out': undefined);
+          this.throwError(container, error.name === 'AbortError' ? 'Request timed out' : undefined);
         } else if (this.config.nonAcceptedStatusBehavior === 'block') {
           this.setupSubmitButton(input, true);
           this.throwError(container, undefined);
+        }
       }
     },
 
