@@ -180,7 +180,7 @@
             this.setupSubmitButton(input, !this.valid);
           }
         } else {
-          console.log(result);
+          console.log(response);
           if (result.error_message === 'Rate limit exceeded' && this.config.throttleLimitBehavior === 'block') {
             this.throwError(container, error.error_message);
           } else {
