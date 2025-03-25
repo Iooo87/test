@@ -8,7 +8,7 @@
       this.config.styling = 'custom';
       this.config.customStyling = {htmlId: 'aa',
       invalidMessage: 'be error',
-      validMessage:'not be error' }
+      validMessage:'not be error' };
       
       this.setupValidation();
     },
