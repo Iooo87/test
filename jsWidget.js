@@ -182,13 +182,13 @@
         } else {
           if (response.status === 429 && this.config.throttleLimitBehavior === 'block') {
             const loaderContainer = container.querySelector('.loaderContainer');
-            if(!loderContainer) this.setupLoaderComponent();
+            if(!loaderContainer) this.setupLoaderComponent();
             this.setupSubmitButton(input, true);
             this.setupError(container, result.error_message);
           } else {
             const loaderContainer = container.querySelector('.loaderContainer');
             if (loaderContainer) container.removeChild(loaderContainer);
-            
+
             this.setupSubmitButton(input, false);
             this.setupHiddenInput(container, input);
 
