@@ -6,10 +6,12 @@
       this.config = JSON.parse(atob(config));
       console.log(this.config);
       this.config.styling = 'custom';
-      this.config.customStyling = {htmlId: 'aa',
-      invalidMessage: 'be error',
-      validMessage:'not be error' };
-      
+      this.config.customStyling = {
+        htmlId: 'aa',
+        invalidMessage: 'be error',
+        validMessage: 'not be error'
+      };
+
       this.setupValidation();
     },
 
@@ -193,9 +195,10 @@
                 loaderContainer = this.setupLoaderComponent();
                 container.insertBefore(loaderContainer, input.nextSibling);
               }
-              this.setupSubmitButton(input, true);
-              this.setupError(container, result.error_message);
             }
+            this.setupSubmitButton(input, true);
+            this.setupError(container, result.error_message);
+
           } else {
             const loaderContainer = container.querySelector('.loaderContainer');
             if (loaderContainer) container.removeChild(loaderContainer);
@@ -230,9 +233,7 @@
         let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
         const loaderContainer = container.querySelector('.loaderContainer');
         if (loaderContainer) container.removeChild(loaderContainer);
-        if (!container.contains(messageContainer)) {
-          container.appendChild(messageContainer);
-        }
+        if (!container.contains(messageContainer)) container.appendChild(messageContainer);
         messageContainer.id = htmlId;
         messageContainer.innerHTML = errorMessage || invalidMessage;
         messageContainer.style.color = '#DC143C';
