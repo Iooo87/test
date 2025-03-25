@@ -181,6 +181,7 @@
             this.setupSubmitButton(input, !this.valid);
           }
         } else {
+          loader.style.display = 'none';
           if (response.status === 429 && this.config.throttleLimitBehavior === 'block') {
             if (this.config.styling === 'default') {
               let loaderContainer = container.querySelector('.loaderContainer');
