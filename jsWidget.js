@@ -121,7 +121,8 @@
         });
 
         input.addEventListener('blur', () => {
-          if (parent.querySelector('.loaderContainer')) {
+          let loaderContainer = parent.querySelector('.loaderContainer');
+          if (loaderContainer) {
             parent.removeChild(loaderContainer);
           }
 
