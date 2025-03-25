@@ -199,10 +199,10 @@
         const container = input.parentNode;
         if (this.config.timeoutLimitBehavior === 'block') {
           this.setupSubmitButton(input, true);
-          this.throwError(container, loaderContainer, error.name === 'AbortError' ? 'Request timed out' : undefined);
+          this.throwError(container, error.name === 'AbortError' ? 'Request timed out' : undefined);
         } else if (error.name !== 'AbortError' && this.config.nonAcceptedStatusBehavior === 'block') {
           this.setupSubmitButton(input, true);
-          this.throwError(container, loaderContainer, undefined);
+          this.throwError(container, undefined);
         } else {
           this.setupSubmitButton(input, false);
           if (loaderContainer) container.removeChild(loaderContainer);
