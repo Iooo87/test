@@ -181,6 +181,7 @@
             this.setupSubmitButton(input, !this.valid);
           }
         } else {
+          console.log('aaa');
           if (response.status === 429 && this.config.throttleLimitBehavior === 'block') {
             this.throwError(container, error.error_message);
           } else {
@@ -195,6 +196,7 @@
           }
         }
       } catch (error) {
+        console.log('bbb');
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
