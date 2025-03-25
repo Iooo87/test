@@ -117,7 +117,7 @@
                 }
               }
             }
-          }, 500);
+          }, 800);
         });
 
         input.addEventListener('focus', () => {
