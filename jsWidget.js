@@ -180,8 +180,7 @@
             this.setupSubmitButton(input, !this.valid);
           }
         } else {
-          console.log(response);
-          if (result.error_message === 'Rate limit exceeded' && this.config.throttleLimitBehavior === 'block') {
+          if (response.status === 429 && this.config.throttleLimitBehavior === 'block') {
             this.throwError(container, error.error_message);
           } else {
             const loaderContainer = container.querySelector('.loaderContainer');
