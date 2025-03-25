@@ -123,7 +123,7 @@
         input.addEventListener('focus', () => {
           let loaderContainer = parent.querySelector('.loaderContainer');
           if (loaderContainer) {
-            loaderContainer.style.display = 'block';
+            loaderContainer.style.display = 'flex';
           }
 
           let messageContainer = parent.querySelector('.zb-message');
