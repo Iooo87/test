@@ -190,7 +190,7 @@
             } else {
               this.setupValidInvalidIcon(container, result.valid);
             }
-            this.setupSubmitButton(input, !this.valid);
+            this.setupSubmitButton(input, !result.valid);
           }
         } else {
           loader.style.display = 'none';
