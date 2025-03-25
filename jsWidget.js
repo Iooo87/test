@@ -5,6 +5,11 @@
     init: function (config) {
       this.config = JSON.parse(atob(config));
       console.log(this.config);
+      this.config.styling = 'custom';
+      this.config.customStyling.htmlId = 'aa';
+      this.config.customStyling.invalidMessage = 'be error';
+      this.config.customStyling.validMessage = 'not be error';
+      
       this.setupValidation();
     },
 
