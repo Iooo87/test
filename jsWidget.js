@@ -217,7 +217,7 @@
           container.appendChild(messageContainer);
         }
         messageContainer.id = htmlId;
-        messageContainer.innerHTML = invalidMessage || errorMessage;
+        messageContainer.innerHTML = errorMessage || invalidMessage;
         messageContainer.style.color = '#DC143C';
         messageContainer.style.display = 'block';
       } else {
