@@ -120,15 +120,27 @@
           }, 500);
         });
 
-        input.addEventListener('blur', () => {
+        input.addEventListener('focus', () => {
           let loaderContainer = parent.querySelector('.loaderContainer');
           if (loaderContainer) {
-            parent.removeChild(loaderContainer);
+            loaderContainer.style.display = 'block';
           }
 
           let messageContainer = parent.querySelector('.zb-message');
           if (messageContainer) {
-            parent.removeChild(messageContainer);
+            messageContainer.style.display = 'block';
+          }
+        });
+
+        input.addEventListener('blur', () => {
+          let loaderContainer = parent.querySelector('.loaderContainer');
+          if (loaderContainer) {
+            loaderContainer.style.display = 'none';
+          }
+
+          let messageContainer = parent.querySelector('.zb-message');
+          if (messageContainer) {
+            messageContainer.style.display = 'none';
           }
 
           if (this.config.styling === 'custom') {
