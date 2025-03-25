@@ -190,6 +190,7 @@
           if (hiddenInput) hiddenInput.value = JSON.stringify(result);
         }
       } catch (error) {
+        console.log(error);
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
