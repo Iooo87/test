@@ -5,13 +5,6 @@
     init: function (config) {
       this.config = JSON.parse(atob(config));
       console.log(this.config);
-      this.config.styling = 'custom';
-      this.config.customStyling = {
-        htmlId: 'aa',
-        invalidMessage: 'be error',
-        validMessage: 'not be error'
-      };
-
       this.setupValidation();
     },
 
@@ -198,7 +191,6 @@
             }
             this.setupSubmitButton(input, true);
             this.setupError(container, result.error_message);
-
           } else {
             const loaderContainer = container.querySelector('.loaderContainer');
             if (loaderContainer) container.removeChild(loaderContainer);
