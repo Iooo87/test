@@ -16,7 +16,9 @@
     },
 
     setupLoaderComponent: function () {
-      const loaderContainer = this.createElement('div', 'loaderContainer', {
+      let loaderContainer = container.querySelector('.loaderContainer');
+      if (loderContainer) return loaderContainer;
+      loaderContainer = this.createElement('div', 'loaderContainer', {
         position: 'absolute', right: 0, borderRadius: '0 0 4px 4px', backgroundColor: '#fff',
         boxShadow: '0 2px 2px rgba(0,0,0,.2)', display: 'flex', alignItems: 'center',
         padding: '1px 5px 2px', height: '32px', border: '1px solid #bbbbbb',
@@ -181,6 +183,7 @@
           }
         } else {
           if (response.status === 429 && this.config.throttleLimitBehavior === 'block') {
+            this.setupLoaderComponent();
             this.setupSubmitButton(input, true);
             this.setupError(container, result.error_message);
           } else {
