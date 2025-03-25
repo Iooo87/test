@@ -183,7 +183,8 @@
         } else {
           console.log('aaa');
           if (response.status === 429 && this.config.throttleLimitBehavior === 'block') {
-            this.throwError(container, error.error_message);
+            console.log('hello');
+            //this.throwError(container, error.error_message);
           } else {
             const loaderContainer = container.querySelector('.loaderContainer');
             if (loaderContainer) container.removeChild(loaderContainer);
