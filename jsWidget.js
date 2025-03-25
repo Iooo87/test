@@ -181,10 +181,15 @@
           }
         } else {
           if (response.status === 429 && this.config.throttleLimitBehavior === 'block') {
-            const loaderContainer = container.querySelector('.loaderContainer');
-            if(!loaderContainer) this.setupLoaderComponent();
-            this.setupSubmitButton(input, true);
-            this.setupError(container, result.error_message);
+            if (this.config.styling === 'default') {
+              let loaderContainer = container.querySelector('.loaderContainer');
+              if (!loaderContainer) {
+                loaderContainer = this.setupLoaderComponent();
+                parent.insertBefore(loaderContainer, input.nextSibling);
+              }
+              this.setupSubmitButton(input, true);
+              this.setupError(container, result.error_message);
+            }
           } else {
             const loaderContainer = container.querySelector('.loaderContainer');
             if (loaderContainer) container.removeChild(loaderContainer);
@@ -197,7 +202,6 @@
           }
         }
       } catch (error) {
-        console.log('bbb');
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
