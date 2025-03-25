@@ -181,7 +181,7 @@
           }
         } else {
           const loaderContainer = container.querySelector('.loaderContainer');
-          container.removeChild(loaderContainer);
+          if (loaderContainer) container.removeChild(loaderContainer);
 
           this.setupSubmitButton(input, false);
           this.setupHiddenInput(container, input);
@@ -190,7 +190,6 @@
           if (hiddenInput) hiddenInput.value = JSON.stringify(result);
         }
       } catch (error) {
-        console.log(error);
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
