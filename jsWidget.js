@@ -185,7 +185,7 @@
               let loaderContainer = container.querySelector('.loaderContainer');
               if (!loaderContainer) {
                 loaderContainer = this.setupLoaderComponent();
-                parent.insertBefore(loaderContainer, input.nextSibling);
+                container.insertBefore(loaderContainer, input.nextSibling);
               }
               this.setupSubmitButton(input, true);
               this.setupError(container, result.error_message);
