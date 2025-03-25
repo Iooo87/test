@@ -180,20 +180,24 @@
             this.setupSubmitButton(input, !this.valid);
           }
         } else {
-          const loaderContainer = container.querySelector('.loaderContainer');
-          if (loaderContainer) container.removeChild(loaderContainer);
+          console.log(result);
+          if (result.error_message === 'Rate limit exceeded' && this.config.throttleLimitBehavior === 'block') {
+            this.throwError(container, error.error_message);
+          } else {
+            const loaderContainer = container.querySelector('.loaderContainer');
+            if (loaderContainer) container.removeChild(loaderContainer);
+            
+            this.setupSubmitButton(input, false);
+            this.setupHiddenInput(container, input);
 
-          this.setupSubmitButton(input, false);
-          this.setupHiddenInput(container, input);
-
-          const hiddenInput = document.getElementById('zbone_valid');
-          if (hiddenInput) hiddenInput.value = JSON.stringify(result);
+            const hiddenInput = document.getElementById('zbone_valid');
+            if (hiddenInput) hiddenInput.value = JSON.stringify(result);
+          }
         }
       } catch (error) {
         clearTimeout(timeoutId);
         loader.style.display = 'none';
         const container = input.parentNode;
-        const loaderContainer = container.querySelector('.loaderContainer');
         if (this.config.timeoutLimitBehavior === 'block') {
           this.setupSubmitButton(input, true);
           this.throwError(container, loaderContainer, error.name === 'AbortError' ? 'Request timed out' : undefined);
@@ -207,11 +211,11 @@
       }
     },
 
-    throwError: function (container, loaderContainer, errorMessage) {
+    throwError: function (container, errorMessage) {
       if (this.config.styling === 'custom') {
         const {htmlId, invalidMessage} = this.config.customStyling;
         let messageContainer = container.querySelector('.zb-message') || this.setupMessageContainer();
-
+        const loaderContainer = container.querySelector('.loaderContainer');
         if (loaderContainer) container.removeChild(loaderContainer);
         if (!container.contains(messageContainer)) {
           container.appendChild(messageContainer);
