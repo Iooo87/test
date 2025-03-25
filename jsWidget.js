@@ -60,7 +60,6 @@
         loader.style.right = `${input.offsetHeight / 2 - 10}px`;
         loader.style.top = `${input.offsetHeight / 2 - 10}px`;
         parent.append(loader);
-        loader.style.display = 'block';
       } else {
         loader.style.marginRight = '8px';
         loader.style.marginTop = '5px';
