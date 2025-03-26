@@ -163,7 +163,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Referer': this.config.domain
           },
           body: jsonData,
           signal: controller.signal
