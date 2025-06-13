@@ -95,6 +95,7 @@ const initializeZeroBounce = (config) => {
     });
   } else {
     const form = document.getElementById(`hsForm_${config.hubspotFormId}`);
+    console.log(form);
     if (form) {
       processValidation(document, selector, disableSubmit, config.apiKey);
     }
