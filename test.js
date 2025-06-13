@@ -1,4 +1,6 @@
 const initializeZeroBounce = (config) => {
+  console.log('Fire');
+  
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, documentContext) {
       console.log('Config:', config);
