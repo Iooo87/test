@@ -94,7 +94,7 @@ const initializeZeroBounce = (config) => {
       processValidation(iframeDocument, selector, disableSubmit, config.apiKey);
     });
   } else {
-    const form = document.querySelector('[id^="hsForm_"]')[0];
+    const form = document.querySelector('form[id^="hsForm_"]')[0];
     console.log(form);
     if (form) {
       processValidation(document, selector, disableSubmit, config.apiKey);
