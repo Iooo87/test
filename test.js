@@ -1,6 +1,7 @@
 const initializeZeroBounce = (config) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, documentContext) {
+      console.log('Config:', config);
       this.apiKey = apiKey;
       this.disableSubmit = disableSubmit;
       this.baseUrl = config.stagingAPI ? config.stagingAPI : config.testAPI ? config.testAPI : 'https://extension-api.zerobounce.net/api';
@@ -9,6 +10,7 @@ const initializeZeroBounce = (config) => {
     }
 
     async validate(input, loader, button, initBR) {
+          console.log('Validate');
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
       const iconContainer = this.document.createElement('div');
@@ -154,6 +156,8 @@ const initializeZeroBounce = (config) => {
       });
 
       input.addEventListener('input', function () {
+
+        console.log('Event input');
         clearTimeout(delayTimer);
         const me = this;
         const parent = input.parentNode;
