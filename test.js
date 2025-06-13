@@ -101,6 +101,9 @@ const initializeZeroBounce = (config) => {
   }
 
   function processValidation(documentContext, selector, disableSubmit, apiKey) {
+      console.log(apiKey);
+
+    
     const zb = new ZeroBounceApi(apiKey, disableSubmit, documentContext);
     const inputs = documentContext.querySelectorAll(selector);
     const loaderContainer = documentContext.createElement('div');
