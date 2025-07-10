@@ -17,6 +17,7 @@ const initializeZeroBounce = (config) => {
     async validate(input, loader, button) {
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
+      console.log(container);
       const iconContainer = this.document.createElement('div');
 
       iconContainer.classList.add('zb-icon');
@@ -108,8 +109,11 @@ const initializeZeroBounce = (config) => {
     const loaderContainer = documentContext.createElement('div');
     const loader = documentContext.createElement('div');
     const loadingText = documentContext.createElement('p');
-    loadingText.innerText = 'Verifying ...';
     let delayTimer;
+
+    loadingText.innerText = 'Verifying ...';
+    loadingText.style.fontSize = '12px';
+    loadingText.style.letterSpacing = '.5px';
 
     loaderContainer.classList.add('loaderContainer');
     loaderContainer.style.position = 'absolute';
@@ -118,7 +122,7 @@ const initializeZeroBounce = (config) => {
     loaderContainer.style.backgroundColor = '#fff';
     loaderContainer.style.boxShadow = '0 2px 2px rgba(0,0,0,.2)';
     loaderContainer.style.display = 'flex';
-    loaderContainer.style.alignItems = 'baseline';
+    loaderContainer.style.alignItems = 'center';
     loaderContainer.style.padding = '3px 5px 5px';
     loaderContainer.style.height = '32px';
     loaderContainer.style.border = '1px solid #bbbbbb';
