@@ -155,13 +155,13 @@ const initializeZeroBounce = (config) => {
         }
       });
 
-      /* input.addEventListener('blur', function () {
+      input.addEventListener('blur', function () {
         const parent = input.parentNode;
         input.style.removeProperty('border-bottom-right-radius');
         if (parent.querySelector('.loaderContainer')) {
           parent.removeChild(loaderContainer);
         }
-      }); */
+      });
 
       input.addEventListener('input', function () {
         clearTimeout(delayTimer);
