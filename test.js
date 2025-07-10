@@ -72,6 +72,7 @@ const initializeZeroBounce = (config) => {
           throw new Error(result.error_message);
         }
       } catch (error) {
+        console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
         input.style.borderColor = '#DC143C';
         container.style.color = '#DC143C';
@@ -106,6 +107,8 @@ const initializeZeroBounce = (config) => {
     const inputs = documentContext.querySelectorAll(selector);
     const loaderContainer = documentContext.createElement('div');
     const loader = documentContext.createElement('div');
+    const loadingText = documentContext.createElement('p');
+    loadingText.innerText = 'Verifying ...';
     let delayTimer;
 
     loaderContainer.classList.add('loaderContainer');
@@ -134,6 +137,8 @@ const initializeZeroBounce = (config) => {
       duration: 2000,
       iterations: Infinity,
     });
+
+    loaderContainer.appendChild(loadingText);
 
     inputs.forEach((input) => {
       loaderContainer.style.right = 'calc(100% - ' + input.offsetWidth + 'px)';
