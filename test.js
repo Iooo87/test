@@ -113,7 +113,7 @@ const initializeZeroBounce = (config) => {
     loadingText.innerText = 'Verifying ...';
     loadingText.style.fontSize = '12px';
     loadingText.style.letterSpacing = '.5px';
-    loadintText.style.fontFamily = '"Helvetica Neue",Helvetica,Arial,sans-serif';
+    loadingText.style.fontFamily = '"Helvetica Neue",Helvetica,Arial,sans-serif';
     loadingText.style.color = 'rgb(60, 60, 60)';
 
     loaderContainer.classList.add('loaderContainer');
