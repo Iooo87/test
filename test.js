@@ -1,9 +1,3 @@
-const config = {
-  apiKey: '',
-  disableSubmitOnError: true,
-  hubspotFormId: '',
-};
-
 const initializeZeroBounce = (config) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, documentContext) {
@@ -17,7 +11,7 @@ const initializeZeroBounce = (config) => {
     async validate(input, loader, button) {
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
-      console.log(container);
+      const textContainer = container.querySelector('p');
       const iconContainer = this.document.createElement('div');
 
       iconContainer.classList.add('zb-icon');
@@ -29,6 +23,7 @@ const initializeZeroBounce = (config) => {
         container.style.borderColor = '#DC143C';
         iconContainer.innerHTML = '&#x2718;';
         iconContainer.style.color = '#DC143C';
+        textContainer.innerHTML = 'Invalid email.';
         container.insertBefore(iconContainer, container.firstChild);
         return;
       }
@@ -50,6 +45,7 @@ const initializeZeroBounce = (config) => {
         if (response.ok) {
           if (result.valid) {
             container.style.borderColor = 'rgba(82,168,236,.8)';
+            textContainer.innerHTML = 'Email valid.';
             iconContainer.innerHTML = '&#x2713;';
             iconContainer.style.color = '#3cb043';
             iconContainer.style.transform = 'scale(1.5, 1)';
@@ -59,6 +55,7 @@ const initializeZeroBounce = (config) => {
           } else {
             iconContainer.innerHTML = '&#x2718;';
             iconContainer.style.color = '#DC143C';
+            textContainer.innerHTML = 'Invalid email.';
             if (this.disableSubmit) {
               input.style.borderColor = '#DC143C';
               container.style.borderColor = '#DC143C';
@@ -69,12 +66,14 @@ const initializeZeroBounce = (config) => {
           container.style.borderColor = '#DC143C';
           iconContainer.innerHTML = '&#x2718;';
           iconContainer.style.color = '#DC143C';
+          textContainer.innerHTML = 'Invalid email.';
           container.insertBefore(iconContainer, container.firstChild);
           throw new Error(result.error_message);
         }
       } catch (error) {
         console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
+        textContainer.innerHTML = 'Invalid email.';
         input.style.borderColor = '#DC143C';
         container.style.color = '#DC143C';
         container.style.borderColor = '#DC143C';
