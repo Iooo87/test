@@ -23,7 +23,7 @@ const initializeZeroBounce = (config) => {
         container.style.borderColor = '#DC143C';
         iconContainer.innerHTML = '&#x2718;';
         iconContainer.style.color = '#DC143C';
-        textContainer.innerHTML = 'Invalid email.';
+        textContainer.innerHTML = 'Invalid email';
         container.insertBefore(iconContainer, container.firstChild);
         return;
       }
@@ -45,7 +45,7 @@ const initializeZeroBounce = (config) => {
         if (response.ok) {
           if (result.valid) {
             container.style.borderColor = 'rgba(82,168,236,.8)';
-            textContainer.innerHTML = 'Email valid.';
+            textContainer.innerHTML = 'Valid email';
             iconContainer.innerHTML = '&#x2713;';
             iconContainer.style.color = '#3cb043';
             iconContainer.style.transform = 'scale(1.5, 1)';
@@ -55,7 +55,7 @@ const initializeZeroBounce = (config) => {
           } else {
             iconContainer.innerHTML = '&#x2718;';
             iconContainer.style.color = '#DC143C';
-            textContainer.innerHTML = 'Invalid email.';
+            textContainer.innerHTML = 'Invalid email';
             if (this.disableSubmit) {
               input.style.borderColor = '#DC143C';
               container.style.borderColor = '#DC143C';
@@ -66,14 +66,14 @@ const initializeZeroBounce = (config) => {
           container.style.borderColor = '#DC143C';
           iconContainer.innerHTML = '&#x2718;';
           iconContainer.style.color = '#DC143C';
-          textContainer.innerHTML = 'Invalid email.';
+          textContainer.innerHTML = 'Invalid email';
           container.insertBefore(iconContainer, container.firstChild);
           throw new Error(result.error_message);
         }
       } catch (error) {
         console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
-        textContainer.innerHTML = 'Invalid email.';
+        textContainer.innerHTML = 'Invalid email';
         input.style.borderColor = '#DC143C';
         container.style.color = '#DC143C';
         container.style.borderColor = '#DC143C';
@@ -113,6 +113,8 @@ const initializeZeroBounce = (config) => {
     loadingText.innerText = 'Verifying ...';
     loadingText.style.fontSize = '12px';
     loadingText.style.letterSpacing = '.5px';
+    loadintText.style.fontFamily = '"Helvetica Neue",Helvetica,Arial,sans-serif';
+    loadingText.style.color = 'rgb(60, 60, 60)';
 
     loaderContainer.classList.add('loaderContainer');
     loaderContainer.style.position = 'absolute';
@@ -152,14 +154,6 @@ const initializeZeroBounce = (config) => {
           input.style.borderBottomRightRadius = '0';
           parent.style.position = 'relative';
           parent.insertBefore(loaderContainer, input.nextSibling);
-        }
-      });
-
-      input.addEventListener('blur', function () {
-        const parent = input.parentNode;
-        input.style.removeProperty('border-bottom-right-radius');
-        if (parent.querySelector('.loaderContainer')) {
-          parent.removeChild(loaderContainer);
         }
       });
 
