@@ -143,9 +143,7 @@ const initializeZeroBounce = (config) => {
         parent.style.position = 'relative';
         if (input.value.length > 0) {
           input.style.borderBottomRightRadius = '0';
-          if (!parent.querySelector('.loaderContainer')) {
-            parent.insertBefore(loaderContainer, input.nextSibling);
-          }
+          parent.insertBefore(loaderContainer, input.nextSibling);
         }
       });
 
