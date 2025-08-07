@@ -11,7 +11,6 @@ const initializeZeroBounce = (config) => {
     async validate(input, loader, button) {
       const uri = this.baseUrl + '/integration/widgets/validate/';
       const container = loader.parentNode;
-      const textContainer = container.querySelector('p');
       const iconContainer = this.document.createElement('div');
 
       iconContainer.classList.add('zb-icon');
@@ -23,7 +22,6 @@ const initializeZeroBounce = (config) => {
         container.style.borderColor = '#DC143C';
         iconContainer.innerHTML = '&#x2718;';
         iconContainer.style.color = '#DC143C';
-        textContainer.innerHTML = 'Invalid email';
         container.insertBefore(iconContainer, container.firstChild);
         return;
       }
@@ -45,7 +43,6 @@ const initializeZeroBounce = (config) => {
         if (response.ok) {
           if (result.valid) {
             container.style.borderColor = 'rgba(82,168,236,.8)';
-            textContainer.innerHTML = 'Valid email';
             iconContainer.innerHTML = '&#x2713;';
             iconContainer.style.color = '#3cb043';
             iconContainer.style.transform = 'scale(1.5, 1)';
@@ -55,7 +52,6 @@ const initializeZeroBounce = (config) => {
           } else {
             iconContainer.innerHTML = '&#x2718;';
             iconContainer.style.color = '#DC143C';
-            textContainer.innerHTML = 'Invalid email';
             if (this.disableSubmit) {
               input.style.borderColor = '#DC143C';
               container.style.borderColor = '#DC143C';
@@ -66,14 +62,12 @@ const initializeZeroBounce = (config) => {
           container.style.borderColor = '#DC143C';
           iconContainer.innerHTML = '&#x2718;';
           iconContainer.style.color = '#DC143C';
-          textContainer.innerHTML = 'Invalid email';
           container.insertBefore(iconContainer, container.firstChild);
           throw new Error(result.error_message);
         }
       } catch (error) {
         console.error('Validation error:', error);
         iconContainer.innerHTML = '&#x2718;';
-        textContainer.innerHTML = 'Invalid email';
         input.style.borderColor = '#DC143C';
         container.style.color = '#DC143C';
         container.style.borderColor = '#DC143C';
@@ -107,14 +101,10 @@ const initializeZeroBounce = (config) => {
     const inputs = documentContext.querySelectorAll(selector);
     const loaderContainer = documentContext.createElement('div');
     const loader = documentContext.createElement('div');
-    const loadingText = documentContext.createElement('p');
+    const logo = documentContext.createElement('img');
     let delayTimer;
 
-    loadingText.innerText = 'Verifying ...';
-    loadingText.style.fontSize = '12px';
-    loadingText.style.letterSpacing = '.5px';
-    loadingText.style.fontFamily = '"Helvetica Neue",Helvetica,Arial,sans-serif';
-    loadingText.style.color = 'rgb(60, 60, 60)';
+    logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
 
     loaderContainer.classList.add('loaderContainer');
     loaderContainer.style.position = 'absolute';
@@ -123,7 +113,7 @@ const initializeZeroBounce = (config) => {
     loaderContainer.style.backgroundColor = '#fff';
     loaderContainer.style.boxShadow = '0 2px 2px rgba(0,0,0,.2)';
     loaderContainer.style.display = 'flex';
-    loaderContainer.style.alignItems = 'center';
+    loaderContainer.style.alignItems = 'baseline';
     loaderContainer.style.padding = '3px 5px 5px';
     loaderContainer.style.height = '32px';
     loaderContainer.style.border = '1px solid #bbbbbb';
@@ -143,17 +133,27 @@ const initializeZeroBounce = (config) => {
       iterations: Infinity,
     });
 
-    loaderContainer.appendChild(loadingText);
+    loaderContainer.appendChild(logo);
 
     inputs.forEach((input) => {
       loaderContainer.style.right = 'calc(100% - ' + input.offsetWidth + 'px)';
 
       input.addEventListener('focus', function () {
+        const parent = input.parentNode;
+        parent.style.position = 'relative';
         if (input.value.length > 0) {
-          const parent = input.parentNode;
           input.style.borderBottomRightRadius = '0';
-          parent.style.position = 'relative';
-          parent.insertBefore(loaderContainer, input.nextSibling);
+          if (!parent.querySelector('.loaderContainer')) {
+            parent.insertBefore(loaderContainer, input.nextSibling);
+          }
+        }
+      });
+
+      input.addEventListener('blur', function () {
+        const parent = input.parentNode;
+        input.style.removeProperty('border-bottom-right-radius');
+        if (parent.querySelector('.loaderContainer')) {
+          parent.removeChild(loaderContainer);
         }
       });
 
@@ -181,7 +181,10 @@ const initializeZeroBounce = (config) => {
           input.style.borderBottomRightRadius = 0;
         }
 
-        loaderContainer.insertBefore(loader, loaderContainer.firstChild);
+        if (!parent.querySelector('.loaderContainer')) {
+          parent.insertBefore(loaderContainer, input.nextSibling);
+        }
+
         delayTimer = setTimeout(function () {
           if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
             parent.removeChild(loaderContainer);
