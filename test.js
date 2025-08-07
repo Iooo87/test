@@ -175,14 +175,13 @@ const initializeZeroBounce = (config) => {
           loaderContainer.removeChild(icon);
         }
         if (me.value.length > 0) {
-          parent.insertBefore(loaderContainer, input.nextSibling);
+          if (!parent.querySelector('.loaderContainer')) {
+            parent.insertBefore(loaderContainer, input.nextSibling);
+          }
           input.style.borderBottomRightRadius = 0;
         }
 
-        if (!parent.querySelector('.loaderContainer')) {
-          parent.insertBefore(loaderContainer, input.nextSibling);
-        }
-
+        loaderContainer.insertBefore(loader, loaderContainer.firstChild);
         delayTimer = setTimeout(function () {
           if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
             parent.removeChild(loaderContainer);
