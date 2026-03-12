@@ -29,6 +29,9 @@ const initializeZeroBounce = (config) => {
 
       if (!this.emailRegex.test(input.value)) {
         container.removeChild(loader);
+        if (this.hideResults && container.classList.contains('loaderContainer')) {
+          container.style.visibility = 'hidden';
+        }
         if (!this.hideResults) {
           container.style.borderColor = '#DC143C';
           iconContainer.innerHTML = '&#x2718;';
@@ -52,6 +55,10 @@ const initializeZeroBounce = (config) => {
 
         const result = await response.json();
         container.removeChild(loader);
+
+        if (this.hideResults && container.classList.contains('loaderContainer')) {
+          container.style.visibility = 'hidden';
+        }
 
         if (response.ok) {
           if (result.valid) {
@@ -99,6 +106,10 @@ const initializeZeroBounce = (config) => {
         }
       } catch (error) {
         console.error('Validation error:', error);
+        container.removeChild(loader);
+        if (this.hideResults && container.classList.contains('loaderContainer')) {
+          container.style.visibility = 'hidden';
+        }
         if (!this.hideResults) {
           iconContainer.innerHTML = '&#x2718;';
           input.style.borderColor = '#DC143C';
@@ -159,6 +170,7 @@ const initializeZeroBounce = (config) => {
     if (hideResults) {
       loaderContainer.style.height = 'auto';
       loaderContainer.style.padding = '5px';
+      loaderContainer.style.visibility = 'hidden';
     }
 
     loader.classList.add('loader');
@@ -190,6 +202,9 @@ const initializeZeroBounce = (config) => {
         parent.style.position = 'relative';
         if (input.value.length > 0) {
           input.style.borderBottomRightRadius = '0';
+          if (hideResults) {
+            loaderContainer.style.visibility = 'visible';
+          }
           parent.insertBefore(loaderContainer, input.nextSibling);
         }
       });
@@ -226,6 +241,9 @@ const initializeZeroBounce = (config) => {
         if (me.value.length > 0) {
           if (!parent.querySelector('.loaderContainer')) {
             parent.insertBefore(loaderContainer, input.nextSibling);
+          }
+          if (hideResults) {
+            loaderContainer.style.visibility = 'visible';
           }
           input.style.borderBottomRightRadius = 0;
         }
