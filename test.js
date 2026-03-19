@@ -218,7 +218,7 @@ const initializeZeroBounce = (config) => {
         if (disableSubmit && button) {
           button.disabled = true;
         }
-        if (loaderContainer.querySelectorAll('.zb-icon').length > 0) {
+        if (loaderContainer && loaderContainer.querySelectorAll('.zb-icon').length > 0) {
           const icon = parent.querySelector('.zb-icon');
           loaderContainer.removeChild(icon);
         }
