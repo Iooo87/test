@@ -1,1 +1,248 @@
-(function(_0x22b3bf,_0x42f05a){const _0x24b6b8=_0x1c7e,_0x317abe=_0x22b3bf();while(!![]){try{const _0x12b2ce=parseInt(_0x24b6b8(0xd3))/0x1*(parseInt(_0x24b6b8(0x136))/0x2)+-parseInt(_0x24b6b8(0x10f))/0x3*(parseInt(_0x24b6b8(0xd4))/0x4)+parseInt(_0x24b6b8(0x10e))/0x5+-parseInt(_0x24b6b8(0x127))/0x6*(-parseInt(_0x24b6b8(0x111))/0x7)+-parseInt(_0x24b6b8(0xcd))/0x8+-parseInt(_0x24b6b8(0xce))/0x9+parseInt(_0x24b6b8(0xd7))/0xa;if(_0x12b2ce===_0x42f05a)break;else _0x317abe['push'](_0x317abe['shift']());}catch(_0x59dae6){_0x317abe['push'](_0x317abe['shift']());}}}(_0x5690,0xed601));function _0x1c7e(_0x24abd8,_0x1fa376){const _0x5690ae=_0x5690();return _0x1c7e=function(_0x1c7eb1,_0x2bb962){_0x1c7eb1=_0x1c7eb1-0xcd;let _0xc3bff5=_0x5690ae[_0x1c7eb1];return _0xc3bff5;},_0x1c7e(_0x24abd8,_0x1fa376);}function _0x5690(){const _0x49799e=['10434285PDmTUG','loaderContainer','value','invalid','&#x2718;','4tWJxQu','28CMyyRP','.loaderContainer','stagingAPI','192250zAxrPi','https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png','src','error_message','validate','backgroundColor','boxShadow','rotate(0deg)','#DC143C','valid','#fff','application/json','div','\x27][type=\x27email\x27]','zIndex','position','innerHTML','zb_validation_result','createElement','hidden','add','POST','5px','blur','emailRegex','[type=\x27submit\x27]','color','hideResults','name','16px','8px','15px','contains','form','right','json','disabled','zb-custom-error','addEventListener','undefined','hubspot','error','visible','animate','querySelector','border-bottom-right-radius','#3cb043','transform','appendChild','forEach','firstChild','style','3px\x205px\x205px','querySelectorAll','border','4433510WkugGF','457518InLrFx','px)','2165072ioUbQf','contentDocument','document','apiKey','cssText','removeProperty','zb-icon','marginRight','padding','closest','disableSubmit','length','stringify','32px','hubspotFormId','borderRadius','parentNode','disableSubmitOnError','insertBefore','#888\x20#fbdd46\x20#888\x20#fbdd46','https://extension-api.zerobounce.net/api','alignItems','36mPMjPt','display','borderColor','visibility','classList','loader','rgba(82,168,236,.8)','img','input','fontSize','baseUrl','height','removeChild','.zb-icon','flex','856948ORbrio','scale(1.5,\x201)','width','[id^=\x27hs-form-iframe\x27]','offsetWidth','calc(100%\x20-\x20','1000','50%','testAPI','10211224tclFhg'];_0x5690=function(){return _0x49799e;};return _0x5690();}const initializeZeroBounce=_0x367f7a=>{const _0xafa237=_0x1c7e;class _0x49a191{constructor(_0x312d67,_0x171b00,_0x3e68d6,_0xc8421d){const _0x3b5bf0=_0x1c7e;this[_0x3b5bf0(0x114)]=_0x312d67,this[_0x3b5bf0(0x11b)]=_0x171b00,this['hideResults']=_0x3e68d6,this[_0x3b5bf0(0x131)]=_0x367f7a['stagingAPI']?_0x367f7a[_0x3b5bf0(0xd6)]:_0x367f7a[_0x3b5bf0(0x13e)]?_0x367f7a['testAPI']:_0x3b5bf0(0x125),this['emailRegex']=/^[a-zA-Z0-9._%+=!?/|{}$^~`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,this['document']=_0xc8421d;}async[_0xafa237(0xdb)](_0xe06929,_0x94cf04,_0xe695c6){const _0x7724e8=_0xafa237,_0x475b44=this[_0x7724e8(0x131)]+'/integration/widgets/validate/',_0x1146da=_0x94cf04[_0x7724e8(0x121)],_0x4b94cc=this['document'][_0x7724e8(0xe9)](_0x7724e8(0xe3)),_0x8d2935=_0xe06929[_0x7724e8(0x11a)](_0x7724e8(0xf8));let _0x91d066=_0x8d2935['querySelector']('input[name=\x22zb_validation_result\x22]');!_0x91d066&&(_0x91d066=this[_0x7724e8(0x113)][_0x7724e8(0xe9)](_0x7724e8(0x12f)),_0x91d066['type']=_0x7724e8(0xea),_0x91d066[_0x7724e8(0xf3)]=_0x7724e8(0xe8),_0x8d2935[_0x7724e8(0x107)](_0x91d066));_0x4b94cc[_0x7724e8(0x12b)]['add'](_0x7724e8(0x117)),_0x4b94cc[_0x7724e8(0x10a)][_0x7724e8(0x130)]=_0x7724e8(0xf4),_0x4b94cc[_0x7724e8(0x10a)]['marginRight']='8px';if(!this[_0x7724e8(0xef)]['test'](_0xe06929[_0x7724e8(0xd0)])){_0x1146da[_0x7724e8(0x133)](_0x94cf04);this['hideResults']&&_0x1146da[_0x7724e8(0x12b)][_0x7724e8(0xf7)](_0x7724e8(0xcf))&&(_0x1146da[_0x7724e8(0x10a)]['visibility']=_0x7724e8(0xea));!this[_0x7724e8(0xf2)]&&(_0x1146da[_0x7724e8(0x10a)]['borderColor']=_0x7724e8(0xdf),_0x4b94cc[_0x7724e8(0xe7)]='&#x2718;',_0x4b94cc[_0x7724e8(0x10a)][_0x7724e8(0xf1)]=_0x7724e8(0xdf),_0x1146da[_0x7724e8(0x123)](_0x4b94cc,_0x1146da[_0x7724e8(0x109)]));_0x91d066[_0x7724e8(0xd0)]=_0x7724e8(0xd1);return;}const _0x44259f=JSON[_0x7724e8(0x11d)]({'public_key':this['apiKey'],'email':_0xe06929[_0x7724e8(0xd0)],'widget_type':_0x7724e8(0xff)});try{const _0xf667a7=await fetch(_0x475b44,{'method':_0x7724e8(0xec),'headers':{'Content-Type':_0x7724e8(0xe2)},'body':_0x44259f}),_0x3b4e24=await _0xf667a7[_0x7724e8(0xfa)]();_0x1146da['removeChild'](_0x94cf04);this[_0x7724e8(0xf2)]&&_0x1146da[_0x7724e8(0x12b)]['contains']('loaderContainer')&&(_0x1146da[_0x7724e8(0x10a)]['visibility']=_0x7724e8(0xea));if(_0xf667a7['ok'])_0x3b4e24['valid']?(!this[_0x7724e8(0xf2)]&&(_0x1146da[_0x7724e8(0x10a)][_0x7724e8(0x129)]='rgba(82,168,236,.8)',_0x4b94cc[_0x7724e8(0xe7)]='&#x2713;',_0x4b94cc[_0x7724e8(0x10a)][_0x7724e8(0xf1)]=_0x7724e8(0x105),_0x4b94cc[_0x7724e8(0x10a)][_0x7724e8(0x106)]=_0x7724e8(0x137)),this[_0x7724e8(0x11b)]&&_0xe695c6&&(_0xe695c6[_0x7724e8(0xfb)]=![]),_0x91d066[_0x7724e8(0xd0)]=_0x7724e8(0xe0)):(!this[_0x7724e8(0xf2)]&&(_0x4b94cc[_0x7724e8(0xe7)]=_0x7724e8(0xd2),_0x4b94cc[_0x7724e8(0x10a)][_0x7724e8(0xf1)]='#DC143C'),this['disableSubmit']&&(!this[_0x7724e8(0xf2)]&&(_0xe06929[_0x7724e8(0x10a)]['borderColor']=_0x7724e8(0xdf),_0x1146da[_0x7724e8(0x10a)]['borderColor']=_0x7724e8(0xdf)),_0xe695c6[_0x7724e8(0xfb)]=!!_0xe695c6),_0x91d066['value']=_0x7724e8(0xd1)),!this['hideResults']&&_0x1146da[_0x7724e8(0x123)](_0x4b94cc,_0x1146da['firstChild']);else{!this[_0x7724e8(0xf2)]&&(_0x1146da['style']['borderColor']=_0x7724e8(0xdf),_0x4b94cc[_0x7724e8(0xe7)]=_0x7724e8(0xd2),_0x4b94cc[_0x7724e8(0x10a)]['color']='#DC143C',_0x1146da[_0x7724e8(0x123)](_0x4b94cc,_0x1146da[_0x7724e8(0x109)]));this[_0x7724e8(0x11b)]&&_0xe695c6&&(_0xe695c6[_0x7724e8(0xfb)]=!![]);_0x91d066[_0x7724e8(0xd0)]=_0x7724e8(0x100);throw new Error(_0x3b4e24[_0x7724e8(0xda)]);}}catch(_0x50a572){console[_0x7724e8(0x100)]('Validation\x20error:',_0x50a572),_0x1146da[_0x7724e8(0x133)](_0x94cf04),this['hideResults']&&_0x1146da[_0x7724e8(0x12b)]['contains'](_0x7724e8(0xcf))&&(_0x1146da[_0x7724e8(0x10a)][_0x7724e8(0x12a)]=_0x7724e8(0xea)),!this[_0x7724e8(0xf2)]&&(_0x4b94cc['innerHTML']=_0x7724e8(0xd2),_0xe06929[_0x7724e8(0x10a)][_0x7724e8(0x129)]=_0x7724e8(0xdf),_0x1146da[_0x7724e8(0x10a)][_0x7724e8(0xf1)]='#DC143C',_0x1146da[_0x7724e8(0x10a)][_0x7724e8(0x129)]=_0x7724e8(0xdf),_0x1146da[_0x7724e8(0x123)](_0x4b94cc,_0x1146da['firstChild'])),this[_0x7724e8(0x11b)]&&_0xe695c6&&(_0xe695c6[_0x7724e8(0xfb)]=![]),_0x91d066['value']='error';}}}const _0x14f3fc=typeof _0x367f7a[_0xafa237(0x122)]!==_0xafa237(0xfe)?_0x367f7a[_0xafa237(0x122)]:!![],_0x53b8a9=typeof _0x367f7a[_0xafa237(0xf2)]!=='undefined'?_0x367f7a[_0xafa237(0xf2)]:![],_0x3d98dd=_0x367f7a[_0xafa237(0x11f)][_0xafa237(0x11c)]>0x0?'[id*=\x27'+_0x367f7a[_0xafa237(0x11f)]+_0xafa237(0xe4):'',_0x4ad797=document[_0xafa237(0x10c)](_0xafa237(0x139));if(_0x4ad797[_0xafa237(0x11c)]>0x0)_0x4ad797[_0xafa237(0x108)](_0x338443=>{const _0x12c8dd=_0xafa237,_0x3c65df=_0x338443[_0x12c8dd(0x112)]||_0x338443['contentWindow']['document'];_0x52a323(_0x3c65df,_0x3d98dd,_0x14f3fc,_0x53b8a9,_0x367f7a[_0x12c8dd(0x114)]);});else{const _0x4a8e9e=document[_0xafa237(0x103)]('form[id^=\x22hsForm_\x22]');_0x4a8e9e&&_0x52a323(document,_0x3d98dd,_0x14f3fc,_0x53b8a9,_0x367f7a[_0xafa237(0x114)]);}function _0x52a323(_0x5d330e,_0x579376,_0x2cae08,_0x327080,_0x32cdbc){const _0x7bf6b0=_0xafa237,_0x1f2426=new _0x49a191(_0x32cdbc,_0x2cae08,_0x327080,_0x5d330e),_0x525001=_0x5d330e[_0x7bf6b0(0x10c)](_0x579376),_0x47f5d1=_0x5d330e[_0x7bf6b0(0xe9)](_0x7bf6b0(0xe3)),_0x3a3c8e=_0x5d330e[_0x7bf6b0(0xe9)](_0x7bf6b0(0xe3)),_0x5215d3=_0x5d330e[_0x7bf6b0(0xe9)](_0x7bf6b0(0x12e));let _0xcc20e7;_0x5215d3[_0x7bf6b0(0xd9)]=_0x7bf6b0(0xd8),_0x47f5d1[_0x7bf6b0(0x12b)][_0x7bf6b0(0xeb)](_0x7bf6b0(0xcf)),_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0xe6)]='absolute',_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0xf9)]=0x0,_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0x120)]='0\x200\x204px\x204px',_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0xdc)]=_0x7bf6b0(0xe1),_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0xdd)]='0\x202px\x202px\x20rgba(0,0,0,.2)',_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0x128)]=_0x7bf6b0(0x135),_0x47f5d1['style'][_0x7bf6b0(0x126)]='baseline',_0x47f5d1[_0x7bf6b0(0x10a)]['padding']=_0x7bf6b0(0x10b),_0x47f5d1['style'][_0x7bf6b0(0x132)]=_0x7bf6b0(0x11e),_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0x10d)]='1px\x20solid\x20#bbbbbb',_0x47f5d1[_0x7bf6b0(0x10a)]['borderTop']='none',_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0xe5)]=_0x7bf6b0(0x13c),_0x327080&&(_0x47f5d1['style'][_0x7bf6b0(0x132)]='auto',_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0x119)]=_0x7bf6b0(0xed),_0x47f5d1[_0x7bf6b0(0x10a)][_0x7bf6b0(0x12a)]=_0x7bf6b0(0xea)),_0x3a3c8e[_0x7bf6b0(0x12b)][_0x7bf6b0(0xeb)](_0x7bf6b0(0x12c)),_0x3a3c8e[_0x7bf6b0(0x10a)][_0x7bf6b0(0x10d)]='3px\x20solid',_0x3a3c8e[_0x7bf6b0(0x10a)][_0x7bf6b0(0x129)]=_0x7bf6b0(0x124),_0x3a3c8e[_0x7bf6b0(0x10a)]['borderRadius']=_0x7bf6b0(0x13d),_0x3a3c8e['style'][_0x7bf6b0(0x138)]=_0x7bf6b0(0xf6),_0x3a3c8e['style'][_0x7bf6b0(0x132)]=_0x7bf6b0(0xf6),_0x3a3c8e[_0x7bf6b0(0x10a)][_0x7bf6b0(0x118)]=_0x7bf6b0(0xf5),_0x327080&&(_0x3a3c8e['style'][_0x7bf6b0(0x118)]='0'),_0x3a3c8e[_0x7bf6b0(0x102)]([{'transform':_0x7bf6b0(0xde)},{'transform':'rotate(360deg)'}],{'duration':0x7d0,'iterations':Infinity}),!_0x327080&&_0x47f5d1['appendChild'](_0x5215d3),_0x525001[_0x7bf6b0(0x108)](_0x4a8fee=>{const _0x1a1c5f=_0x7bf6b0;_0x47f5d1[_0x1a1c5f(0x10a)][_0x1a1c5f(0xf9)]=_0x1a1c5f(0x13b)+_0x4a8fee[_0x1a1c5f(0x13a)]+_0x1a1c5f(0x110),_0x4a8fee['addEventListener']('focus',function(){const _0x420075=_0x1a1c5f,_0x75bd0d=_0x4a8fee[_0x420075(0x121)];_0x75bd0d[_0x420075(0x10a)][_0x420075(0xe6)]='relative';}),_0x4a8fee[_0x1a1c5f(0xfd)](_0x1a1c5f(0xee),function(){const _0x5e0bb6=_0x1a1c5f,_0x141e72=_0x4a8fee[_0x5e0bb6(0x121)];_0x4a8fee[_0x5e0bb6(0x10a)][_0x5e0bb6(0x116)](_0x5e0bb6(0x104)),_0x141e72[_0x5e0bb6(0x103)](_0x5e0bb6(0xd5))&&_0x141e72['removeChild'](_0x47f5d1);}),_0x4a8fee[_0x1a1c5f(0xfd)](_0x1a1c5f(0x12f),function(){const _0x433a5b=_0x1a1c5f;clearTimeout(_0xcc20e7);const _0x463dd6=this,_0x2e4b26=_0x4a8fee['parentNode'],_0x23f5ac=_0x4a8fee[_0x433a5b(0x11a)](_0x433a5b(0xf8)),_0x12343d=_0x23f5ac['querySelector'](_0x433a5b(0xf0));_0x4a8fee['style']['cssText']='';!_0x327080&&(_0x47f5d1['style'][_0x433a5b(0x129)]=_0x433a5b(0x12d));if(_0x4a8fee['classList'][_0x433a5b(0xf7)](_0x433a5b(0xfc)))_0x4a8fee[_0x433a5b(0x12b)]['remove'](_0x433a5b(0xfc));if(_0x47f5d1[_0x433a5b(0x12b)][_0x433a5b(0xf7)](_0x433a5b(0xfc)))_0x4a8fee['classList']['remove'](_0x433a5b(0xfc));_0x2cae08&&_0x12343d&&(_0x12343d[_0x433a5b(0xfb)]=!![]);if(_0x47f5d1[_0x433a5b(0x10c)](_0x433a5b(0x134))[_0x433a5b(0x11c)]>0x0){const _0x355cb0=_0x2e4b26[_0x433a5b(0x103)](_0x433a5b(0x134));_0x47f5d1[_0x433a5b(0x133)](_0x355cb0);}_0x463dd6['value'][_0x433a5b(0x11c)]>0x0&&(!_0x2e4b26[_0x433a5b(0x103)](_0x433a5b(0xd5))&&_0x2e4b26[_0x433a5b(0x123)](_0x47f5d1,_0x4a8fee['nextSibling']),_0x327080&&(_0x47f5d1[_0x433a5b(0x10a)]['visibility']=_0x433a5b(0x101)),_0x4a8fee[_0x433a5b(0x10a)]['borderBottomRightRadius']=0x0),_0x47f5d1['insertBefore'](_0x3a3c8e,_0x47f5d1[_0x433a5b(0x109)]),_0xcc20e7=setTimeout(function(){const _0xc6615e=_0x433a5b;_0x463dd6[_0xc6615e(0xd0)]===''&&_0x2e4b26[_0xc6615e(0x10c)](_0xc6615e(0xd5))[_0xc6615e(0x11c)]>0x0&&(_0x2e4b26[_0xc6615e(0x133)](_0x47f5d1),!_0x327080&&(_0x4a8fee[_0xc6615e(0x10a)][_0xc6615e(0x115)]=''));if(_0x463dd6[_0xc6615e(0xd0)]!=='')_0x1f2426[_0xc6615e(0xdb)](_0x463dd6,_0x3a3c8e,_0x12343d);},0x1f4);});});}};
+const initializeZeroBounce = (config) => {
+  class ZeroBounceApi {
+    constructor(apiKey, disableSubmit, hideResults, documentContext) {
+      this.apiKey = apiKey;
+      this.disableSubmit = disableSubmit;
+      this.hideResults = hideResults;
+      this.baseUrl = config.stagingAPI ? config.stagingAPI : config.testAPI ? config.testAPI : 'https://extension-api.zerobounce.net/api';
+      this.emailRegex = /^[a-zA-Z0-9._%+=!?/|{}$^~`&#*-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+      this.document = documentContext;
+    }
+
+    async validate(input, loader, button) {
+      const uri = this.baseUrl + '/integration/widgets/validate/';
+      const container = loader.parentNode;
+      const form = input.closest('form');
+      const documentContext = this.document;
+
+      if (!container) return;
+
+      const iconContainer = documentContext.createElement('div');
+      let validationResultInput = form.querySelector('input[name="zb_validation_result"]');
+
+      if (!validationResultInput) {
+        validationResultInput = documentContext.createElement('input');
+        validationResultInput.type = 'hidden';
+        validationResultInput.name = 'zb_validation_result';
+        form.appendChild(validationResultInput);
+      }
+
+      iconContainer.classList.add('zb-icon');
+      iconContainer.style.fontSize = '16px';
+      iconContainer.style.marginRight = '8px';
+
+      const safeRemove = (el, parent) => {
+        if (el && el.parentNode === parent) {
+          parent.removeChild(el);
+        }
+      };
+
+      if (!this.emailRegex.test(input.value)) {
+        safeRemove(loader, container);
+
+        if (this.hideResults && container.classList.contains('loaderContainer')) {
+          container.style.visibility = 'hidden';
+        }
+        if (!this.hideResults) {
+          container.style.borderColor = '#DC143C';
+          iconContainer.innerHTML = '&#x2718;';
+          iconContainer.style.color = '#DC143C';
+          container.insertBefore(iconContainer, container.firstChild);
+        }
+        validationResultInput.value = 'invalid';
+        return;
+      }
+
+      const jsonData = JSON.stringify({ public_key: this.apiKey, email: input.value, widget_type: 'hubspot' });
+
+      try {
+        const response = await fetch(uri, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: jsonData,
+        });
+
+        const result = await response.json();
+
+        if (!container.parentNode) return;
+
+        safeRemove(loader, container);
+
+        if (this.hideResults && container.classList.contains('loaderContainer')) {
+          container.style.visibility = 'hidden';
+        }
+
+        if (response.ok) {
+          if (result.valid) {
+            if (!this.hideResults) {
+              container.style.borderColor = 'rgba(82,168,236,.8)';
+              iconContainer.innerHTML = '&#x2713;';
+              iconContainer.style.color = '#3cb043';
+              iconContainer.style.transform = 'scale(1.5, 1)';
+            }
+            if (this.disableSubmit && button) button.disabled = false;
+            validationResultInput.value = 'valid';
+          } else {
+            if (!this.hideResults) {
+              iconContainer.innerHTML = '&#x2718;';
+              iconContainer.style.color = '#DC143C';
+              input.style.borderColor = '#DC143C';
+              container.style.borderColor = '#DC143C';
+            }
+            if (this.disableSubmit && button) button.disabled = true;
+            validationResultInput.value = 'invalid';
+          }
+          if (!this.hideResults) container.insertBefore(iconContainer, container.firstChild);
+        } else {
+          throw new Error(result.error_message || 'API Error');
+        }
+      } catch (error) {
+        console.error('Validation error:', error);
+        safeRemove(loader, container);
+
+        if (this.hideResults && container.classList.contains('loaderContainer')) {
+          container.style.visibility = 'hidden';
+        }
+        if (!this.hideResults && container.parentNode) {
+          iconContainer.innerHTML = '&#x2718;';
+          input.style.borderColor = '#DC143C';
+          container.style.color = '#DC143C';
+          container.style.borderColor = '#DC143C';
+          container.insertBefore(iconContainer, container.firstChild);
+        }
+        if (this.disableSubmit && button) button.disabled = false;
+        validationResultInput.value = 'error';
+      }
+    }
+  }
+
+  const disableSubmit = typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
+  const hideResults = typeof config.hideResults !== 'undefined' ? config.hideResults : false;
+  const selector = config.hubspotFormId.length > 0 ? `[id*='${config.hubspotFormId}'][type='email']` : '';
+
+  const iframes = document.querySelectorAll("[id^='hs-form-iframe']");
+
+  if (iframes.length > 0) {
+    iframes.forEach((iframe) => {
+      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+      processValidation(iframeDocument, selector, disableSubmit, hideResults, config.apiKey);
+    });
+  } else {
+    const form = document.querySelector('form[id^="hsForm_"]');
+    if (form) {
+      processValidation(document, selector, disableSubmit, hideResults, config.apiKey);
+    }
+  }
+
+  function processValidation(documentContext, selector, disableSubmit, hideResults, apiKey) {
+    const zb = new ZeroBounceApi(apiKey, disableSubmit, hideResults, documentContext);
+    const inputs = documentContext.querySelectorAll(selector);
+    const loaderContainer = documentContext.createElement('div');
+    const loader = documentContext.createElement('div');
+    const logo = documentContext.createElement('img');
+    let delayTimer;
+
+    logo.src = 'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=23,metadata=none/static/logo.png';
+
+    loaderContainer.classList.add('loaderContainer');
+    loaderContainer.style.position = 'absolute';
+    loaderContainer.style.right = 0;
+    loaderContainer.style.borderRadius = '0 0 4px 4px';
+    loaderContainer.style.backgroundColor = '#fff';
+    loaderContainer.style.boxShadow = '0 2px 2px rgba(0,0,0,.2)';
+    loaderContainer.style.display = 'flex';
+    loaderContainer.style.alignItems = 'baseline';
+    loaderContainer.style.padding = '3px 5px 5px';
+    loaderContainer.style.height = '32px';
+    loaderContainer.style.border = '1px solid #bbbbbb';
+    loaderContainer.style.borderTop = 'none';
+    loaderContainer.style.zIndex = '1000';
+
+    if (hideResults) {
+      loaderContainer.style.height = 'auto';
+      loaderContainer.style.padding = '5px';
+      loaderContainer.style.visibility = 'hidden';
+    }
+
+    loader.classList.add('loader');
+    loader.style.border = '3px solid';
+    loader.style.borderColor = '#888 #fbdd46 #888 #fbdd46';
+    loader.style.borderRadius = '50%';
+    loader.style.width = '15px';
+    loader.style.height = '15px';
+    loader.style.marginRight = '8px';
+
+    if (hideResults) {
+      loader.style.marginRight = '0';
+    }
+
+    loader.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
+      duration: 2000,
+      iterations: Infinity,
+    });
+
+    if (!hideResults) {
+      loaderContainer.appendChild(logo);
+    }
+
+    inputs.forEach((input) => {
+      loaderContainer.style.right = 'calc(100% - ' + input.offsetWidth + 'px)';
+
+      input.addEventListener('focus', function () {
+        const parent = input.parentNode;
+        parent.style.position = 'relative';
+      });
+
+      input.addEventListener('blur', function () {
+        const parent = input.parentNode;
+        input.style.removeProperty('border-bottom-right-radius');
+        if (parent.querySelector('.loaderContainer')) {
+          parent.removeChild(loaderContainer);
+        }
+      });
+
+      input.addEventListener('input', function () {
+        clearTimeout(delayTimer);
+        const me = this;
+        const parent = input.parentNode;
+        const form = input.closest('form');
+        const button = form.querySelector("[type='submit']");
+        input.style.cssText = '';
+        if (!hideResults) {
+          loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
+        }
+
+        if (input.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
+        if (loaderContainer.classList.contains('zb-custom-error')) input.classList.remove('zb-custom-error');
+
+        if (disableSubmit && button) {
+          button.disabled = true;
+        }
+        if (loaderContainer.querySelectorAll('.zb-icon').length > 0) {
+          const icon = parent.querySelector('.zb-icon');
+          loaderContainer.removeChild(icon);
+        }
+        if (me.value.length > 0) {
+          if (!parent.querySelector('.loaderContainer')) {
+            parent.insertBefore(loaderContainer, input.nextSibling);
+          }
+          if (hideResults) {
+            loaderContainer.style.visibility = 'visible';
+          }
+          input.style.borderBottomRightRadius = 0;
+        }
+
+        loaderContainer.insertBefore(loader, loaderContainer.firstChild);
+        delayTimer = setTimeout(function () {
+          if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
+            parent.removeChild(loaderContainer);
+            if (!hideResults) {
+              input.style.cssText = '';
+            }
+          }
+          if (me.value !== '') zb.validate(me, loader, button);
+        }, 500);
+      });
+    });
+  }
+};
