@@ -218,9 +218,11 @@ const initializeZeroBounce = (config) => {
         if (disableSubmit && button) {
           button.disabled = true;
         }
-        if (loaderContainer && loaderContainer.querySelectorAll('.zb-icon').length > 0) {
-          const icon = parent.querySelector('.zb-icon');
-          loaderContainer.removeChild(icon);
+        if (loaderContainer) {
+          const icon = loaderContainer.querySelector('.zb-icon');
+          if (icon && icon.parentNode === loaderContainer) {
+            loaderContainer.removeChild(icon);
+          }
         }
         if (me.value.length > 0) {
           if (!parent.querySelector('.loaderContainer')) {
