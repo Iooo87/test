@@ -1,18 +1,4 @@
 const initializeZeroBounce = (config) => {
-  /** User may still be typing (e.g. local@domain before TLD) — do not show invalid UI or call API. */
-  const isLikelyIncompleteEmail = (value) => {
-    const v = String(value).trim();
-    if (!v.length) return true;
-    const at = v.indexOf('@');
-    if (at <= 0) return true;
-    const domain = v.slice(at + 1);
-    if (!domain.length) return true;
-    if (!domain.includes('.')) return true;
-    const afterLastDot = domain.slice(domain.lastIndexOf('.') + 1);
-    if (afterLastDot.length < 2) return true;
-    return false;
-  };
-
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, hideResults, documentContext) {
       this.apiKey = apiKey;
@@ -65,17 +51,7 @@ const initializeZeroBounce = (config) => {
           container.style.visibility = 'hidden';
         }
 
-        if (isLikelyIncompleteEmail(input.value)) {
-          if (this.disableSubmit && button) button.disabled = true;
-          validationResultInput.value = 'pending';
-          if (!this.hideResults && container.parentNode) {
-            clearResultIcons(container);
-            container.style.borderColor = 'rgba(82,168,236,.8)';
-            input.style.removeProperty('border-color');
-          }
-          return;
-        }
-
+        // validate() only runs after the input debounce (idle), so this is “stopped typing”, not mid-keystroke.
         if (!this.hideResults) {
           clearResultIcons(container);
           container.style.borderColor = '#DC143C';
