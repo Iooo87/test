@@ -1,4 +1,18 @@
 const initializeZeroBounce = (config) => {
+  /** User may still be typing (e.g. local@domain before TLD) — do not show invalid UI or call API. */
+  const isLikelyIncompleteEmail = (value) => {
+    const v = String(value).trim();
+    if (!v.length) return true;
+    const at = v.indexOf('@');
+    if (at <= 0) return true;
+    const domain = v.slice(at + 1);
+    if (!domain.length) return true;
+    if (!domain.includes('.')) return true;
+    const afterLastDot = domain.slice(domain.lastIndexOf('.') + 1);
+    if (afterLastDot.length < 2) return true;
+    return false;
+  };
+
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, hideResults, documentContext) {
       this.apiKey = apiKey;
@@ -37,18 +51,39 @@ const initializeZeroBounce = (config) => {
         }
       };
 
+      const clearResultIcons = (parent) => {
+        if (!parent) return;
+        parent.querySelectorAll('.zb-icon').forEach((node) => {
+          if (node.parentNode === parent) parent.removeChild(node);
+        });
+      };
+
       if (!this.emailRegex.test(input.value)) {
         safeRemove(loader, container);
 
         if (this.hideResults && container.classList.contains('loaderContainer')) {
           container.style.visibility = 'hidden';
         }
+
+        if (isLikelyIncompleteEmail(input.value)) {
+          if (this.disableSubmit && button) button.disabled = true;
+          validationResultInput.value = 'pending';
+          if (!this.hideResults && container.parentNode) {
+            clearResultIcons(container);
+            container.style.borderColor = 'rgba(82,168,236,.8)';
+            input.style.removeProperty('border-color');
+          }
+          return;
+        }
+
         if (!this.hideResults) {
+          clearResultIcons(container);
           container.style.borderColor = '#DC143C';
           iconContainer.innerHTML = '&#x2718;';
           iconContainer.style.color = '#DC143C';
           container.insertBefore(iconContainer, container.firstChild);
         }
+        if (this.disableSubmit && button) button.disabled = true;
         validationResultInput.value = 'invalid';
         return;
       }
@@ -84,7 +119,9 @@ const initializeZeroBounce = (config) => {
         }
 
         if (!this.hideResults) {
+          clearResultIcons(container);
           if (isValid) {
+            input.style.removeProperty('border-color');
             container.style.borderColor = 'rgba(82,168,236,.8)';
             iconContainer.innerHTML = '&#x2713;';
             iconContainer.style.color = '#3cb043';
@@ -108,6 +145,7 @@ const initializeZeroBounce = (config) => {
           container.style.visibility = 'hidden';
         }
         if (!this.hideResults && container.parentNode) {
+          clearResultIcons(container);
           iconContainer.innerHTML = '&#x2718;';
           input.style.borderColor = '#DC143C';
           container.style.color = '#DC143C';
@@ -205,10 +243,9 @@ const initializeZeroBounce = (config) => {
         loaderContainer.removeChild(loader);
       }
 
-      const existingIcon = loaderContainer.querySelector('.zb-icon');
-      if (existingIcon && existingIcon.parentNode === loaderContainer) {
-        loaderContainer.removeChild(existingIcon);
-      }
+      loaderContainer.querySelectorAll('.zb-icon').forEach((node) => {
+        if (node.parentNode === loaderContainer) loaderContainer.removeChild(node);
+      });
 
       const icon = documentContext.createElement('div');
       icon.classList.add('zb-icon');
