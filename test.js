@@ -243,9 +243,6 @@ const initializeZeroBounce = (config) => {
           parent.insertBefore(loaderContainer, input.nextSibling);
           input.style.borderBottomRightRadius = 0;
         }
-        if (hideResults && input.value.length > 0) {
-          loaderContainer.style.visibility = 'visible';
-        }
         restoreResultOnFocus(input);
       });
 
