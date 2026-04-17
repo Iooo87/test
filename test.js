@@ -190,12 +190,63 @@ const initializeZeroBounce = (config) => {
       loaderContainer.appendChild(logo);
     }
 
+    const restoreResultOnFocus = (input) => {
+      if (hideResults || !input.value) return;
+
+      const form = input.closest('form');
+      if (!form) return;
+
+      const validationResultInput = form.querySelector('input[name="zb_validation_result"]');
+      const status = validationResultInput ? validationResultInput.value : '';
+
+      if (!status || status === 'pending') return;
+
+      if (loader.parentNode === loaderContainer) {
+        loaderContainer.removeChild(loader);
+      }
+
+      const existingIcon = loaderContainer.querySelector('.zb-icon');
+      if (existingIcon && existingIcon.parentNode === loaderContainer) {
+        loaderContainer.removeChild(existingIcon);
+      }
+
+      const icon = documentContext.createElement('div');
+      icon.classList.add('zb-icon');
+      icon.style.fontSize = '16px';
+      icon.style.marginRight = '8px';
+
+      if (status === 'valid') {
+        loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
+        icon.innerHTML = '&#x2713;';
+        icon.style.color = '#3cb043';
+        icon.style.transform = 'scale(1.5, 1)';
+      } else if (status === 'invalid' || status === 'error') {
+        input.style.borderColor = '#DC143C';
+        loaderContainer.style.borderColor = '#DC143C';
+        icon.innerHTML = '&#x2718;';
+        icon.style.color = '#DC143C';
+      } else {
+        return;
+      }
+
+      loaderContainer.insertBefore(icon, loaderContainer.firstChild);
+    };
+
     inputs.forEach((input) => {
       loaderContainer.style.right = 'calc(100% - ' + input.offsetWidth + 'px)';
 
       input.addEventListener('focus', function () {
         const parent = input.parentNode;
         parent.style.position = 'relative';
+
+        if (input.value.length > 0 && !parent.querySelector('.loaderContainer')) {
+          parent.insertBefore(loaderContainer, input.nextSibling);
+          input.style.borderBottomRightRadius = 0;
+        }
+        if (hideResults && input.value.length > 0) {
+          loaderContainer.style.visibility = 'visible';
+        }
+        restoreResultOnFocus(input);
       });
 
       input.addEventListener('blur', function () {
