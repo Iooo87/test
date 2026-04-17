@@ -95,13 +95,12 @@ const initializeZeroBounce = (config) => {
           }
         }
 
-        if (!isContainerMounted) return;
-
         safeRemove(loader, container);
-
         if (this.hideResults && container.classList.contains('loaderContainer')) {
           container.style.visibility = 'hidden';
         }
+
+        if (!isContainerMounted) return;
 
         if (!this.hideResults) {
           clearResultIcons(container);
@@ -263,7 +262,7 @@ const initializeZeroBounce = (config) => {
         const parent = input.parentNode;
         parent.style.position = 'relative';
 
-        if (input.value.length > 0 && !parent.querySelector('.loaderContainer')) {
+        if (!hideResults && input.value.length > 0 && !parent.querySelector('.loaderContainer')) {
           parent.insertBefore(loaderContainer, input.nextSibling);
           input.style.borderBottomRightRadius = 0;
         }
