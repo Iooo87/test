@@ -1,4 +1,7 @@
-const initializeZeroBounce = (config) => {
+(function() {
+  if (typeof window.initializeZeroBounce !== 'undefined') return;
+
+  const initializeZeroBounce = (config) => {
   class ZeroBounceApi {
     constructor(apiKey, disableSubmit, hideResults, documentContext) {
       this.apiKey = apiKey;
@@ -277,16 +280,15 @@ const initializeZeroBounce = (config) => {
         }
       });
 
-      input.addEventListener('input', function () {
+      const triggerValidation = () => {
         clearTimeout(delayTimer);
         if (currentAbortController) {
           currentAbortController.abort();
           currentAbortController = null;
         }
-        const me = this;
         const parent = input.parentNode;
         const form = input.closest('form');
-        const button = form.querySelector("[type='submit']");
+        const button = form ? form.querySelector("[type='submit']") : null;
         input.style.cssText = '';
         if (!hideResults) {
           loaderContainer.style.borderColor = 'rgba(82,168,236,.8)';
@@ -304,7 +306,7 @@ const initializeZeroBounce = (config) => {
             loaderContainer.removeChild(icon);
           }
         }
-        if (me.value.length > 0) {
+        if (input.value.length > 0) {
           if (!parent.querySelector('.loaderContainer')) {
             parent.insertBefore(loaderContainer, input.nextSibling);
           }
@@ -316,18 +318,45 @@ const initializeZeroBounce = (config) => {
 
         loaderContainer.insertBefore(loader, loaderContainer.firstChild);
         delayTimer = setTimeout(function () {
-          if (me.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
+          if (input.value === '' && parent.querySelectorAll('.loaderContainer').length > 0) {
             parent.removeChild(loaderContainer);
             if (!hideResults) {
               input.style.cssText = '';
             }
           }
-          if (me.value !== '') {
+          if (input.value !== '') {
             currentAbortController = new AbortController();
-            zb.validate(me, loader, button, currentAbortController.signal);
+            zb.validate(input, loader, button, currentAbortController.signal);
           }
         }, 500);
+      };
+
+      // HubSpot's native "Did you mean" typo suggestion sets input.value programmatically
+      // and typically fires a 'change' event (not always 'input'), so we listen to both.
+      let lastKnownValue = input.value;
+      const handleValueChange = () => {
+        lastKnownValue = input.value;
+        triggerValidation();
+      };
+      input.addEventListener('input', handleValueChange);
+      input.addEventListener('change', handleValueChange);
+
+      // Fallback: in case HubSpot updates the value without dispatching an event
+      // (e.g. .value = 'x'), poll briefly after blur since the "Did you mean" link
+      // is usually clicked after the input loses focus.
+      input.addEventListener('blur', () => {
+        let checks = 0;
+        const poll = setInterval(() => {
+          if (input.value !== lastKnownValue) {
+            lastKnownValue = input.value;
+            triggerValidation();
+          }
+          if (++checks >= 10) clearInterval(poll);
+        }, 100);
       });
     });
   }
-};
+  };
+
+  window.initializeZeroBounce = initializeZeroBounce;
+})();
