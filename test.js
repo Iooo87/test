@@ -281,7 +281,6 @@
       });
 
       const triggerValidation = () => {
-        console.log('here');
         clearTimeout(delayTimer);
         if (currentAbortController) {
           currentAbortController.abort();
@@ -333,28 +332,34 @@
       };
 
       // HubSpot's native "Did you mean" typo suggestion sets input.value programmatically
-      // and typically fires a 'change' event (not always 'input'), so we listen to both.
+      // (through React state). Native 'input'/'change' events may not fire reliably, so
+      // we combine event listeners with a continuous low-frequency value poll that catches
+      // any programmatic change regardless of focus state.
       let lastKnownValue = input.value;
       const handleValueChange = () => {
+        if (input.value === lastKnownValue) return;
         lastKnownValue = input.value;
         triggerValidation();
       };
+
       input.addEventListener('input', handleValueChange);
       input.addEventListener('change', handleValueChange);
 
-      // Fallback: in case HubSpot updates the value without dispatching an event
-      // (e.g. .value = 'x'), poll briefly after blur since the "Did you mean" link
-      // is usually clicked after the input loses focus.
-      input.addEventListener('blur', () => {
-        let checks = 0;
-        const poll = setInterval(() => {
-          if (input.value !== lastKnownValue) {
-            lastKnownValue = input.value;
-            triggerValidation();
-          }
-          if (++checks >= 10) clearInterval(poll);
-        }, 100);
-      });
+      // Poll for programmatic value changes (e.g. clicking HubSpot's "Did you mean"
+      // suggestion) in case neither 'input' nor 'change' fires. Safe during typing
+      // because handleValueChange keeps lastKnownValue in sync with every keystroke,
+      // so the poll becomes a no-op while the user is actively typing.
+      const pollWindow = documentContext.defaultView || window;
+      const valuePoll = pollWindow.setInterval(() => {
+        if (!input.isConnected) {
+          pollWindow.clearInterval(valuePoll);
+          return;
+        }
+        if (input.value !== lastKnownValue) {
+          lastKnownValue = input.value;
+          triggerValidation();
+        }
+      }, 250);
     });
   }
   };
