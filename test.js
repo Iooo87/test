@@ -281,6 +281,7 @@
       });
 
       const triggerValidation = () => {
+        console.log('here');
         clearTimeout(delayTimer);
         if (currentAbortController) {
           currentAbortController.abort();
