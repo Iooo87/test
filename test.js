@@ -1036,8 +1036,10 @@
     guard.style.display = 'none';
     guard.style.boxSizing = 'border-box';
     guard.style.padding = '12px 16px';
-    guard.style.background = '#ffffff';
-    guard.style.borderTop = '1px solid #d0d0d0';
+    guard.style.background = 'rgba(255, 255, 255, 0.55)';
+    guard.style.backdropFilter = 'blur(10px)';
+    guard.style.webkitBackdropFilter = 'blur(10px)';
+    guard.style.borderTop = '1px solid rgba(208, 208, 208, 0.7)';
     guard.style.boxShadow = '0 -2px 8px rgba(0,0,0,.08)';
     guard.style.cursor = 'not-allowed';
     guard.style.fontFamily = 'Arial, Helvetica, sans-serif';
@@ -1046,12 +1048,16 @@
     row.style.display = 'flex';
     row.style.flexDirection = 'row';
     row.style.alignItems = 'center';
-    row.style.gap = '10px';
+    row.style.gap = '12px';
 
     const spinner = doc.createElement('div');
     spinner.className = IFRAME_GUARD_SPINNER_CLASS;
     startLogoStyleSpinner(spinner);
+    spinner.style.width = '22px';
+    spinner.style.height = '22px';
+    spinner.style.borderWidth = '3px';
     spinner.style.display = 'none';
+    spinner.style.flexShrink = '0';
 
     const msg = doc.createElement('div');
     msg.className = IFRAME_GUARD_MSG_CLASS;
@@ -1062,9 +1068,10 @@
     msg.style.fontWeight = '500';
     msg.style.color = '#33475b';
 
-    const logo = createZeroBounceLogo(doc, 18);
+    const logo = createZeroBounceLogo(doc, 28);
     logo.className = IFRAME_GUARD_LOGO_CLASS;
     logo.style.alignSelf = 'center';
+    logo.style.height = '28px';
     logo.style.display = brandingHidden() ? 'none' : 'block';
 
     row.appendChild(spinner);
@@ -1104,9 +1111,8 @@
     }
 
     if (outcome === 'pending') {
-      guard.style.background = '#ffffff';
-      guard.style.borderTopColor = '#fbdd46';
-      if (spinner) spinner.style.display = hideResults ? 'none' : 'block';
+      guard.style.borderTopColor = 'rgba(251, 221, 70, 0.9)';
+      if (spinner) spinner.style.display = 'block';
       if (msg) {
         msg.style.color = '#33475b';
         msg.textContent = hideResults ? '' : 'Validating email…';
@@ -1114,8 +1120,7 @@
       return;
     }
 
-    guard.style.background = '#ffffff';
-    guard.style.borderTopColor = '#DC143C';
+    guard.style.borderTopColor = 'rgba(220, 21, 60, 0.85)';
     if (spinner) spinner.style.display = 'none';
     if (msg) {
       applyHubSpotErrorTextStyle(msg);
