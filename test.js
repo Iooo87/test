@@ -13,12 +13,12 @@
  * How it runs:
  *   Same-origin / raw-HTML embeds: finds email inputs, then validates 350ms
  *   after blur — or, when idleSeconds is set, only after that idle pause.
- *   Cross-origin V4 iframe embeds: HubSpot blocks parent DOM access, so the
- *   email is read via HubSpotFormsV4.getFieldValue / getFormFieldValues.
- *   Loader and logo are created with the iframe document and inserted next to
- *   the email field, same as the legacy ZBEHS widget. Submit is intercepted
- *   with an overlay on the iframe footer when the submit button cannot be
- *   disabled from the parent.
+ *   Cross-origin V4 iframe embeds (`.hs-form-frame`, renderRawHtml false):
+ *   HubSpot blocks parent DOM access, so the email is read via
+ *   HubSpotFormsV4.getFieldValue / getFormFieldValues. Submit is intercepted
+ *   with `.zb-hs-iframe-submit-guard` on the iframe footer. Raw-HTML embeds
+ *   (`.hs-form-html`, renderRawHtml true) skip that overlay and use in-field
+ *   validation only.
  *   Local syntax is checked first; only well-formed addresses are POSTed
  *   to members-api.
  *   In-page results show as an in-field spinner, then a check/cross plus the
@@ -65,21 +65,8 @@
  */
 (function (root) {
 
-  const zbLog = function () {
-    const args = Array.prototype.slice.call(arguments);
-    args.unshift('[ZB HS V4]');
-    console.log.apply(console, args);
-  };
-
-  zbLog('script loaded', {
-    href: typeof location !== 'undefined' ? location.href : '',
-    currentScriptSrc: typeof document !== 'undefined' && document.currentScript
-      ? document.currentScript.src
-      : '',
-  });
-
   const currentScript = typeof document !== 'undefined' ? document.currentScript : null;
-  
+
   const VALIDATE_URL_TEST =
     'https://test-members-api.zerobounce.net/api/integration/hubspot-forms/validate/';
   const VALIDATE_URL_PROD =
@@ -125,7 +112,6 @@
   /** POST { portalId, email } to the current validate URL (test or production). */
   const requestHubspotFormsValidation = async (portalId, email, signal) => {
     const body = { portalId: String(portalId), email: String(email) };
-    zbLog('validate fetch start', { url: validateUrl, portalId: body.portalId, email: body.email });
     const timeoutHandle = withValidationTimeout(signal);
     let response;
     try {
@@ -136,12 +122,6 @@
         signal: timeoutHandle.signal,
       });
     } catch (err) {
-      zbLog('validate fetch threw', {
-        name: err && err.name,
-        message: err && err.message,
-        timedOut: timeoutHandle.didTimeout(),
-        userAborted: !!(signal && signal.aborted),
-      });
       if (signal && signal.aborted) throw err;
       if (timeoutHandle.didTimeout()) {
         const timeoutErr = new Error('ZeroBounce validation request timed out');
@@ -154,7 +134,6 @@
     }
 
     const result = await response.json();
-    zbLog('validate fetch response', { http: response.status, ok: response.ok, result: result });
     if (!response.ok) {
       throw new Error('ZeroBounce validation HTTP ' + response.status);
     }
@@ -400,11 +379,6 @@
       typeof document !== 'undefined'
         ? document.querySelector('.hs-form-frame[data-portal-id], .hs-form-html[data-portal-id]')
         : null;
-    zbLog('readEmbedConfig lookup', {
-      hasCurrentScript: !!currentScript,
-      frameTag: frame ? frame.tagName : null,
-      frameClass: frame ? frame.className : null,
-    });
     const idleRaw =
       (currentScript &&
         (currentScript.getAttribute('data-idle-seconds') ||
@@ -424,24 +398,16 @@
       uiFlags: readUiFlags(currentScript && currentScript.getAttribute('data-key'), portalId),
       useTestEndpoint: parseBool(
         currentScript &&
-          (currentScript.getAttribute('data-use-test-endpoint') ||
-            currentScript.getAttribute('data-test-endpoint')),
+        (currentScript.getAttribute('data-use-test-endpoint') ||
+          currentScript.getAttribute('data-test-endpoint')),
       ),
       timeoutSeconds: parseTimeoutSeconds(
         currentScript &&
-          (currentScript.getAttribute('data-timeout') ||
-            currentScript.getAttribute('data-api-timeout') ||
-            currentScript.getAttribute('data-timeout-seconds')),
+        (currentScript.getAttribute('data-timeout') ||
+          currentScript.getAttribute('data-api-timeout') ||
+          currentScript.getAttribute('data-timeout-seconds')),
       ),
     };
-    zbLog('readEmbedConfig result', {
-      portalId: config.portalId,
-      hubspotFormId: config.hubspotFormId,
-      idleSeconds: config.idleSeconds,
-      useTestEndpoint: config.useTestEndpoint,
-      timeoutSeconds: config.timeoutSeconds,
-      uiFlags: config.uiFlags,
-    });
     return config;
   };
 
@@ -463,7 +429,6 @@
   const watchedIframeDocuments = new WeakSet();
   /** `formId:instanceId` keys already wired to the HubSpotFormsV4 iframe path. */
   const iframeFormBindKeys = new Set();
-  let iframeApiMissingLogged = false;
   const IFRAME_GUARD_CLASS = 'zb-hs-iframe-submit-guard';
   const IFRAME_GUARD_SPINNER_CLASS = 'zb-hs-iframe-submit-guard-spinner';
   const IFRAME_GUARD_MSG_CLASS = 'zb-hs-iframe-submit-guard-msg';
@@ -862,32 +827,10 @@
   };
 
   /** Same-origin iframe document, or null if cross-origin. */
-  const getIframeDocument = (iframe, silent) => {
+  const getIframeDocument = (iframe) => {
     try {
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-      if (!silent) {
-        if (!doc) {
-          zbLog('iframe document empty (likely cross-origin)', {
-            src: iframe.src || '',
-            id: iframe.id || '',
-          });
-        } else {
-          zbLog('iframe document', {
-            src: iframe.src || '',
-            id: iframe.id || '',
-            accessible: true,
-          });
-        }
-      }
-      return doc;
+      return iframe.contentDocument || iframe.contentWindow.document;
     } catch (e) {
-      if (!silent) {
-        zbLog('iframe document blocked (cross-origin)', {
-          src: iframe.src || '',
-          id: iframe.id || '',
-          message: e && e.message,
-        });
-      }
       return null;
     }
   };
@@ -899,12 +842,6 @@
   const collectHubSpotEmailInputs = (root, hubspotFormId) => {
     const inputs = [];
     const seen = new Set();
-    zbLog('collectHubSpotEmailInputs start', {
-      hubspotFormId: hubspotFormId,
-      htmlFrames: queryAll(document, '.hs-form-html').length,
-      hsFrames: queryAll(document, '.hs-form-frame').length,
-      iframes: queryAll(document, 'iframe').length,
-    });
 
     const addInput = (input) => {
       if (!input || seen.has(input) || boundEmailInputs.has(input)) return;
@@ -955,10 +892,6 @@
     };
 
     scanContext(root, false);
-    zbLog('collectHubSpotEmailInputs done', {
-      found: inputs.length,
-      ids: inputs.map((input) => input.id || input.name || ''),
-    });
     return inputs;
   };
 
@@ -1001,6 +934,14 @@
     return nodes[0] || null;
   };
 
+  /** HubSpot `displayOptions.renderRawHtml: true` → `.hs-form-html` (in-field UI, no submit overlay). */
+  const isRawHtmlHubSpotMount = (mount) =>
+    !!(mount && mount.classList && mount.classList.contains('hs-form-html'));
+
+  /** HubSpot `displayOptions.renderRawHtml: false` → `.hs-form-frame` (iframe + submit guard). */
+  const isIframeHubSpotMount = (mount) =>
+    !!(mount && mount.classList && mount.classList.contains('hs-form-frame'));
+
   const findHubSpotFormIframe = (mount) => {
     if (!mount) return null;
     return (
@@ -1011,7 +952,7 @@
   };
 
   const ensureIframeSubmitGuard = (mount) => {
-    if (!mount) return null;
+    if (!isIframeHubSpotMount(mount)) return null;
     const doc = mount.ownerDocument || document;
     const view = doc.defaultView || window;
     const computed = view.getComputedStyle ? view.getComputedStyle(mount) : null;
@@ -1227,9 +1168,6 @@
     if (!container) {
       container = createIframeLoaderBadge(iframeDocument, hideResults);
       parent.insertBefore(container, input.nextSibling);
-      zbLog('iframe loader appended inside iframe', {
-        input: input.name || input.id || '',
-      });
     }
     container.style.right = 'calc(100% - ' + input.offsetWidth + 'px)';
     if (input.value) input.style.borderBottomRightRadius = '0';
@@ -1313,17 +1251,12 @@
    * Returns true once at least one matching form instance is bound.
    */
   const bindCrossOriginHubSpotForms = (config, event) => {
-    const api = getHubSpotFormsV4Api();
-    if (!api) {
-      if (!iframeApiMissingLogged) {
-        iframeApiMissingLogged = true;
-        zbLog('iframe API skip: HubSpotFormsV4 missing');
-      }
-      return false;
-    }
-    iframeApiMissingLogged = false;
-
     const hubspotFormId = config.hubspotFormId || '';
+    if (isRawHtmlHubSpotMount(findHubSpotEmbedMount(hubspotFormId))) return true;
+
+    const api = getHubSpotFormsV4Api();
+    if (!api) return false;
+
     const forms = [];
     const addForm = (form) => {
       if (!form || forms.indexOf(form) !== -1) return;
@@ -1334,18 +1267,15 @@
       try {
         addForm(api.getFormFromEvent(event));
       } catch (e) {
-        zbLog('iframe API getFormFromEvent failed', { message: e && e.message });
       }
     }
     if (typeof api.getForms === 'function') {
       try {
         (api.getForms() || []).forEach(addForm);
       } catch (e) {
-        zbLog('iframe API getForms failed', { message: e && e.message });
       }
     }
 
-    zbLog('iframe API forms', { count: forms.length, hubspotFormId: hubspotFormId });
 
     forms.forEach((form) => {
       let formId = '';
@@ -1354,13 +1284,13 @@
         formId = typeof form.getFormId === 'function' ? String(form.getFormId() || '') : '';
         instanceId = typeof form.getInstanceId === 'function' ? String(form.getInstanceId() || '') : '';
       } catch (e) {
-        zbLog('iframe API form id failed', { message: e && e.message });
       }
       if (hubspotFormId && formId && formId !== hubspotFormId) return;
+      const mount = findHubSpotEmbedMount(formId || hubspotFormId);
+      if (!isIframeHubSpotMount(mount)) return;
       const key = formId + ':' + (instanceId || '0');
       if (iframeFormBindKeys.has(key)) return;
       iframeFormBindKeys.add(key);
-      zbLog('iframe API bind', { formId: formId, instanceId: instanceId });
       watchHubSpotIframeForm(form, formId, config);
     });
 
@@ -1374,14 +1304,9 @@
     const idleMs = parseIdleSeconds(config.idleSeconds) * 1000;
     const debounceMs = idleMs > 0 ? idleMs : BLUR_VALIDATE_DELAY_MS;
     const mount = findHubSpotEmbedMount(formId);
+    if (!isIframeHubSpotMount(mount)) return;
     const guard = ensureIframeSubmitGuard(mount);
 
-    zbLog('iframe API watch', {
-      formId: formId,
-      hasMount: !!mount,
-      mountClass: mount ? mount.className : '',
-      debounceMs: debounceMs,
-    });
 
     let emailFieldName = '0-1/email';
     let currentEmail = '';
@@ -1391,18 +1316,17 @@
     let debounceTimer = null;
     let currentAbortController = null;
     let inFlight = false;
-    let loggedMissingIframeUi = false;
 
-    const resolveIframeUi = (silent) => {
+    const resolveIframeUi = () => {
       const iframe = findHubSpotFormIframe(mount);
-      const iframeDocument = iframe ? getIframeDocument(iframe, silent) : null;
+      const iframeDocument = iframe ? getIframeDocument(iframe) : null;
       const input = findIframeEmailInput(iframeDocument);
       return { iframe: iframe, iframeDocument: iframeDocument, input: input };
     };
 
     const setSubmitBlocked = (blocked) => {
       if (!disableSubmit) return;
-      const ui = resolveIframeUi(true);
+      const ui = resolveIframeUi();
       const button =
         ui.iframeDocument && ui.iframeDocument.querySelector
           ? ui.iframeDocument.querySelector("[type='submit']")
@@ -1412,11 +1336,9 @@
 
     const applySuggestion = (suggestion) => {
       const next = applyIframeSuggestion(currentEmail, suggestion);
-      zbLog('iframe API apply suggestion', { from: currentEmail, to: next });
       try {
         if (typeof form.setFieldValue === 'function') form.setFieldValue(emailFieldName, next);
       } catch (e) {
-        zbLog('iframe API setFieldValue failed', { message: e && e.message });
       }
       currentEmail = next;
       lastValidatedEmail = '';
@@ -1437,18 +1359,8 @@
       } else if (guard) {
         guard.style.display = 'none';
       }
-      const ui = resolveIframeUi(true);
-      if (!ui.iframeDocument || !ui.input) {
-        if (!loggedMissingIframeUi) {
-          loggedMissingIframeUi = true;
-          zbLog('iframe inner badge skipped (using submit guard)', {
-            hasIframe: !!ui.iframe,
-            hasDoc: !!ui.iframeDocument,
-            hasInput: !!ui.input,
-          });
-        }
-        return;
-      }
+      const ui = resolveIframeUi();
+      if (!ui.iframeDocument || !ui.input) return;
       if (outcome === 'empty') {
         detachIframeLoaderBadge(ui.input);
         return;
@@ -1459,7 +1371,6 @@
 
     const runValidate = async () => {
       const email = String(currentEmail || '').trim();
-      zbLog('iframe API runValidate', { email: email, field: emailFieldName });
       if (!email) {
         lastValidatedEmail = '';
         lastOutcome = '';
@@ -1493,13 +1404,10 @@
         lastOutcome = isValid ? 'valid' : 'invalid';
         lastSuggestion = isValid ? '' : extractDidYouMean(result);
         setSubmitBlocked(!isValid);
-        zbLog('iframe API result', { pass: isValid, suggestion: lastSuggestion });
       } catch (error) {
         if (error && error.name === 'AbortError') {
-          zbLog('iframe API aborted');
           return;
         }
-        zbLog('iframe API error', { name: error && error.name, message: error && error.message });
         lastValidatedEmail = email;
         lastOutcome = 'error';
         lastSuggestion = '';
@@ -1530,17 +1438,12 @@
           return picked.value;
         }
       } catch (e) {
-        zbLog('iframe API getFormFieldValues failed', { message: e && e.message });
       }
       if (typeof form.getFieldValue === 'function') {
         try {
           const value = await form.getFieldValue(emailFieldName);
           return Array.isArray(value) ? String(value[0] || '').trim() : String(value || '').trim();
         } catch (e) {
-          zbLog('iframe API getFieldValue failed', {
-            field: emailFieldName,
-            message: e && e.message,
-          });
         }
       }
       return '';
@@ -1549,7 +1452,6 @@
     const tick = async () => {
       const next = await readEmail();
       if (next === currentEmail) return;
-      zbLog('iframe API email changed', { from: currentEmail, to: next });
       currentEmail = next;
       if (currentAbortController) {
         currentAbortController.abort();
@@ -1584,10 +1486,6 @@
    * Optional config.email runs one API call (syntax-checked) and returns the payload.
    */
   const initializeZeroBounce = async (configOrPortalId, maybeEmail) => {
-    zbLog('initializeZeroBounce', {
-      argType: typeof configOrPortalId,
-      maybeEmail: maybeEmail || '',
-    });
     const scriptConfig = readEmbedConfig();
     const config =
       typeof configOrPortalId === 'object' && configOrPortalId !== null
@@ -1616,29 +1514,16 @@
 
     if (!config.portalId) {
       console.warn('[ZeroBounce] data-portal-id is required');
-      zbLog('initializeZeroBounce stop: missing portalId');
       return;
     }
 
-    zbLog('initializeZeroBounce bind', {
-      portalId: config.portalId,
-      hubspotFormId: config.hubspotFormId,
-      idleSeconds: config.idleSeconds,
-      validateUrl: validateUrl,
-      timeoutSeconds: config.timeoutSeconds,
-      brandingHiddenByEmbed: brandingHiddenByEmbed,
-    });
 
     if (typeof document !== 'undefined') {
       bindHubspotFormValidation(config);
-    } else {
-      zbLog('initializeZeroBounce skip bind: no document');
     }
 
     if (config.email) {
-      zbLog('initializeZeroBounce one-off email', { email: config.email });
       if (!isEmailSyntaxValid(config.email)) {
-        zbLog('initializeZeroBounce one-off email skipped: bad syntax');
         return;
       }
       return requestHubspotFormsValidation(config.portalId, String(config.email).trim());
@@ -1650,7 +1535,6 @@
    * and update the in-field spinner/check/cross.
    */
   function bindHubspotFormValidation(config) {
-    zbLog('bindHubspotFormValidation');
     /** Calls members-backend; writes hidden zb_validation_* fields and the in-field icon. */
     class ZeroBounceApi {
       constructor(portalId, disableSubmit, hideResults, documentContext) {
@@ -1662,11 +1546,9 @@
 
       /** Validate one email. Bad syntax → invalid UI, no fetch. Retype aborts in-flight requests. */
       async validate(input, button, signal) {
-        zbLog('validate()', { email: String(input.value || '').trim(), hasButton: !!button });
         const host = getHubSpotFieldHost(input);
         const documentContext = this.document;
         if (!host) {
-          zbLog('validate() stop: no host');
           return;
         }
 
@@ -1690,7 +1572,6 @@
         }
 
         if (!isEmailSyntaxValid(email)) {
-          zbLog('validate() local syntax fail', { email: email });
           if (!this.hideResults) input.style.borderColor = '#DC143C';
           if (this.disableSubmit && button) button.disabled = true;
           validationResultInput.value = 'invalid';
@@ -1721,19 +1602,12 @@
             else input.style.borderColor = '#DC143C';
           }
 
-          zbLog('validate() result', {
-            status: isValid ? 'valid' : 'invalid',
-            pass: isValid,
-            suggestion: suggestion,
-          });
           return { status: isValid ? 'valid' : 'invalid', email: email, result: result };
         } catch (error) {
           if (error.name === 'AbortError') {
-            zbLog('validate() aborted');
             return { status: 'aborted' };
           }
           console.error('Validation error:', error);
-          zbLog('validate() error', { name: error.name, message: error.message });
           if (!this.hideResults) input.style.borderColor = '#DC143C';
           if (this.disableSubmit && button) button.disabled = false;
           validationResultInput.value = 'error';
@@ -1769,15 +1643,10 @@
 
         const iframeDocument = getIframeDocument(iframe);
         if (!iframeDocument || !iframeDocument.documentElement) {
-          zbLog('iframe watch skip: not accessible', {
-            src: iframe.src || '',
-            id: iframe.id || '',
-          });
           return;
         }
         if (watchedIframeDocuments.has(iframeDocument)) return;
 
-        zbLog('iframe watch attach observer');
 
         watchedIframeDocuments.add(iframeDocument);
         const iframeObserver = new MutationObserver(attachToFoundInputs);
@@ -1790,10 +1659,8 @@
 
     /** Scan the page for unbound email inputs and attach validation. */
     const attachToFoundInputs = () => {
-      zbLog('attachToFoundInputs');
       watchAccessibleHubSpotIframes();
       const found = collectHubSpotEmailInputs(document, hubspotFormId);
-      zbLog('attachToFoundInputs found', { count: found.length });
       const byDoc = new Map();
 
       found.forEach((input) => {
@@ -1813,13 +1680,14 @@
         );
       });
 
-      if (!found.length) bindCrossOriginHubSpotForms(config);
+      if (!isRawHtmlHubSpotMount(findHubSpotEmbedMount(hubspotFormId))) {
+        bindCrossOriginHubSpotForms(config);
+      }
     };
 
     attachToFoundInputs();
 
     root.addEventListener('hs-form-event:on-ready', (event) => {
-      zbLog('hs-form-event:on-ready', event && event.detail);
       attachToFoundInputs();
       bindCrossOriginHubSpotForms(config, event);
     });
@@ -1869,14 +1737,8 @@
       idleSeconds,
     ) {
       const unbound = inputs.filter((input) => !boundEmailInputs.has(input));
-      zbLog('processValidation', {
-        inputs: inputs.length,
-        unbound: unbound.length,
-        idleSeconds: idleSeconds,
-      });
       unbound.forEach((input) => boundEmailInputs.add(input));
       if (!unbound.length) {
-        zbLog('processValidation: nothing new to bind');
         return;
       }
 
@@ -1928,7 +1790,6 @@
         };
 
         const runValidate = async () => {
-          zbLog('runValidate', { value: String(input.value || '').trim() });
           if (String(input.value || '').trim() === '') {
             clearEmptyFieldValidation();
             return;
@@ -1986,10 +1847,8 @@
         const blockUncheckedSubmit = (event) => {
           if (!disableSubmit) return;
           if (emailIsAllowedToSubmit()) {
-            zbLog('submit allowed');
             return;
           }
-          zbLog('submit blocked', { type: event.type });
           event.preventDefault();
           if (typeof event.stopImmediatePropagation === 'function') {
             event.stopImmediatePropagation();
@@ -2029,7 +1888,6 @@
         });
 
         input.addEventListener('blur', function () {
-          zbLog('blur', { value: String(input.value || '').trim(), idleOnly: idleOnly });
           if (String(input.value || '').trim() === '') {
             clearTimers();
             if (currentAbortController) {
@@ -2137,10 +1995,7 @@
 
   // Auto-start when the script tag has data-portal-id (or the embed node does).
   const embedConfig = readEmbedConfig();
-  zbLog('auto-start', { portalId: embedConfig.portalId || '(missing)' });
   if (embedConfig.portalId) {
     initializeZeroBounce(embedConfig);
-  } else {
-    zbLog('auto-start skipped: no portalId on script or HubSpot embed node');
   }
 })(typeof window !== 'undefined' ? window : typeof globalThis !== 'undefined' ? globalThis : this);
