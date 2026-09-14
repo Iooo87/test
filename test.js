@@ -11,11 +11,17 @@
  * Or: window.initializeZeroBounce({ portalId, hubspotFormId, ... })
  *
  * How it runs:
- *   Finds email inputs on the HubSpot form, then validates 350ms after blur —
- *   or, when idleSeconds is set, only after that idle pause. Local syntax is
- *   checked first; only well-formed addresses are POSTed through the
- *   ZeroBounce validation proxy.
- *   Results show as an in-field spinner, then a check/cross plus the
+ *   Same-origin / raw-HTML embeds: finds email inputs, then validates 350ms
+ *   after blur — or, when idleSeconds is set, only after that idle pause.
+ *   Cross-origin V4 iframe embeds: HubSpot blocks parent DOM access, so the
+ *   email is read via HubSpotFormsV4.getFieldValue / getFormFieldValues.
+ *   Loader and logo are created with the iframe document and inserted next to
+ *   the email field, same as the legacy ZBEHS widget. Submit is intercepted
+ *   with an overlay on the iframe footer when the submit button cannot be
+ *   disabled from the parent.
+ *   Local syntax is checked first; only well-formed addresses are POSTed
+ *   through the ZeroBounce validation proxy.
+ *   In-page results show as an in-field spinner, then a check/cross plus the
  *   ZeroBounce logo.
  *
  * Booleans (data-* or JS): true | 1 | yes | on (any case). Anything else is false.
@@ -455,6 +461,15 @@
   const boundEmailInputs = new WeakSet();
   const watchedIframes = new WeakSet();
   const watchedIframeDocuments = new WeakSet();
+  /** `formId:instanceId` keys already wired to the HubSpotFormsV4 iframe path. */
+  const iframeFormBindKeys = new Set();
+  let iframeApiMissingLogged = false;
+  const IFRAME_GUARD_CLASS = 'zb-hs-iframe-submit-guard';
+  const IFRAME_LOADER_CONTAINER_CLASS = 'loaderContainer';
+  const IFRAME_LOADER_CLASS = 'loader';
+  const IFRAME_ICON_CLASS = 'zb-icon';
+  /** Covers the usual V4 submit/next strip inside `.hs-form-frame`. */
+  const IFRAME_SUBMIT_GUARD_HEIGHT_PX = 96;
   const FIELD_LOADER_CLASS = 'zb-email-field-loader';
   const INVALID_MSG_CLASS = 'zb-invalid-email-message';
   const DID_YOU_MEAN_CLASS = 'zb-did-you-mean';
@@ -804,6 +819,17 @@
       documentContext,
       status === 'pending' || status === '' || status === 'error' ? '' : suggestion || '',
     );
+    const doc = documentContext || (input && input.ownerDocument);
+    const inIframe = !!(doc && doc.defaultView && doc.defaultView !== window);
+    if (inIframe) {
+      if (!status) {
+        detachIframeLoaderBadge(input);
+        return;
+      }
+      const container = attachIframeLoaderBadge(input, doc, hideResults);
+      paintIframeLoaderBadge(container, doc, status, hideResults);
+      return;
+    }
     if (hideResults) return;
     const pending = status === 'pending';
     setFieldLoaderVisible(input, documentContext, pending);
@@ -832,28 +858,32 @@
   };
 
   /** Same-origin iframe document, or null if cross-origin. */
-  const getIframeDocument = (iframe) => {
+  const getIframeDocument = (iframe, silent) => {
     try {
       const doc = iframe.contentDocument || iframe.contentWindow.document;
-      if (!doc) {
-        zbLog('iframe document empty (likely cross-origin)', {
-          src: iframe.src || '',
-          id: iframe.id || '',
-        });
-      } else {
-        zbLog('iframe document', {
-          src: iframe.src || '',
-          id: iframe.id || '',
-          accessible: true,
-        });
+      if (!silent) {
+        if (!doc) {
+          zbLog('iframe document empty (likely cross-origin)', {
+            src: iframe.src || '',
+            id: iframe.id || '',
+          });
+        } else {
+          zbLog('iframe document', {
+            src: iframe.src || '',
+            id: iframe.id || '',
+            accessible: true,
+          });
+        }
       }
       return doc;
     } catch (e) {
-      zbLog('iframe document blocked (cross-origin)', {
-        src: iframe.src || '',
-        id: iframe.id || '',
-        message: e && e.message,
-      });
+      if (!silent) {
+        zbLog('iframe document blocked (cross-origin)', {
+          src: iframe.src || '',
+          id: iframe.id || '',
+          message: e && e.message,
+        });
+      }
       return null;
     }
   };
@@ -926,6 +956,488 @@
       ids: inputs.map((input) => input.id || input.name || ''),
     });
     return inputs;
+  };
+
+  const getHubSpotFormsV4Api = () => {
+    try {
+      return root.HubSpotFormsV4 || null;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const isHubSpotEmailFieldName = (name) => {
+    const leaf = String(name || '')
+      .toLowerCase()
+      .split('/')
+      .pop()
+      .split('.')
+      .pop();
+    return leaf === 'email';
+  };
+
+  const emailFromFormFields = (fields) => {
+    if (!Array.isArray(fields)) return { name: '', value: '' };
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i] || {};
+      if (!isHubSpotEmailFieldName(field.name)) continue;
+      const raw = field.value;
+      const value = Array.isArray(raw) ? String(raw[0] || '').trim() : String(raw || '').trim();
+      return { name: String(field.name), value: value };
+    }
+    return { name: '', value: '' };
+  };
+
+  const findHubSpotEmbedMount = (formId) => {
+    const nodes = queryAll(document, '.hs-form-frame, .hs-form-html');
+    if (formId) {
+      const match = nodes.find((node) => node.getAttribute && node.getAttribute('data-form-id') === formId);
+      if (match) return match;
+    }
+    return nodes[0] || null;
+  };
+
+  const findHubSpotFormIframe = (mount) => {
+    if (!mount) return null;
+    return (
+      mount.querySelector("[id^='hs-form-iframe']") ||
+      mount.querySelector('iframe.hs-form-iframe') ||
+      mount.querySelector('iframe')
+    );
+  };
+
+  const ensureIframeSubmitGuard = (mount) => {
+    if (!mount) return null;
+    const doc = mount.ownerDocument || document;
+    const view = doc.defaultView || window;
+    const computed = view.getComputedStyle ? view.getComputedStyle(mount) : null;
+    if (!computed || computed.position === 'static') mount.style.position = 'relative';
+
+    let guard = Array.from(mount.children).find(
+      (node) => node.classList && node.classList.contains(IFRAME_GUARD_CLASS),
+    );
+    if (!guard) {
+      guard = doc.createElement('div');
+      guard.className = IFRAME_GUARD_CLASS;
+      guard.setAttribute('aria-hidden', 'true');
+      guard.style.position = 'absolute';
+      guard.style.left = '0';
+      guard.style.right = '0';
+      guard.style.bottom = '0';
+      guard.style.height = IFRAME_SUBMIT_GUARD_HEIGHT_PX + 'px';
+      guard.style.zIndex = '2147483646';
+      guard.style.display = 'none';
+      guard.style.cursor = 'not-allowed';
+      guard.style.background = 'transparent';
+      mount.appendChild(guard);
+    }
+    return guard;
+  };
+
+  /** Same hanging badge as ZBEHS: created with the iframe document, sits under the email field. */
+  const createIframeLoaderBadge = (iframeDocument, hideResults) => {
+    const loaderContainer = iframeDocument.createElement('div');
+    const loader = iframeDocument.createElement('div');
+    const logo = iframeDocument.createElement('img');
+    logo.src = ZB_LOGO_SRC;
+    logo.alt = '';
+    logo.setAttribute('aria-hidden', 'true');
+
+    loaderContainer.classList.add(IFRAME_LOADER_CONTAINER_CLASS);
+    loaderContainer.style.position = 'absolute';
+    loaderContainer.style.right = '0';
+    loaderContainer.style.borderRadius = '0 0 4px 4px';
+    loaderContainer.style.backgroundColor = '#fff';
+    loaderContainer.style.boxShadow = '0 2px 2px rgba(0,0,0,.2)';
+    loaderContainer.style.display = 'flex';
+    loaderContainer.style.alignItems = 'baseline';
+    loaderContainer.style.padding = '3px 5px 5px';
+    loaderContainer.style.height = '32px';
+    loaderContainer.style.border = '1px solid #bbbbbb';
+    loaderContainer.style.borderTop = 'none';
+    loaderContainer.style.zIndex = '1000';
+
+    if (hideResults) {
+      loaderContainer.style.height = 'auto';
+      loaderContainer.style.padding = '5px';
+      loaderContainer.style.visibility = 'hidden';
+    }
+
+    loader.classList.add(IFRAME_LOADER_CLASS);
+    startLogoStyleSpinner(loader);
+    loader.style.marginRight = hideResults ? '0' : '8px';
+
+    loaderContainer.__zbLoader = loader;
+    loaderContainer.__zbLogo = logo;
+    if (!hideResults && !brandingHidden()) loaderContainer.appendChild(logo);
+    return loaderContainer;
+  };
+
+  const clearIframeLoaderIcons = (container) => {
+    if (!container) return;
+    Array.from(container.querySelectorAll('.' + IFRAME_ICON_CLASS)).forEach((node) => {
+      if (node.parentNode === container) container.removeChild(node);
+    });
+  };
+
+  const attachIframeLoaderBadge = (input, iframeDocument, hideResults) => {
+    if (!input || !iframeDocument || !input.parentNode) return null;
+    const parent = input.parentNode;
+    parent.style.position = 'relative';
+    let container = Array.from(parent.children).find(
+      (node) => node.classList && node.classList.contains(IFRAME_LOADER_CONTAINER_CLASS),
+    );
+    if (!container) {
+      container = createIframeLoaderBadge(iframeDocument, hideResults);
+      parent.insertBefore(container, input.nextSibling);
+      zbLog('iframe loader appended inside iframe', {
+        input: input.name || input.id || '',
+      });
+    }
+    container.style.right = 'calc(100% - ' + input.offsetWidth + 'px)';
+    if (input.value) input.style.borderBottomRightRadius = '0';
+    return container;
+  };
+
+  const detachIframeLoaderBadge = (input) => {
+    if (!input || !input.parentNode) return;
+    const parent = input.parentNode;
+    const container = Array.from(parent.children).find(
+      (node) => node.classList && node.classList.contains(IFRAME_LOADER_CONTAINER_CLASS),
+    );
+    if (container && container.parentNode === parent) parent.removeChild(container);
+    input.style.removeProperty('border-bottom-right-radius');
+  };
+
+  const paintIframeLoaderBadge = (container, iframeDocument, outcome, hideResults) => {
+    if (!container || !iframeDocument) return;
+    const loader = container.__zbLoader;
+    const safeRemoveLoader = () => {
+      if (loader && loader.parentNode === container) container.removeChild(loader);
+    };
+
+    clearIframeLoaderIcons(container);
+
+    if (!outcome || outcome === 'empty') {
+      safeRemoveLoader();
+      if (hideResults) container.style.visibility = 'hidden';
+      return;
+    }
+
+    if (outcome === 'pending') {
+      if (hideResults) container.style.visibility = 'visible';
+      container.style.borderColor = 'rgba(82,168,236,.8)';
+      if (loader && loader.parentNode !== container) {
+        container.insertBefore(loader, container.firstChild);
+      }
+      return;
+    }
+
+    safeRemoveLoader();
+    if (hideResults) {
+      container.style.visibility = 'hidden';
+      return;
+    }
+
+    const icon = iframeDocument.createElement('div');
+    icon.classList.add(IFRAME_ICON_CLASS);
+    icon.style.fontSize = '16px';
+    icon.style.marginRight = '8px';
+    if (outcome === 'valid') {
+      container.style.borderColor = 'rgba(82,168,236,.8)';
+      icon.innerHTML = '&#x2713;';
+      icon.style.color = '#3cb043';
+      icon.style.transform = 'scale(1.5, 1)';
+    } else {
+      container.style.borderColor = '#DC143C';
+      icon.innerHTML = '&#x2718;';
+      icon.style.color = '#DC143C';
+    }
+    container.insertBefore(icon, container.firstChild);
+  };
+
+  const findIframeEmailInput = (iframeDocument) => {
+    if (!iframeDocument) return null;
+    const inputs = queryAll(iframeDocument, EMAIL_FIELD_SELECTOR);
+    return inputs[0] || null;
+  };
+
+  const applyIframeSuggestion = (current, suggestion) => {
+    if (!suggestion) return current;
+    if (suggestion.indexOf('@') === -1) {
+      const at = String(current || '').indexOf('@');
+      return at !== -1 ? current.slice(0, at + 1) + suggestion : suggestion;
+    }
+    return suggestion;
+  };
+
+  /**
+   * Cross-origin V4 iframe: read the email through HubSpotFormsV4 (no iframe DOM).
+   * Returns true once at least one matching form instance is bound.
+   */
+  const bindCrossOriginHubSpotForms = (config, event) => {
+    const api = getHubSpotFormsV4Api();
+    if (!api) {
+      if (!iframeApiMissingLogged) {
+        iframeApiMissingLogged = true;
+        zbLog('iframe API skip: HubSpotFormsV4 missing');
+      }
+      return false;
+    }
+    iframeApiMissingLogged = false;
+
+    const hubspotFormId = config.hubspotFormId || '';
+    const forms = [];
+    const addForm = (form) => {
+      if (!form || forms.indexOf(form) !== -1) return;
+      forms.push(form);
+    };
+
+    if (event && typeof api.getFormFromEvent === 'function') {
+      try {
+        addForm(api.getFormFromEvent(event));
+      } catch (e) {
+        zbLog('iframe API getFormFromEvent failed', { message: e && e.message });
+      }
+    }
+    if (typeof api.getForms === 'function') {
+      try {
+        (api.getForms() || []).forEach(addForm);
+      } catch (e) {
+        zbLog('iframe API getForms failed', { message: e && e.message });
+      }
+    }
+
+    zbLog('iframe API forms', { count: forms.length, hubspotFormId: hubspotFormId });
+
+    forms.forEach((form) => {
+      let formId = '';
+      let instanceId = '';
+      try {
+        formId = typeof form.getFormId === 'function' ? String(form.getFormId() || '') : '';
+        instanceId = typeof form.getInstanceId === 'function' ? String(form.getInstanceId() || '') : '';
+      } catch (e) {
+        zbLog('iframe API form id failed', { message: e && e.message });
+      }
+      if (hubspotFormId && formId && formId !== hubspotFormId) return;
+      const key = formId + ':' + (instanceId || '0');
+      if (iframeFormBindKeys.has(key)) return;
+      iframeFormBindKeys.add(key);
+      zbLog('iframe API bind', { formId: formId, instanceId: instanceId });
+      watchHubSpotIframeForm(form, formId, config);
+    });
+
+    return iframeFormBindKeys.size > 0;
+  };
+
+  const watchHubSpotIframeForm = (form, formId, config) => {
+    const disableSubmit =
+      typeof config.disableSubmitOnError !== 'undefined' ? config.disableSubmitOnError : true;
+    const hideResults = typeof config.hideResults !== 'undefined' ? config.hideResults : false;
+    const idleMs = parseIdleSeconds(config.idleSeconds) * 1000;
+    const debounceMs = idleMs > 0 ? idleMs : BLUR_VALIDATE_DELAY_MS;
+    const mount = findHubSpotEmbedMount(formId);
+    const guard = ensureIframeSubmitGuard(mount);
+
+    zbLog('iframe API watch', {
+      formId: formId,
+      hasMount: !!mount,
+      mountClass: mount ? mount.className : '',
+      debounceMs: debounceMs,
+    });
+
+    let emailFieldName = '0-1/email';
+    let currentEmail = '';
+    let lastValidatedEmail = '';
+    let lastOutcome = '';
+    let lastSuggestion = '';
+    let debounceTimer = null;
+    let currentAbortController = null;
+    let inFlight = false;
+    let loggedMissingIframeUi = false;
+
+    const resolveIframeUi = (silent) => {
+      const iframe = findHubSpotFormIframe(mount);
+      const iframeDocument = iframe ? getIframeDocument(iframe, silent) : null;
+      const input = findIframeEmailInput(iframeDocument);
+      return { iframe: iframe, iframeDocument: iframeDocument, input: input };
+    };
+
+    const setSubmitBlocked = (blocked) => {
+      if (!disableSubmit) {
+        if (guard) guard.style.display = 'none';
+        return;
+      }
+      const ui = resolveIframeUi(true);
+      const button =
+        ui.iframeDocument && ui.iframeDocument.querySelector
+          ? ui.iframeDocument.querySelector("[type='submit']")
+          : null;
+      if (button) button.disabled = !!blocked;
+      if (guard) guard.style.display = !button && blocked ? 'block' : 'none';
+    };
+
+    const emailIsAllowedToSubmit = () => {
+      const email = String(currentEmail || '').trim();
+      if (!email) return true;
+      if (debounceTimer || inFlight) return false;
+      if (lastValidatedEmail !== email) return false;
+      return lastOutcome === 'valid' || lastOutcome === 'error';
+    };
+
+    const paint = () => {
+      const outcome = String(currentEmail || '').trim() ? lastOutcome || 'empty' : 'empty';
+      const ui = resolveIframeUi(true);
+      if (!ui.iframeDocument || !ui.input) {
+        if (!loggedMissingIframeUi) {
+          loggedMissingIframeUi = true;
+          zbLog('iframe loader not appended: iframe document inaccessible', {
+            hasIframe: !!ui.iframe,
+            hasDoc: !!ui.iframeDocument,
+            hasInput: !!ui.input,
+          });
+        }
+        return;
+      }
+      loggedMissingIframeUi = false;
+      if (outcome === 'empty') {
+        detachIframeLoaderBadge(ui.input);
+        return;
+      }
+      const container = attachIframeLoaderBadge(ui.input, ui.iframeDocument, hideResults);
+      paintIframeLoaderBadge(container, ui.iframeDocument, outcome, hideResults);
+    };
+
+    const runValidate = async () => {
+      const email = String(currentEmail || '').trim();
+      zbLog('iframe API runValidate', { email: email, field: emailFieldName });
+      if (!email) {
+        lastValidatedEmail = '';
+        lastOutcome = '';
+        lastSuggestion = '';
+        setSubmitBlocked(false);
+        paint();
+        return;
+      }
+      if (!isEmailSyntaxValid(email)) {
+        lastValidatedEmail = email;
+        lastOutcome = 'invalid';
+        lastSuggestion = '';
+        setSubmitBlocked(true);
+        paint();
+        return;
+      }
+      if (currentAbortController) currentAbortController.abort();
+      currentAbortController = new AbortController();
+      const signal = currentAbortController.signal;
+      inFlight = true;
+      lastOutcome = 'pending';
+      lastSuggestion = '';
+      setSubmitBlocked(true);
+      paint();
+      try {
+        const result = await requestHubspotFormsValidation(config.portalId, email, signal);
+        if (signal.aborted) return;
+        readApiMessages(result);
+        const isValid = isValidationPassed(result);
+        lastValidatedEmail = email;
+        lastOutcome = isValid ? 'valid' : 'invalid';
+        lastSuggestion = isValid ? '' : extractDidYouMean(result);
+        setSubmitBlocked(!isValid);
+        zbLog('iframe API result', { pass: isValid, suggestion: lastSuggestion });
+      } catch (error) {
+        if (error && error.name === 'AbortError') {
+          zbLog('iframe API aborted');
+          return;
+        }
+        zbLog('iframe API error', { name: error && error.name, message: error && error.message });
+        lastValidatedEmail = email;
+        lastOutcome = 'error';
+        lastSuggestion = '';
+        setSubmitBlocked(false);
+      } finally {
+        if (currentAbortController && currentAbortController.signal === signal) {
+          currentAbortController = null;
+        }
+        inFlight = false;
+        paint();
+      }
+    };
+
+    const scheduleValidate = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        debounceTimer = null;
+        runValidate();
+      }, debounceMs);
+    };
+
+    if (guard) {
+      guard.addEventListener('click', (guardEvent) => {
+        guardEvent.preventDefault();
+        guardEvent.stopPropagation();
+        zbLog('iframe API submit guard click', { allowed: emailIsAllowedToSubmit() });
+        if (emailIsAllowedToSubmit()) return;
+        if (!inFlight) runValidate();
+      });
+    }
+
+    const readEmail = async () => {
+      try {
+        if (typeof form.getFormFieldValues === 'function') {
+          const fields = await form.getFormFieldValues();
+          const picked = emailFromFormFields(fields);
+          if (picked.name) emailFieldName = picked.name;
+          return picked.value;
+        }
+      } catch (e) {
+        zbLog('iframe API getFormFieldValues failed', { message: e && e.message });
+      }
+      if (typeof form.getFieldValue === 'function') {
+        try {
+          const value = await form.getFieldValue(emailFieldName);
+          return Array.isArray(value) ? String(value[0] || '').trim() : String(value || '').trim();
+        } catch (e) {
+          zbLog('iframe API getFieldValue failed', {
+            field: emailFieldName,
+            message: e && e.message,
+          });
+        }
+      }
+      return '';
+    };
+
+    const tick = async () => {
+      const next = await readEmail();
+      if (next === currentEmail) return;
+      zbLog('iframe API email changed', { from: currentEmail, to: next });
+      currentEmail = next;
+      if (currentAbortController) {
+        currentAbortController.abort();
+        currentAbortController = null;
+      }
+      if (!String(next || '').trim()) {
+        if (debounceTimer) {
+          clearTimeout(debounceTimer);
+          debounceTimer = null;
+        }
+        lastValidatedEmail = '';
+        lastOutcome = '';
+        lastSuggestion = '';
+        setSubmitBlocked(false);
+        paint();
+        return;
+      }
+      scheduleValidate();
+    };
+
+    tick();
+    setInterval(tick, 250);
+    if (typeof root.addEventListener === 'function') {
+      root.addEventListener('hs-form-event:on-interaction:navigate', () => {
+        tick();
+      });
+    }
   };
 
   /**
@@ -1161,13 +1673,16 @@
           config.idleSeconds,
         );
       });
+
+      if (!found.length) bindCrossOriginHubSpotForms(config);
     };
 
     attachToFoundInputs();
 
-    root.addEventListener('hs-form-event:on-ready', () => {
-      zbLog('hs-form-event:on-ready');
+    root.addEventListener('hs-form-event:on-ready', (event) => {
+      zbLog('hs-form-event:on-ready', event && event.detail);
       attachToFoundInputs();
+      bindCrossOriginHubSpotForms(config, event);
     });
 
     if (Array.isArray(root.hsFormsOnReady)) {
@@ -1184,6 +1699,17 @@
         bindTimer = setTimeout(attachToFoundInputs, 250);
       });
       observer.observe(document.documentElement, { childList: true, subtree: true });
+    }
+
+    if (!root.__zbHubspotV4IframeRetry) {
+      let iframeApiTries = 0;
+      root.__zbHubspotV4IframeRetry = setInterval(() => {
+        iframeApiTries += 1;
+        if (bindCrossOriginHubSpotForms(config) || iframeApiTries > 80) {
+          clearInterval(root.__zbHubspotV4IframeRetry);
+          root.__zbHubspotV4IframeRetry = null;
+        }
+      }, 250);
     }
 
     /**
