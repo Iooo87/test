@@ -58,6 +58,8 @@
  *                         Skips the API if local syntax is invalid.
  */
 (function (root) {
+
+  console.log('BEHSV4 Code.js loaded');
   const currentScript = typeof document !== 'undefined' ? document.currentScript : null;
   
   const VALIDATE_PROXY_URL_TEST =
