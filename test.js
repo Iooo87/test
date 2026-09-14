@@ -20,7 +20,7 @@
  *   with an overlay on the iframe footer when the submit button cannot be
  *   disabled from the parent.
  *   Local syntax is checked first; only well-formed addresses are POSTed
- *   through the ZeroBounce validation proxy.
+ *   to members-api.
  *   In-page results show as an in-field spinner, then a check/cross plus the
  *   ZeroBounce logo.
  *
@@ -49,11 +49,11 @@
  *     0 or omit = validate 350ms after blur only. Example: "2"
  *
  *   data-use-test-endpoint / useTestEndpoint  (alias: data-test-endpoint)
- *     true = test validation proxy. Omit/false = production validation proxy.
+ *     true = test API (test-members-api). Omit/false = production (members-api).
  *
  *   data-timeout / timeout  (aliases: data-api-timeout, data-timeout-seconds,
  *                           apiTimeout, apiTimeoutSeconds)
- *     Seconds before a hung validation request is aborted. Aborts fail-open
+ *     Seconds before a hung members-api request is aborted. Aborts fail-open
  *     (submit is re-enabled). Omit or invalid = 10. Example: "10"
  *
  * JS-only (no data-*):
@@ -80,11 +80,11 @@
 
   const currentScript = typeof document !== 'undefined' ? document.currentScript : null;
   
-  const VALIDATE_PROXY_URL_TEST =
-    'https://test-external-proxy.zerobounce.net/api/integration/hubspot-forms/validate/';
-  const VALIDATE_PROXY_URL_PROD =
-    'https://external-proxy.zerobounce.net/api/integration/hubspot-forms/validate/';
-  let validateUrl = VALIDATE_PROXY_URL_PROD;
+  const VALIDATE_URL_TEST =
+    'https://test-members-api.zerobounce.net/api/integration/hubspot-forms/validate/';
+  const VALIDATE_URL_PROD =
+    'https://members-api.zerobounce.net/api/integration/hubspot-forms/validate/';
+  let validateUrl = VALIDATE_URL_PROD;
 
   const DEFAULT_API_TIMEOUT_SECONDS = 10;
   let validateTimeoutMs = DEFAULT_API_TIMEOUT_SECONDS * 1000;
@@ -1467,8 +1467,8 @@
     config.timeoutSeconds = parseTimeoutSeconds(timeoutRaw);
     validateTimeoutMs = config.timeoutSeconds * 1000;
     validateUrl = parseBool(config.useTestEndpoint)
-      ? VALIDATE_PROXY_URL_TEST
-      : VALIDATE_PROXY_URL_PROD;
+      ? VALIDATE_URL_TEST
+      : VALIDATE_URL_PROD;
 
     // Read from scriptConfig, never the merged config: a caller-supplied uiFlags
     // would otherwise skip the token check entirely.
