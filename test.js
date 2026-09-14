@@ -465,6 +465,10 @@
   const iframeFormBindKeys = new Set();
   let iframeApiMissingLogged = false;
   const IFRAME_GUARD_CLASS = 'zb-hs-iframe-submit-guard';
+  const IFRAME_GUARD_SPINNER_CLASS = 'zb-hs-iframe-submit-guard-spinner';
+  const IFRAME_GUARD_MSG_CLASS = 'zb-hs-iframe-submit-guard-msg';
+  const IFRAME_GUARD_LOGO_CLASS = 'zb-hs-iframe-submit-guard-logo';
+  const IFRAME_GUARD_TYPO_CLASS = 'zb-hs-iframe-submit-guard-typo';
   const IFRAME_LOADER_CONTAINER_CLASS = 'loaderContainer';
   const IFRAME_LOADER_CLASS = 'loader';
   const IFRAME_ICON_CLASS = 'zb-icon';
@@ -1016,22 +1020,145 @@
     let guard = Array.from(mount.children).find(
       (node) => node.classList && node.classList.contains(IFRAME_GUARD_CLASS),
     );
-    if (!guard) {
-      guard = doc.createElement('div');
-      guard.className = IFRAME_GUARD_CLASS;
-      guard.setAttribute('aria-hidden', 'true');
-      guard.style.position = 'absolute';
-      guard.style.left = '0';
-      guard.style.right = '0';
-      guard.style.bottom = '0';
-      guard.style.height = IFRAME_SUBMIT_GUARD_HEIGHT_PX + 'px';
-      guard.style.zIndex = '2147483646';
-      guard.style.display = 'none';
-      guard.style.cursor = 'not-allowed';
-      guard.style.background = 'transparent';
-      mount.appendChild(guard);
-    }
+    if (guard) return guard;
+
+    guard = doc.createElement('div');
+    guard.className = IFRAME_GUARD_CLASS;
+    guard.setAttribute('role', 'status');
+    guard.setAttribute('aria-live', 'polite');
+    guard.style.position = 'absolute';
+    guard.style.left = '0';
+    guard.style.right = '0';
+    guard.style.bottom = '0';
+    guard.style.minHeight = IFRAME_SUBMIT_GUARD_HEIGHT_PX + 'px';
+    guard.style.height = 'auto';
+    guard.style.zIndex = '2147483646';
+    guard.style.display = 'none';
+    guard.style.boxSizing = 'border-box';
+    guard.style.padding = '12px 16px';
+    guard.style.background = '#ffffff';
+    guard.style.borderTop = '1px solid #d0d0d0';
+    guard.style.boxShadow = '0 -2px 8px rgba(0,0,0,.08)';
+    guard.style.cursor = 'not-allowed';
+    guard.style.fontFamily = 'Arial, Helvetica, sans-serif';
+
+    const row = doc.createElement('div');
+    row.style.display = 'flex';
+    row.style.flexDirection = 'row';
+    row.style.alignItems = 'center';
+    row.style.gap = '10px';
+
+    const spinner = doc.createElement('div');
+    spinner.className = IFRAME_GUARD_SPINNER_CLASS;
+    startLogoStyleSpinner(spinner);
+    spinner.style.display = 'none';
+
+    const msg = doc.createElement('div');
+    msg.className = IFRAME_GUARD_MSG_CLASS;
+    msg.style.flex = '1';
+    msg.style.minWidth = '0';
+    msg.style.fontSize = '14px';
+    msg.style.lineHeight = '1.35';
+    msg.style.fontWeight = '500';
+    msg.style.color = '#33475b';
+
+    const logo = createZeroBounceLogo(doc, 18);
+    logo.className = IFRAME_GUARD_LOGO_CLASS;
+    logo.style.alignSelf = 'center';
+    logo.style.display = brandingHidden() ? 'none' : 'block';
+
+    row.appendChild(spinner);
+    row.appendChild(msg);
+    row.appendChild(logo);
+    guard.appendChild(row);
+
+    const typo = doc.createElement('div');
+    typo.className = IFRAME_GUARD_TYPO_CLASS;
+    typo.style.display = 'none';
+    typo.style.marginTop = '6px';
+    guard.appendChild(typo);
+
+    mount.appendChild(guard);
     return guard;
+  };
+
+  const paintIframeSubmitGuard = (guard, state, hideResults, onApplySuggestion) => {
+    if (!guard) return;
+    const outcome = state.outcome;
+    const suggestion = state.suggestion || '';
+    const spinner = guard.querySelector('.' + IFRAME_GUARD_SPINNER_CLASS);
+    const msg = guard.querySelector('.' + IFRAME_GUARD_MSG_CLASS);
+    const logo = guard.querySelector('.' + IFRAME_GUARD_LOGO_CLASS);
+    const typo = guard.querySelector('.' + IFRAME_GUARD_TYPO_CLASS);
+    const doc = guard.ownerDocument || document;
+
+    if (logo) logo.style.display = brandingHidden() ? 'none' : 'block';
+
+    const show = outcome === 'pending' || outcome === 'invalid';
+    guard.style.display = show ? 'block' : 'none';
+    if (!show) return;
+
+    if (typo) {
+      typo.innerHTML = '';
+      typo.style.display = 'none';
+    }
+
+    if (outcome === 'pending') {
+      guard.style.background = '#ffffff';
+      guard.style.borderTopColor = '#fbdd46';
+      if (spinner) spinner.style.display = hideResults ? 'none' : 'block';
+      if (msg) {
+        msg.style.color = '#33475b';
+        msg.textContent = hideResults ? '' : 'Validating email…';
+      }
+      return;
+    }
+
+    guard.style.background = '#ffffff';
+    guard.style.borderTopColor = '#DC143C';
+    if (spinner) spinner.style.display = 'none';
+    if (msg) {
+      applyHubSpotErrorTextStyle(msg);
+      msg.style.flex = '1';
+      msg.style.minWidth = '0';
+      msg.textContent = apiInvalidMessage || 'Please enter a valid email address.';
+    }
+
+    if (
+      typo &&
+      suggestion &&
+      apiTyposEnabled !== false &&
+      typeof onApplySuggestion === 'function'
+    ) {
+      applyHubSpotErrorTextStyle(typo);
+      typo.style.marginTop = '6px';
+      const customPrefix = apiTypoErrorMessage;
+      if (customPrefix) {
+        typo.appendChild(
+          doc.createTextNode(/[\s]$/.test(customPrefix) ? customPrefix : customPrefix + ' '),
+        );
+      } else {
+        typo.appendChild(doc.createTextNode('Did you mean '));
+      }
+      const link = doc.createElement('button');
+      link.type = 'button';
+      link.textContent = suggestion;
+      link.style.border = 'none';
+      link.style.background = 'none';
+      link.style.padding = '0';
+      link.style.color = 'inherit';
+      link.style.cursor = 'pointer';
+      link.style.font = 'inherit';
+      link.style.textDecoration = 'underline';
+      link.addEventListener('click', (clickEvent) => {
+        clickEvent.preventDefault();
+        clickEvent.stopPropagation();
+        onApplySuggestion(suggestion);
+      });
+      typo.appendChild(link);
+      if (!customPrefix) typo.appendChild(doc.createTextNode('?'));
+      typo.style.display = 'block';
+    }
   };
 
   /** Same hanging badge as ZBEHS: created with the iframe document, sits under the email field. */
@@ -1264,17 +1391,28 @@
     };
 
     const setSubmitBlocked = (blocked) => {
-      if (!disableSubmit) {
-        if (guard) guard.style.display = 'none';
-        return;
-      }
+      if (!disableSubmit) return;
       const ui = resolveIframeUi(true);
       const button =
         ui.iframeDocument && ui.iframeDocument.querySelector
           ? ui.iframeDocument.querySelector("[type='submit']")
           : null;
       if (button) button.disabled = !!blocked;
-      if (guard) guard.style.display = !button && blocked ? 'block' : 'none';
+    };
+
+    const applySuggestion = (suggestion) => {
+      const next = applyIframeSuggestion(currentEmail, suggestion);
+      zbLog('iframe API apply suggestion', { from: currentEmail, to: next });
+      try {
+        if (typeof form.setFieldValue === 'function') form.setFieldValue(emailFieldName, next);
+      } catch (e) {
+        zbLog('iframe API setFieldValue failed', { message: e && e.message });
+      }
+      currentEmail = next;
+      lastValidatedEmail = '';
+      lastOutcome = '';
+      lastSuggestion = '';
+      runValidate();
     };
 
     const emailIsAllowedToSubmit = () => {
@@ -1287,11 +1425,21 @@
 
     const paint = () => {
       const outcome = String(currentEmail || '').trim() ? lastOutcome || 'empty' : 'empty';
+      if (disableSubmit) {
+        paintIframeSubmitGuard(
+          guard,
+          { outcome: outcome, suggestion: lastSuggestion },
+          hideResults,
+          applySuggestion,
+        );
+      } else if (guard) {
+        guard.style.display = 'none';
+      }
       const ui = resolveIframeUi(true);
       if (!ui.iframeDocument || !ui.input) {
         if (!loggedMissingIframeUi) {
           loggedMissingIframeUi = true;
-          zbLog('iframe loader not appended: iframe document inaccessible', {
+          zbLog('iframe inner badge skipped (using submit guard)', {
             hasIframe: !!ui.iframe,
             hasDoc: !!ui.iframeDocument,
             hasInput: !!ui.input,
@@ -1299,7 +1447,6 @@
         }
         return;
       }
-      loggedMissingIframeUi = false;
       if (outcome === 'empty') {
         detachIframeLoaderBadge(ui.input);
         return;
