@@ -1020,10 +1020,15 @@
     let guard = Array.from(mount.children).find(
       (node) => node.classList && node.classList.contains(IFRAME_GUARD_CLASS),
     );
+    if (guard && guard.getAttribute('data-zb-layout') !== 'stack') {
+      if (guard.parentNode) guard.parentNode.removeChild(guard);
+      guard = null;
+    }
     if (guard) return guard;
 
     guard = doc.createElement('div');
     guard.className = IFRAME_GUARD_CLASS;
+    guard.setAttribute('data-zb-layout', 'stack');
     guard.setAttribute('role', 'status');
     guard.setAttribute('aria-live', 'polite');
     guard.style.position = 'absolute';
@@ -1035,20 +1040,21 @@
     guard.style.zIndex = '2147483646';
     guard.style.display = 'none';
     guard.style.boxSizing = 'border-box';
-    guard.style.padding = '12px 16px';
-    guard.style.background = 'rgba(255, 255, 255, 0.55)';
+    guard.style.padding = '16px 20px 18px';
+    guard.style.background = 'rgba(128, 128, 128, 0.42)';
     guard.style.backdropFilter = 'blur(10px)';
     guard.style.webkitBackdropFilter = 'blur(10px)';
-    guard.style.borderTop = '1px solid rgba(208, 208, 208, 0.7)';
-    guard.style.boxShadow = '0 -2px 8px rgba(0,0,0,.08)';
+    guard.style.borderTop = '1px solid rgba(0, 0, 0, 0.12)';
     guard.style.cursor = 'not-allowed';
     guard.style.fontFamily = 'Arial, Helvetica, sans-serif';
+    guard.style.textAlign = 'center';
 
-    const row = doc.createElement('div');
-    row.style.display = 'flex';
-    row.style.flexDirection = 'row';
-    row.style.alignItems = 'center';
-    row.style.gap = '12px';
+    const stack = doc.createElement('div');
+    stack.style.display = 'flex';
+    stack.style.flexDirection = 'column';
+    stack.style.alignItems = 'center';
+    stack.style.justifyContent = 'center';
+    stack.style.gap = '10px';
 
     const spinner = doc.createElement('div');
     spinner.className = IFRAME_GUARD_SPINNER_CLASS;
@@ -1061,30 +1067,30 @@
 
     const msg = doc.createElement('div');
     msg.className = IFRAME_GUARD_MSG_CLASS;
-    msg.style.flex = '1';
-    msg.style.minWidth = '0';
-    msg.style.fontSize = '14px';
+    msg.style.fontSize = '16px';
     msg.style.lineHeight = '1.35';
     msg.style.fontWeight = '500';
-    msg.style.color = '#33475b';
-
-    const logo = createZeroBounceLogo(doc, 28);
-    logo.className = IFRAME_GUARD_LOGO_CLASS;
-    logo.style.alignSelf = 'center';
-    logo.style.height = '28px';
-    logo.style.display = brandingHidden() ? 'none' : 'block';
-
-    row.appendChild(spinner);
-    row.appendChild(msg);
-    row.appendChild(logo);
-    guard.appendChild(row);
+    msg.style.textAlign = 'center';
+    msg.style.color = '#e51520';
 
     const typo = doc.createElement('div');
     typo.className = IFRAME_GUARD_TYPO_CLASS;
     typo.style.display = 'none';
-    typo.style.marginTop = '6px';
-    guard.appendChild(typo);
+    typo.style.textAlign = 'center';
 
+    const logo = createZeroBounceLogo(doc, 40);
+    logo.className = IFRAME_GUARD_LOGO_CLASS;
+    logo.src =
+      'https://www.zerobounce.net/cdn-cgi/image/fit=scale-down,format=auto,quality=100,height=80,metadata=none/logo.webp';
+    logo.style.height = '40px';
+    logo.style.alignSelf = 'center';
+    logo.style.display = brandingHidden() ? 'none' : 'block';
+
+    stack.appendChild(spinner);
+    stack.appendChild(msg);
+    stack.appendChild(typo);
+    stack.appendChild(logo);
+    guard.appendChild(stack);
     mount.appendChild(guard);
     return guard;
   };
@@ -1111,21 +1117,20 @@
     }
 
     if (outcome === 'pending') {
-      guard.style.borderTopColor = 'rgba(251, 221, 70, 0.9)';
       if (spinner) spinner.style.display = 'block';
       if (msg) {
         msg.style.color = '#33475b';
+        msg.style.textAlign = 'center';
         msg.textContent = hideResults ? '' : 'Validating email…';
       }
       return;
     }
 
-    guard.style.borderTopColor = 'rgba(220, 21, 60, 0.85)';
     if (spinner) spinner.style.display = 'none';
     if (msg) {
       applyHubSpotErrorTextStyle(msg);
-      msg.style.flex = '1';
-      msg.style.minWidth = '0';
+      msg.style.textAlign = 'center';
+      msg.style.fontSize = '16px';
       msg.textContent = apiInvalidMessage || 'Please enter a valid email address.';
     }
 
@@ -1136,7 +1141,7 @@
       typeof onApplySuggestion === 'function'
     ) {
       applyHubSpotErrorTextStyle(typo);
-      typo.style.marginTop = '6px';
+      typo.style.textAlign = 'center';
       const customPrefix = apiTypoErrorMessage;
       if (customPrefix) {
         typo.appendChild(
