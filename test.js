@@ -1041,7 +1041,7 @@
     guard.style.display = 'none';
     guard.style.boxSizing = 'border-box';
     guard.style.padding = '16px 20px 18px';
-    guard.style.background = 'rgba(128, 128, 128, 0.42)';
+    guard.style.background = 'rgba(255, 255, 255, 0.65)';
     guard.style.backdropFilter = 'blur(10px)';
     guard.style.webkitBackdropFilter = 'blur(10px)';
     guard.style.borderTop = '1px solid rgba(0, 0, 0, 0.12)';
