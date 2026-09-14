@@ -1420,14 +1420,6 @@
       runValidate();
     };
 
-    const emailIsAllowedToSubmit = () => {
-      const email = String(currentEmail || '').trim();
-      if (!email) return true;
-      if (debounceTimer || inFlight) return false;
-      if (lastValidatedEmail !== email) return false;
-      return lastOutcome === 'valid' || lastOutcome === 'error';
-    };
-
     const paint = () => {
       const outcome = String(currentEmail || '').trim() ? lastOutcome || 'empty' : 'empty';
       if (disableSubmit) {
@@ -1523,16 +1515,6 @@
         runValidate();
       }, debounceMs);
     };
-
-    if (guard) {
-      guard.addEventListener('click', (guardEvent) => {
-        guardEvent.preventDefault();
-        guardEvent.stopPropagation();
-        zbLog('iframe API submit guard click', { allowed: emailIsAllowedToSubmit() });
-        if (emailIsAllowedToSubmit()) return;
-        if (!inFlight) runValidate();
-      });
-    }
 
     const readEmail = async () => {
       try {
