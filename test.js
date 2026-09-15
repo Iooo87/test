@@ -1251,7 +1251,6 @@
               setSubmitBlocked(false);
             }
           }
-          scheduleIdleValidate();
         });
 
         input.addEventListener('blur', function () {
